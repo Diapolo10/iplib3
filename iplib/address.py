@@ -1,13 +1,27 @@
 class IPAddress:
 
-    def __init__(self, value=None):
+    def __init__(self, value=None, address_type='ipv4'):
         self._num = 0
-        self._ipv4 = "0.0.0.0"
-        self._ipv6 = "::"
+        # self._ipv4 = "0.0.0.0"
+        # self._ipv6 = "::"
 
-        if value is None:
+        if isinstance(value, int) and value >= 0:
             self._ipv4 = self.num_to_ipv4()
             self._ipv6 = self.num_to_ipv6()
+
+        elif isinstance(value, str) and '.' in value:
+            self._ipv4 = value
+            self._num = self.ipv4_to_num()
+
+        elif isinstance(value, str):
+            self._ipv6 = value
+            self._num = self.ipv6_to_num()
+
+        elif value is None:
+            pass
+
+        else:
+            raise TypeError
 
 
     def num_to_ipv4(self):
