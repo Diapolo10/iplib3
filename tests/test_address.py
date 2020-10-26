@@ -9,6 +9,7 @@ def test_ipv4():
 def test_ipv6():
     assert str(IPAddress(25601440).as_ipv6) == '0:0:0:0:0:0:186:A5A0'
     assert str(IPAddress('2606:4700:4700::1111')) == '2606:4700:4700::1111'
+    assert str(IPv6('2606:4700:4700::1111')) == '2606:4700:4700::1111'
 
 def test_ipv6_full():
     assert IPAddress(25601440).num_to_ipv6(shorten=False) == '0000:0000:0000:0000:0000:0000:0186:A5A0'
