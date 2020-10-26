@@ -82,15 +82,19 @@ def _ipv6_validator(address: str, strict=True) -> bool:
 
     if len(halves) == 2:
         # Address with zero-skip part
-        total_length = sum(map(len, halves))
-            
+        total_length = sum(map(lambda x: len(x.split(':')), halves))
+
         if halves[0]:
             segments.extend(halves[0].split(':'))
+        else:
+            segments.append('0000')
             
         segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
         if halves[1]:
             segments.extend(halves[1].split(':'))
+        else:
+            segments.append('0000')
 
     elif len(halves) == 1:
         # Full address
@@ -101,11 +105,10 @@ def _ipv6_validator(address: str, strict=True) -> bool:
         return False
 
     try:
-        processed_segments: List[int] = list(map(lambda x: int(x, 16) if x else 0, address.split(':')))
+        processed_segments: List[int] = list(map(lambda x: int(x, 16) if x else 0, segments))
     except ValueError:
         # IPv6 address was not made of valid hexadecimal numbers
         return False
-
     if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
         # Invalid number of segments
         return False
