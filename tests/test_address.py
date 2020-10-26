@@ -1,5 +1,5 @@
 import pytest
-from iplib import IPAddress # pylint: disable=import-error
+from iplib import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error
 
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
@@ -16,3 +16,23 @@ def test_ipv6_remove_zeroes():
 
 def test_chaining():
     assert str(IPAddress(25601440).as_ipv6.as_ipv4) == '1.134.165.160'
+
+def test_ipv4_validator():
+    assert _ipv4_validator('1.1.1.1') is True
+    assert _ipv4_validator('0.0.0.0') is True
+    assert _ipv4_validator('255.255.255.255') is True
+    assert _ipv4_validator('192.168.0.1:8080') is True
+    assert _ipv4_validator('12.123.234.345') is False
+    assert _ipv4_validator('FF.FF.FF.FF') is False
+    assert _ipv4_validator('1.1.1.1:314159') is False
+    assert _ipv4_validator('12.23.34.45.56') is False
+    assert _ipv4_validator('1337.1337.1337.1337', strict=False) is True
+    assert _ipv4_validator('1337.1337.1337.1337:314159', strict=False) is True
+
+def test_ipv6_validator():
+    assert _ipv6_validator('0:0:0:0:0:0:0:0') is True
+    assert _ipv6_validator('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF') is True
+    assert _ipv6_validator('[0:0:0:0:0:0:0:0]:80') is True
+    assert _ipv6_validator('[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:65535') is True
+    assert _ipv6_validator('::12') is True
+    assert _ipv6_validator('314::') is True

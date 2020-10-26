@@ -1,6 +1,6 @@
 from typing import List, Tuple, Optional
 
-__all__ = ('IPAddress', 'IPv4', 'IPv6',)
+__all__ = ('IPAddress', 'IPv4', 'IPv6', '_ipv4_validator', '_ipv6_validator')
 
 PORT_NUMBER_MAX_VALUE = 65536
 
@@ -63,16 +63,18 @@ def _ipv6_validator(address: str, strict=True) -> bool:
     don't exceed legal bounds, otherwise focuses on form.
     """
 
-    address, *port = address.split(']:')
+    address, *port = address.split(']:') # Try split on closing bracket and port separator
     if port:
-        address = address[1:]
+        address = address[1:] # Gets rid of the opening bracket that contained the address
         try:
             port_num = int(port[0])
         except ValueError:
+            # Port number wasn't a valid integer
             return False
 
         if strict:
             if not 0 <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                # Port number was too high or too low to be strictly valid
                 return False
 
     halves = address.split('::')
@@ -101,14 +103,18 @@ def _ipv6_validator(address: str, strict=True) -> bool:
     try:
         processed_segments: List[int] = list(map(lambda x: int(x, 16) if x else 0, address.split(':')))
     except ValueError:
+        # IPv6 address was not made of valid hexadecimal numbers
         return False
 
-    if len(processed_segments) > IPV6_MAX_SEGMENT_COUNT:
+    if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
+        # Invalid number of segments
         return False
 
     if strict:
-        if max(processed_segments) > IPV6_MAX_SEGMENT_VALUE or min(processed_segments) < 0:
-            return False
+        for seg in processed_segments:
+            if not 0 <= seg <= IPV6_MAX_SEGMENT_VALUE:
+                # Segment value was too high or too low to be strictly valid
+                return False
 
     return True
 
