@@ -1,6 +1,8 @@
-from typing import List, Optional
+from typing import List, Tuple, Optional
 
 __all__ = ('IPAddress', 'IPv4', 'IPv6',)
+
+PORT_NUMBER_MAX_VALUE = 65536
 
 # IPv4 constants
 IPV4_MAX_SEGMENT_COUNT = 4
@@ -14,43 +16,101 @@ IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
 # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
 IPV6_MAX_VALUE = 340282366920938463463374607431768211455
 
-def _ipv4_validator(address: str, strict=True):
+def _ipv4_validator(address: str, strict=True) -> bool:
+    """
+    Validates an IPv4 address, returning a boolean.
+
+    Under strict mode ensures that the numerical values
+    don't exceed legal bounds, otherwise focuses on form.
+    """
 
     address, *port = address.split(':')
-    if port:
+    if port: # Handles ports separately to keep the rest of the code intact
         try:
-            port = int(port[0])
+            port_num = int(port[0])
         except ValueError:
+            # Port number wasn't a valid integer
             return False
 
         if strict:
-            if not 0 <= port <= 65536: # 2**16
+            if not 0 <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                # Port number was too high or too low to be strictly valid
                 return False
 
     try:
         segments = list(map(int, address.split('.')))
     except ValueError:
+        # IPv4 address was not made of valid integers
         return False
 
-    if len(segments) != 4:
+    if len(segments) != IPV4_MAX_SEGMENT_COUNT:
+        # Invalid number of segments
         return False
 
     if strict:
         for seg in segments:
-            if not 0 <= seg <= 255:    
+            if not 0 <= seg <= IPV4_MAX_SEGMENT_VALUE:
+                # Segment value was too high or too low to be strictly valid
                 return False
 
     return True
 
-def _ipv6_validator(address: str, strict=True):
+def _ipv6_validator(address: str, strict=True) -> bool:
+    """
+    Validates an IPv6 address, returning a boolean.
+
+    Under strict mode ensures that the numerical values
+    don't exceed legal bounds, otherwise focuses on form.
+    """
 
     address, *port = address.split(']:')
     if port:
         address = address[1:]
         try:
-            port = int(port[0])
+            port_num = int(port[0])
         except ValueError:
             return False
+
+        if strict:
+            if not 0 <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                return False
+
+    halves = address.split('::')
+    segments = []
+
+    if len(halves) == 2:
+        # Address with zero-skip part
+        total_length = sum(map(len, halves))
+            
+        if halves[0]:
+            segments.extend(halves[0].split(':'))
+            
+        segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
+
+        if halves[1]:
+            segments.extend(halves[1].split(':'))
+
+    elif len(halves) == 1:
+        # Full address
+        segments.extend(halves[0].split(':'))
+
+    else:
+        # More than one zero-skip
+        return False
+
+    try:
+        processed_segments: List[int] = list(map(lambda x: int(x, 16) if x else 0, address.split(':')))
+    except ValueError:
+        return False
+
+    if len(processed_segments) > IPV6_MAX_SEGMENT_COUNT:
+        return False
+
+    if strict:
+        if max(processed_segments) > IPV6_MAX_SEGMENT_VALUE or min(processed_segments) < 0:
+            return False
+
+    return True
 
 class PureAddress:
     """
