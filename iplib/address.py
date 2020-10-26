@@ -110,6 +110,7 @@ def _ipv6_validator(address: str, strict=True) -> bool:
     except ValueError:
         # IPv6 address was not made of valid hexadecimal numbers
         return False
+
     if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
         # Invalid number of segments
         return False
@@ -318,32 +319,48 @@ class IPv6(IPAddress):
         halves = self._address.split('::')
         segments = []
 
-        if len(halves) == 2: # Address with zero-skip part
-            total_length = sum(map(len, halves))
-            
+        if len(halves) == 2:
+        # Address with zero-skip part
+            left, right = map(lambda x: x.split(':'), halves)
+            total_length = len(left) + len(right)
+
             if halves[0]:
-                segments.extend(halves[0].split(':'))
+                segments.extend(left)
+            else:
+                segments.append('0000')
             
             segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
-            
-            if halves[1]:
-                segments.extend(halves[1].split(':'))
 
-        elif len(halves) == 1: # Full address
+            if halves[1]:
+                segments.extend(right)
+            else:
+                segments.append('0000')
+
+        elif len(halves) == 1:
+            # Full address
             segments.extend(halves[0].split(':'))
 
         else:
             raise ValueError("Invalid IPv6 address format; only one zero-skip allowed")
+        
+        try:
+            processed_segments: List[int] = list(map(lambda num: int(num, 16) if num != '' else 0, segments[::-1]))
+        except ValueError:
+            raise ValueError(f"Invalid IPv6 address format; address contains invalid characters")
 
-        processed_segments: List[int] = list(map(lambda num: int(num, 16) if num != '' else 0, segments[::-1]))
-        total = 0
-
-        if (segment_count := len(processed_segments) > IPV6_MAX_SEGMENT_COUNT):
+        segment_count = len(processed_segments)
+        if segment_count > IPV6_MAX_SEGMENT_COUNT:
             raise ValueError(f"Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})")
 
-        if (value := max(processed_segments) > IPV6_MAX_SEGMENT_VALUE):
-            raise ValueError(f"Invalid IPv6 address format; segment max value passed ({value} > {IPV6_MAX_SEGMENT_VALUE})")
+        highest = max(processed_segments)
+        if highest > IPV6_MAX_SEGMENT_VALUE:
+            raise ValueError(f"Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})")
 
+        lowest = min(processed_segments)
+        if 0 > lowest:
+            raise ValueError(f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)")
+        
+        total = 0
         for idx, num in enumerate(processed_segments):
             total += num * 2**(idx * 16)
 
