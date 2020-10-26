@@ -82,17 +82,18 @@ def _ipv6_validator(address: str, strict=True) -> bool:
 
     if len(halves) == 2:
         # Address with zero-skip part
-        total_length = sum(map(lambda x: len(x.split(':')), halves))
+        left, right = map(lambda x: x.split(':'), halves)
+        total_length = len(left) + len(right)
 
         if halves[0]:
-            segments.extend(halves[0].split(':'))
+            segments.extend(left)
         else:
             segments.append('0000')
             
         segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
         if halves[1]:
-            segments.extend(halves[1].split(':'))
+            segments.extend(right)
         else:
             segments.append('0000')
 
