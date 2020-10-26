@@ -1,17 +1,56 @@
 from typing import List, Optional
 
+__all__ = ('IPAddress', 'IPv4', 'IPv6',)
+
 # IPv4 constants
 IPV4_MAX_SEGMENT_COUNT = 4
 IPV4_MAX_SEGMENT_VALUE = 0xFF # (255)
-# 0xFFFFFFFF (8)
+# 0xFF_FF_FF_FF (8)
 IPV4_MAX_VALUE = 4294967295
 
 # IPv6 constants
 IPV6_MAX_SEGMENT_COUNT = 8
 IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
-# 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF (32)
+# 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
 IPV6_MAX_VALUE = 340282366920938463463374607431768211455
 
+def _ipv4_validator(address: str, strict=True):
+
+    address, *port = address.split(':')
+    if port:
+        try:
+            port = int(port[0])
+        except ValueError:
+            return False
+
+        if strict:
+            if not 0 <= port <= 65536: # 2**16
+                return False
+
+    try:
+        segments = list(map(int, address.split('.')))
+    except ValueError:
+        return False
+
+    if len(segments) != 4:
+        return False
+
+    if strict:
+        for seg in segments:
+            if not 0 <= seg <= 255:    
+                return False
+
+    return True
+
+def _ipv6_validator(address: str, strict=True):
+
+    address, *port = address.split(']:')
+    if port:
+        address = address[1:]
+        try:
+            port = int(port[0])
+        except ValueError:
+            return False
 
 class PureAddress:
     """
@@ -35,7 +74,7 @@ class PureAddress:
 
         return self._num_to_ipv4(self.num)
 
-    def num_to_ipv6(self, shorten=True, remove_zeroes=True) -> str:
+    def num_to_ipv6(self, shorten=True, remove_zeroes=False) -> str:
         """ Todo: toggleable shortening and optionally
         remove one section of zeroes """
 
@@ -86,13 +125,17 @@ class PureAddress:
                     current += 1
 
                 else:
+                    current = 0
 
-                    if current > longest:
-                        longest = current
-                        longest_idx = current_idx
-                        current = 0
+                if current > longest:
+                    longest = current
+                    longest_idx = current_idx
 
-            segments = segments[:longest_idx] + [''] + segments[longest_idx+longest:]
+            segments = (
+                (segments[:longest_idx] if 0 < longest_idx < IPV6_MAX_SEGMENT_COUNT-1 else [''])
+                + ['']
+                + (segments[longest_idx+longest:] if 0 < longest_idx+longest < IPV6_MAX_SEGMENT_COUNT else [''])
+            )
 
         if not shorten:
 
@@ -151,7 +194,7 @@ class IPAddress(PureAddress):
 
 class IPv4(IPAddress):
     __slots__ = ('_num', '_address', '_port')
-    
+
     def __init__(self, address: str, port=None):
         self._address = address
         self._num = self.ipv4_to_num()
@@ -189,9 +232,9 @@ class IPv6(IPAddress):
         self._port = port
 
     def __str__(self):
-        if self._port is not None:
-            return f"[{self._address}]:{self._port}"
-        else:
+        # if self._port is not None:
+        #     return f"[{self._address}]:{self._port}"
+        # else:
             return self._address
 
     def ipv6_to_num(self) -> int:
@@ -222,7 +265,7 @@ class IPv6(IPAddress):
         else:
             raise ValueError("Invalid IPv6 address format; only one zero-skip allowed")
 
-        processed_segments: List[int] = list(map(lambda num: int(num, 16), segments[::-1]))
+        processed_segments: List[int] = list(map(lambda num: int(num, 16) if num != '' else 0, segments[::-1]))
         total = 0
 
         if (segment_count := len(processed_segments) > IPV6_MAX_SEGMENT_COUNT):
@@ -231,7 +274,7 @@ class IPv6(IPAddress):
         if (value := max(processed_segments) > IPV6_MAX_SEGMENT_VALUE):
             raise ValueError(f"Invalid IPv6 address format; segment max value passed ({value} > {IPV6_MAX_SEGMENT_VALUE})")
 
-        for idx, num in enumerate(segments):
+        for idx, num in enumerate(processed_segments):
             total += num * 2**(idx * 16)
 
         return total
