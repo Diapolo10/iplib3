@@ -141,6 +141,13 @@ class PureAddress:
 
         return max(0, self._num)
 
+    @property
+    def hex(self):
+        """
+        Returns a hexadecimal representation of the address
+        """
+        return hex(self.num)
+
     def num_to_ipv4(self) -> str:
 
         return self._num_to_ipv4(self.num)
