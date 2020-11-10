@@ -17,7 +17,7 @@ IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
 # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
 IPV6_MAX_VALUE = 340282366920938463463374607431768211455
 
-def _ipv4_validator(address: str, strict=True) -> bool:
+def _ipv4_validator(address: str, strict: bool = True) -> bool:
     """
     Validates an IPv4 address, returning a boolean.
 
@@ -56,7 +56,7 @@ def _ipv4_validator(address: str, strict=True) -> bool:
 
     return True
 
-def _ipv6_validator(address: str, strict=True) -> bool:
+def _ipv6_validator(address: str, strict: bool = True) -> bool:
     """
     Validates an IPv6 address, returning a boolean.
 
@@ -131,11 +131,11 @@ class PureAddress:
     __slots__ = ('_num', '_port')
 
     def __init__(self):
-        self._num = 0
-        self._port = None
+        self._num: int = 0
+        self._port: Optional[int] = None
 
     @property
-    def num(self):
+    def num(self) -> int:
         """
         Negative numbers aren't valid,
         they are treated as zero.
@@ -144,7 +144,7 @@ class PureAddress:
         return max(0, self._num)
 
     @property
-    def port(self):
+    def port(self) -> Optional[int]:
         if self._port is None:
             return None
         
@@ -152,7 +152,7 @@ class PureAddress:
 
 
     @property
-    def hex(self):
+    def hex(self) -> str:
         """
         Returns a hexadecimal representation of the address
         """
@@ -162,7 +162,7 @@ class PureAddress:
 
         return self._num_to_ipv4(self.num)
 
-    def num_to_ipv6(self, shorten=True, remove_zeroes=False) -> str:
+    def num_to_ipv6(self, shorten: bool = True, remove_zeroes: bool = False) -> str:
         """ Todo: toggleable shortening and optionally
         remove one section of zeroes """
 
@@ -238,7 +238,7 @@ class PureAddress:
 class IPAddress(PureAddress):
     __slots__ = ('_num', '_port', '_ipv4', '_ipv6')
 
-    def __new__(cls, address: Optional[int]=None, **kwargs):
+    def __new__(cls, address: Optional[int] = None, **kwargs):
 
         if isinstance(address, str):
             cls = IPv4 if '.' in address else IPv6
@@ -273,11 +273,11 @@ class IPAddress(PureAddress):
             raise ValueError(f"No valid address representation exists for {self.num}")
 
     @property
-    def as_ipv4(self):
+    def as_ipv4(self) -> 'IPv4':
         return IPv4(self.num_to_ipv4())
 
     @property
-    def as_ipv6(self):
+    def as_ipv6(self) -> 'IPv6':
         return IPv6(self.num_to_ipv6())
 
 
@@ -296,7 +296,7 @@ class IPv4(IPAddress):
         self._address = address
         self._num = self.ipv4_to_num()
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self._port is not None:
             return f"{self._address}:{self._port}"
         else:
@@ -334,7 +334,7 @@ class IPv6(IPAddress):
         self._address = address
         self._num = self.ipv6_to_num()
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self._port is not None:
             return f"[{self._address}]:{self._port}"
         else:
