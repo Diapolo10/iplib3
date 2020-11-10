@@ -273,11 +273,11 @@ class IPAddress(PureAddress):
             raise ValueError(f"No valid address representation exists for {self.num}")
 
     @property
-    def as_ipv4(self) -> IPv4:
+    def as_ipv4(self) -> 'IPv4':
         return IPv4(self.num_to_ipv4())
 
     @property
-    def as_ipv6(self) -> IPv6:
+    def as_ipv6(self) -> 'IPv6':
         return IPv6(self.num_to_ipv6())
 
 
