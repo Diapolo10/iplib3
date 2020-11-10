@@ -50,4 +50,4 @@ jobs:
         python setup.py sdist
         pip install twine
         twine upload --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} dist/*
-      
+      working-directory: .
