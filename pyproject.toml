@@ -1,0 +1,8 @@
+[build-system]
+requires = ['pytest-runner', 'flake8', 'setuptools', 'wheel']
+build-backend = "setuptools.build_meta"
+
+[metadata]
+name = 'iplib3'
+version = '0.1.2'
+description = 'A modern, object-oriented approach to IP addresses.'

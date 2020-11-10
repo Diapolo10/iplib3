@@ -8,7 +8,7 @@ with open(Path(__file__).parent / 'README.md', encoding='utf-8') as f:
 
 setup(
     name='iplib3',
-    version='0.1.1',
+    version='0.1.2',
     description="A modern, object-oriented approach to IP addresses.",
     license="MIT License (MIT License)",
     long_description=long_description,
@@ -29,6 +29,6 @@ setup(
         'Typing :: Typed',
     ],
     install_requires=[],
-    setup_requires=['pytest-runner', 'flake8'],
+    setup_requires=['pytest-runner', 'flake8', 'setuptools', 'wheel'],
     tests_require=['pytest'],
 )
