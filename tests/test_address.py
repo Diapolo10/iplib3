@@ -1,15 +1,19 @@
 import pytest
-from iplib import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error
+from iplib3 import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error
 
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
     assert str(IPAddress('192.168.1.1')) == '192.168.1.1'
     assert str(IPv4('192.168.1.1')) == '192.168.1.1'
+    assert str(IPAddress('1.1.1.1:8080')) == '1.1.1.1:8080'
+    assert str(IPv4('1.1.1.1:8080')) == '1.1.1.1:8080'
 
 def test_ipv6():
     assert str(IPAddress(25601440).as_ipv6) == '0:0:0:0:0:0:186:A5A0'
     assert str(IPAddress('2606:4700:4700::1111')) == '2606:4700:4700::1111'
     assert str(IPv6('2606:4700:4700::1111')) == '2606:4700:4700::1111'
+    assert str(IPAddress('[2606:4700:4700::1111]:8080')) == '[2606:4700:4700::1111]:8080'
+    assert str(IPv6('[2606:4700:4700::1111]:8080')) == '[2606:4700:4700::1111]:8080'
 
 def test_ipv6_full():
     assert IPAddress(25601440).num_to_ipv6(shorten=False) == '0000:0000:0000:0000:0000:0000:0186:A5A0'
