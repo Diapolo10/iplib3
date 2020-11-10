@@ -2,6 +2,7 @@ from typing import List, Tuple, Optional
 
 __all__ = ('IPAddress', 'IPv4', 'IPv6', '_ipv4_validator', '_ipv6_validator')
 
+PORT_NUMBER_MIN_VALUE = 0
 PORT_NUMBER_MAX_VALUE = 65536
 
 # IPv4 constants
@@ -127,10 +128,11 @@ class PureAddress:
     """
     Base class for IP addresses
     """
-    __slots__ = ('_num',)
+    __slots__ = ('_num', '_port')
 
     def __init__(self):
         self._num = 0
+        self._port = None
 
     @property
     def num(self):
@@ -140,6 +142,14 @@ class PureAddress:
         """
 
         return max(0, self._num)
+
+    @property
+    def port(self):
+        if self._port is None:
+            return None
+        
+        return min(max(PORT_NUMBER_MIN_VALUE, self._port), PORT_NUMBER_MAX_VALUE)
+
 
     @property
     def hex(self):
@@ -229,6 +239,7 @@ class IPAddress(PureAddress):
     __slots__ = ('_num', '_port', '_ipv4', '_ipv6')
 
     def __new__(cls, address: Optional[int]=None, **kwargs):
+
         if isinstance(address, str):
             cls = IPv4 if '.' in address else IPv6
 
@@ -273,10 +284,17 @@ class IPAddress(PureAddress):
 class IPv4(IPAddress):
     __slots__ = ('_num', '_address', '_port')
 
-    def __init__(self, address: str, port=None):
+    def __init__(self, address: str, port: Optional[int] = None):
+        
+        self._port = port
+
+        _address, *_port = address.split(':')
+        if _port:
+            self._port = int(_port[0])
+            address = _address
+
         self._address = address
         self._num = self.ipv4_to_num()
-        self._port = port
 
     def __str__(self):
         if self._port is not None:
@@ -304,15 +322,22 @@ class IPv4(IPAddress):
 class IPv6(IPAddress):
     __slots__ = ('_num', '_address', '_port')
 
-    def __init__(self, address: str, port=None):
-        self._address = address
-        self._num = self.ipv6_to_num()
+    def __init__(self, address: str, port: Optional[int] = None):
+
         self._port = port
 
+        _address, *_port = address.split(']:')
+        if _port:
+            self._port = int(_port[0])
+            address = _address[1:] # Removes the opening square bracket
+
+        self._address = address
+        self._num = self.ipv6_to_num()
+
     def __str__(self):
-        # if self._port is not None:
-        #     return f"[{self._address}]:{self._port}"
-        # else:
+        if self._port is not None:
+            return f"[{self._address}]:{self._port}"
+        else:
             return self._address
 
     def ipv6_to_num(self) -> int:
