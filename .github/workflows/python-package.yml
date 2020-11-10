@@ -10,9 +10,9 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
 
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, windows-latest]
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
@@ -40,3 +40,13 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+        
+  upload:
+    needs: build-and-test
+    steps:
+    - name: Upload to PyPI
+      run: |
+        python setup.py sdist
+        pip install twine
+        twine upload --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} dist/*
+      
