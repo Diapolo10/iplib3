@@ -212,7 +212,7 @@ class PureAddress(metaclass=ABCMeta):
         """
         Returns a hexadecimal representation of the address
         """
-        return hex(self.num)
+        return f"0x{hex(self.num)[2:].upper()}"
 
 
     def num_to_ipv4(self) -> str:
@@ -256,8 +256,8 @@ class PureAddress(metaclass=ABCMeta):
 
             # Goes over the segments to find the
             # longest strip with nothing but zeroes
-            # and replaces it with an empty string
-            # the final str.join will turn to ::.
+            # and replaces it with an empty string.
+            # The final str.join will turn to '::'.
 
             longest = 0
             longest_idx = 0
