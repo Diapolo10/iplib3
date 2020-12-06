@@ -14,7 +14,8 @@ IPV4_MIN_SUBNET_VALUE = 0 # Often 1 is a better choice as in some systems 0 has 
                           # special meaning, but technically 0 is valid
 IPV4_MAX_SUBNET_VALUE = 8 * 4 - 1 # == 31, 8 bits in 4 segments, -1 to have room for at least one device
 # 0xFF_FF_FF_FF (8)
-IPV4_MAX_VALUE = 4294967295
+IPV4_MAX_VALUE = 4294967295 # 0xFF*0x100**3 + 0xFF*0x100**2 + 0xFF*0x100**1 + 0xFF*0x100**0
+IPV4_MIN_VALUE = 0 # 0x0*0x100**0
 
 # IPv6 constants
 IPV6_MAX_SEGMENT_COUNT = 8
@@ -22,7 +23,8 @@ IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
 IPV6_MIN_SUBNET_VALUE = 0 # Unlike in IPV4, this should *always* be valid
 IPV6_MAX_SUBNET_VALUE = 16 * 8 - 1 # == 127, 16 bits in 8 segments, -1 to have room for at least one device
 # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
-IPV6_MAX_VALUE = 340282366920938463463374607431768211455
+IPV6_MAX_VALUE = 340282366920938463463374607431768211455 # 0xFFFF*0x10_000**7 + ... + 0xFFFF*0x10_000**0
+IPV6_MIN_VALUE = 0 # 0x0*0x10_000**0
 
 
 def _port_validator(port_num: int) -> bool:
@@ -338,7 +340,7 @@ class IPAddress(PureAddress):
 
     def __str__(self) -> str:
         
-        if self.num <= IPV4_MAX_VALUE:
+        if IPV4_MIN_VALUE <= self.num <= IPV4_MAX_VALUE:
             if self._ipv4 is None:
                 self._ipv4 = self.as_ipv4
             return str(self._ipv4)
