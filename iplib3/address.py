@@ -8,11 +8,12 @@ PORT_NUMBER_MIN_VALUE = 0
 PORT_NUMBER_MAX_VALUE = 65535 # 2 ** 16 - 1 == 0xFFFF
 
 # IPv4 constants
+IPV4_SEGMENT_BIT_COUNT = 8
 IPV4_MAX_SEGMENT_COUNT = 4
 IPV4_MIN_SEGMENT_COUNT = 4 # IPv4 shortening is not valid
 IPV4_MAX_SEGMENT_VALUE = 0xFF # (255)
 IPV4_MIN_SEGMENT_VALUE = 0x0 # (0)
-IPV4_MAX_SUBNET_VALUE = 8 * 4 - 1 # == 31, 8 bits in 4 segments, -1 to have room for at least one device
+IPV4_MAX_SUBNET_VALUE = IPV4_SEGMENT_BIT_COUNT * IPV4_MAX_SEGMENT_COUNT - 1 # == 31
 IPV4_MIN_SUBNET_VALUE = 0 # Often 1 is a better choice as in some systems 0 has a
                           # special meaning, but technically 0 is valid
 # 0xFF_FF_FF_FF (8)
@@ -20,11 +21,12 @@ IPV4_MAX_VALUE = 4294967295 # 0xFF*0x100**3 + 0xFF*0x100**2 + 0xFF*0x100**1 + 0x
 IPV4_MIN_VALUE = 0 # 0x0*0x100**0
 
 # IPv6 constants
+IPV6_SEGMENT_BIT_COUNT = 16
 IPV6_MAX_SEGMENT_COUNT = 8
 IPV6_MIN_SEGMENT_COUNT = 0 # Technically legal as long as there are at least two colons (::)
 IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
 IPV6_MIN_SEGMENT_VALUE = 0x0 # (0)
-IPV6_MAX_SUBNET_VALUE = 16 * 8 - 1 # == 127, 16 bits in 8 segments, -1 to have room for at least one device
+IPV6_MAX_SUBNET_VALUE = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1 # == 127
 IPV6_MIN_SUBNET_VALUE = 0 # Unlike in IPV4, this should *always* be valid
 # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
 IPV6_MAX_VALUE = 340282366920938463463374607431768211455 # 0xFFFF*0x10_000**7 + ... + 0xFFFF*0x10_000**0
@@ -43,8 +45,56 @@ def _port_validator(port_num: int) -> bool:
     return True
 
 
-def _subnet_validator(subnet: Union[str, int]) -> bool:
-    pass
+def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
+    """
+    Validates an IPv4-compliant subnet mask
+    """
+
+    if isinstance(subnet, int):
+        return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
+
+    elif isinstance(subnet, str):
+        segments = tuple(map(int, subnet.split('.')))
+        if len(segments) != IPV4_MIN_SEGMENT_COUNT:
+            return False
+
+        for segment in segments:
+            total = 0
+            for exponent in range(IPV4_SEGMENT_BIT_COUNT):
+                total += 2 ** exponent
+                if segment == total:
+                    break
+                elif segment < total:
+                    return False
+
+        if not IPV4_MIN_SEGMENT_VALUE <= segments[-1] < IPV4_MAX_SEGMENT_VALUE:
+            return False # At least one bit must be available for end devices
+
+    else:
+        raise TypeError(f"Subnet cannot be of type '{subnet.__class__.__name__}'; only strings and integers supported")
+
+    return True
+
+
+def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string representation
+    """
+    Validates an IPv6-compliant subnet mask
+    """
+    return IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE and isinstance(subnet, int)
+
+
+def _subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
+    """
+    Validates a given subnet mask, defaulting to IPv4 protocol
+    """
+
+    if isinstance(subnet, str) or protocol.lower() == 'ipv4':
+        return _ipv4_subnet_validator(subnet)
+
+    elif protocol.lower() == 'ipv6':
+        return _ipv6_subnet_validator(subnet)
+
+    raise ValueError("Invalid protocol")
 
 
 def _ipv4_validator(address: str, strict: bool = True) -> bool:
@@ -492,22 +542,3 @@ class IPv6(IPAddress):
             total += num * 2**(idx * 16)
 
         return total
-
-# Validator regex: r"""
-# (([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|
-# ([0-9a-fA-F]{1,4}:){1,7}:|
-# ([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|
-# ([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|
-# ([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|
-# ([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|
-# ([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|
-# [0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|
-# :((:[0-9a-fA-F]{1,4}){1,7}|:)|
-# fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|
-# ::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|
-# 1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|
-# (2[0-4]|1{0,1}[0-9]){0,1}[0-9])|
-# ([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|
-# 1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|
-# (2[0-4]|1{0,1}[0-9]){0,1}[0-9]))
-# """ @ https://stackoverflow.com/a/17871737
