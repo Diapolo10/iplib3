@@ -1,5 +1,5 @@
 import pytest
-from iplib3 import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error
+from iplib3 import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error,no-name-in-module
 
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
@@ -14,7 +14,7 @@ def test_ipv4():
 def test_ipv4_port_initialisation():
 
     foo = IPv4('222.173.190.239:80')
-    bar = IPv4('222.173.190.239', 80)
+    bar = IPv4('222.173.190.239', 80) # pylint: disable=too-many-function-args
     baz = IPv4('222.173.190.239', port_num=80)
     spam = IPv4('222.173.190.239:25565', port_num=80) # Argument-given ports should be preferred
 
@@ -43,7 +43,7 @@ def test_ipv6_remove_zeroes():
 def test_ipv6_port_initialisation():
 
     foo = IPv6('[::1337:1337:1337:1337]:25565')
-    bar = IPv6('::1337:1337:1337:1337', 25565)
+    bar = IPv6('::1337:1337:1337:1337', 25565) # pylint: disable=too-many-function-args
     baz = IPv6('::1337:1337:1337:1337', port_num=25565)
     spam = IPv6('[::1337:1337:1337:1337]:80', port_num=25565) # Argument-given ports should be preferred
 
