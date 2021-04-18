@@ -4,5 +4,5 @@ build-backend = "setuptools.build_meta"
 
 [metadata]
 name = 'iplib3'
-version = '0.1.3'
+version = '0.1.4'
 description = 'A modern, object-oriented approach to IP addresses.'
