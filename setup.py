@@ -8,7 +8,7 @@ with open(Path(__file__).parent / 'README.md', encoding='utf-8') as f:
 
 setup(
     name='iplib3',
-    version='0.1.2',
+    version='0.1.3',
     description="A modern, object-oriented approach to IP addresses.",
     license="MIT License (MIT License)",
     long_description=long_description,
