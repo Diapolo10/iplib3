@@ -1,5 +1,13 @@
 import pytest
-from iplib3 import IPAddress, IPv4, IPv6, _ipv4_validator, _ipv6_validator # pylint: disable=import-error,no-name-in-module
+from iplib3 import ( # pylint: disable=import-error,no-name-in-module
+    IPAddress, IPv4, IPv6,
+    _ipv4_validator, _ipv6_validator,
+    _port_validator, _subnet_validator,
+    _ipv4_subnet_validator, _ipv6_subnet_validator,
+    IPV4_MIN_SUBNET_VALUE, IPV4_MAX_SUBNET_VALUE,
+    IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE,
+    PORT_NUMBER_MIN_VALUE, PORT_NUMBER_MAX_VALUE
+) 
 
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
@@ -61,9 +69,9 @@ def test_hex_output():
     v4 = base.as_ipv4
     v6 = base.as_ipv6
 
-    assert base.hex == '0xDEADBEEF'
-    assert v4.hex == '0xDEADBEEF'
-    assert v6.hex == '0xDEADBEEF'
+    assert base.as_hex == '0xDEADBEEF'
+    assert v4.as_hex == '0xDEADBEEF'
+    assert v6.as_hex == '0xDEADBEEF'
 
 
 def test_ipv4_validator():
@@ -83,6 +91,11 @@ def test_ipv4_validator():
     assert _ipv4_validator('1337.1337.1337.1337', strict=False) is True
     assert _ipv4_validator('1337.1337.1337.1337:314159', strict=False) is True
 
+    assert _ipv4_validator(25601440) is True
+    assert _ipv4_validator(0xDEADBEEF) is True
+    assert _ipv4_validator(25601440, strict=False) is True
+    assert _ipv4_validator(0xDEADBEEF, strict=False) is True
+
 
 def test_ipv6_validator():
     assert _ipv6_validator('0:0:0:0:0:0:0:0') is True
@@ -92,3 +105,61 @@ def test_ipv6_validator():
     assert _ipv6_validator('::12') is True
     assert _ipv6_validator('314::') is True
     assert _ipv6_validator('2606:4700:4700::1111') is True
+
+
+def test_port_validator():
+    assert _port_validator(None) is True
+    assert _port_validator(False) is True
+    assert _port_validator(True) is True
+    assert _port_validator(13) is True
+    assert _port_validator(21) is True
+    assert _port_validator(22) is True
+    assert _port_validator(25) is True
+    assert _port_validator(80) is True
+    assert _port_validator(104) is True
+    assert _port_validator(192) is True
+    assert _port_validator(443) is True
+    assert _port_validator(554) is True
+    assert _port_validator(3724) is True
+    assert _port_validator(8080) is True
+    assert _port_validator(25565) is True
+
+    assert _port_validator(PORT_NUMBER_MIN_VALUE-1) is False
+    assert _port_validator(PORT_NUMBER_MAX_VALUE+1) is False
+    assert _port_validator(0xDEADBEEF) is False
+    assert _port_validator("Hello, world!") is False
+    assert _port_validator([3, 1, 4]) is False
+
+
+def test_ipv4_subnet_validator():
+    assert _ipv4_subnet_validator("255.0.0.0") is True
+    assert _ipv4_subnet_validator("255.255.0.0") is True
+    assert _ipv4_subnet_validator("255.255.128.0") is True
+    assert _ipv4_subnet_validator("255.255.255.0") is True
+    assert _ipv4_subnet_validator("255.255.255.128") is True
+    assert _ipv4_subnet_validator("255.255.255.192") is True
+    assert _ipv4_subnet_validator("255.255.255.224") is True
+    assert _ipv4_subnet_validator("255.255.255.240") is True
+    assert _ipv4_subnet_validator("255.255.255.248") is True
+    assert _ipv4_subnet_validator("255.255.255.252") is True
+    assert _ipv4_subnet_validator("255.255.255.254") is True
+    assert _ipv4_subnet_validator("255.255.255.255") is False
+
+    assert _ipv4_subnet_validator("255.128.128.0") is False
+    assert _ipv4_subnet_validator("256.256.256.0") is False
+    assert _ipv4_subnet_validator("128.0.0.1") is False
+
+    for subnet in range(IPV4_MIN_SUBNET_VALUE, IPV4_MAX_SUBNET_VALUE+1):
+        assert _ipv4_subnet_validator(subnet) is True
+
+    assert _ipv4_subnet_validator(IPV4_MAX_SUBNET_VALUE+1) is False
+    assert _ipv4_subnet_validator(IPV4_MIN_SUBNET_VALUE-1) is False
+
+
+def test_ipv6_subnet_validator():
+
+    for subnet in range(IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE+1):
+        assert _ipv6_subnet_validator(subnet) is True
+
+    assert _ipv6_subnet_validator(IPV6_MAX_SUBNET_VALUE+1) is False
+    assert _ipv6_subnet_validator(IPV6_MIN_SUBNET_VALUE-1) is False
