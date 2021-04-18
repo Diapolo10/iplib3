@@ -1,32 +1,24 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Tuple, Optional, Union
 
-__all__ = (
-    'IPAddress', 'IPv4', 'IPv6',
-    '_ipv4_validator', '_ipv6_validator',
-    '_port_validator', '_subnet_validator',
-    '_ipv4_subnet_validator', '_ipv6_subnet_validator',
-    'IPV4_MIN_SUBNET_VALUE', 'IPV4_MAX_SUBNET_VALUE',
-    'IPV6_MIN_SUBNET_VALUE', 'IPV6_MAX_SUBNET_VALUE',
-    'PORT_NUMBER_MIN_VALUE', 'PORT_NUMBER_MAX_VALUE',
-)
+__all__ = ('IPAddress', 'IPv4', 'IPv6')
 
 # Port number constants (agnostic between IPV4 and IPV6)
 PORT_NUMBER_MIN_VALUE = 0
 PORT_NUMBER_MAX_VALUE = 65535 # 2 ** 16 - 1 == 0xFFFF
 
 # IPv4 constants
-IPV4_SEGMENT_BIT_COUNT = 8
-IPV4_MIN_SEGMENT_COUNT = 4 # IPv4 shortening is not valid
-IPV4_MAX_SEGMENT_COUNT = 4
-IPV4_MIN_SEGMENT_VALUE = 0x0 # (0)
-IPV4_MAX_SEGMENT_VALUE = 0xFF # (255)
+IPV4_SEGMENT_BIT_COUNT     = 8
+IPV4_MIN_SEGMENT_COUNT     = 4 # IPv4 shortening is not valid
+IPV4_MAX_SEGMENT_COUNT     = 4
+IPV4_MIN_SEGMENT_VALUE     = 0x0 # (0)
+IPV4_MAX_SEGMENT_VALUE     = 0xFF # (255)
 IPV4_VALID_SUBNET_SEGMENTS = (0, 128, 192, 224, 240, 248, 252, 254, 255)
-IPV4_MIN_SUBNET_VALUE = 0 # Usually 1 is a better choice, 0 is technically valid though
-IPV4_MAX_SUBNET_VALUE = IPV4_SEGMENT_BIT_COUNT * IPV4_MAX_SEGMENT_COUNT - 1 # == 31
-IPV4_MIN_VALUE = 0 # 0x0*0x100**0
-IPV4_MAX_VALUE = 4294967295 # 0xFF*0x100**3 + 0xFF*0x100**2 + 0xFF*0x100**1 + 0xFF*0x100**0
-               # 0xFF_FF_FF_FF (8)
+IPV4_MIN_SUBNET_VALUE      = 0 # Usually 1 is a better choice, 0 is technically valid though
+IPV4_MAX_SUBNET_VALUE      = IPV4_SEGMENT_BIT_COUNT * IPV4_MAX_SEGMENT_COUNT - 1 # == 31
+IPV4_MIN_VALUE             = 0 # 0x0*0x100**0
+IPV4_MAX_VALUE             = 4294967295 # 0xFF*0x100**3 + 0xFF*0x100**2 + 0xFF*0x100**1 + 0xFF*0x100**0
+                           # 0xFF_FF_FF_FF (8)
 
 # IPv6 constants
 IPV6_SEGMENT_BIT_COUNT = 16
@@ -34,11 +26,21 @@ IPV6_MIN_SEGMENT_COUNT = 0 # Technically legal as long as there are at least two
 IPV6_MAX_SEGMENT_COUNT = 8
 IPV6_MIN_SEGMENT_VALUE = 0x0 # (0)
 IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
-IPV6_MIN_SUBNET_VALUE = 0 # Unlike in IPV4, this should *always* be valid
-IPV6_MAX_SUBNET_VALUE = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1 # == 127
-IPV6_MIN_VALUE = 0 # 0x0*0x10_000**0
-IPV6_MAX_VALUE = 340282366920938463463374607431768211455 # 0xFFFF*0x10_000**7 + ... + 0xFFFF*0x10_000**0
-               # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
+IPV6_MIN_SUBNET_VALUE  = 0 # Unlike in IPV4, this should *always* be valid
+IPV6_MAX_SUBNET_VALUE  = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1 # == 127
+IPV6_MIN_VALUE         = 0 # 0x0*0x10_000**0
+IPV6_MAX_VALUE         = 340282366920938463463374607431768211455 # 0xFFFF*0x10_000**7 + ... + 0xFFFF*0x10_000**0
+                       # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
+
+
+# Note; all functions with leading underscores are considered
+# not to be part of the public interface. They may receive
+# sudden changes, they may be moved, and they may even be
+# completely deleted in the future. Please don't rely on them
+# outside the library. If proven useful and working, some of
+# them may eventually make their way into the public interface
+# in which case the leading underscores will be removed.
+# - L
 
 
 def _port_validator(port_num: Optional[int]) -> bool:

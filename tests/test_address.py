@@ -1,13 +1,25 @@
 import pytest
+
 from iplib3 import ( # pylint: disable=import-error,no-name-in-module
-    IPAddress, IPv4, IPv6,
+    IPAddress, IPv4, IPv6
+)
+from iplib3.address import ( # pylint: disable=import-error,no-name-in-module
     _ipv4_validator, _ipv6_validator,
     _port_validator, _subnet_validator,
     _ipv4_subnet_validator, _ipv6_subnet_validator,
-    IPV4_MIN_SUBNET_VALUE, IPV4_MAX_SUBNET_VALUE,
-    IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE,
-    PORT_NUMBER_MIN_VALUE, PORT_NUMBER_MAX_VALUE
-) 
+
+    IPV4_SEGMENT_BIT_COUNT, IPV6_SEGMENT_BIT_COUNT,
+    IPV4_MIN_SEGMENT_COUNT, IPV6_MIN_SEGMENT_COUNT,
+    IPV4_MAX_SEGMENT_COUNT, IPV6_MAX_SEGMENT_COUNT,
+    IPV4_MIN_SEGMENT_VALUE, IPV6_MIN_SEGMENT_VALUE,
+    IPV4_MAX_SEGMENT_VALUE, IPV6_MAX_SEGMENT_VALUE,
+    IPV4_MIN_SUBNET_VALUE,  IPV6_MIN_SUBNET_VALUE,
+    IPV4_MAX_SUBNET_VALUE,  IPV6_MAX_SUBNET_VALUE,
+    IPV4_MIN_VALUE,         IPV6_MIN_VALUE,
+    IPV4_MAX_VALUE,         IPV6_MAX_VALUE,
+
+    PORT_NUMBER_MIN_VALUE, PORT_NUMBER_MAX_VALUE,
+)
 
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
@@ -70,8 +82,8 @@ def test_hex_output():
     v6 = base.as_ipv6
 
     assert base.as_hex == '0xDEADBEEF'
-    assert v4.as_hex == '0xDEADBEEF'
-    assert v6.as_hex == '0xDEADBEEF'
+    assert v4.as_hex   == '0xDEADBEEF'
+    assert v6.as_hex   == '0xDEADBEEF'
 
 
 def test_ipv4_validator():
