@@ -123,3 +123,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Local GitHub Actions tool (ACT)
+.actrc
