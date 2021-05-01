@@ -3,11 +3,11 @@
 
 name: iplib3 CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [ push, pull_request ]
+  # push:
+  #   branches: [ main, nightly ]
+  # pull_request:
+  #   branches: [ main, nightly ]
 
 jobs:
 
@@ -58,6 +58,7 @@ jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     runs-on: ubuntu-latest
+    if: endsWith(github.ref, 'master')
     steps:
     - uses: actions/checkout@master
     - name: Set up Python 3.9
