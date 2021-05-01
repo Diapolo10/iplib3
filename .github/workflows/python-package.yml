@@ -84,7 +84,7 @@ jobs:
         password: ${{ secrets.TEST_PYPI_PASSWORD }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
-      if: startsWith(github.ref, 'refs/tags/v')
+      #if: startsWith(github.ref, 'refs/tags/v') # TODO: Find a permanent solution
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_PASSWORD }}
