@@ -181,3 +181,16 @@ def test_ipv6_subnet_validator():
 
     with pytest.raises(TypeError) as e_info: # pylint: disable=unused-variable
         _ipv6_subnet_validator("Hello, world!")
+
+def test_subnet_validator():
+    assert _subnet_validator("255.0.0.0", protocol='ipv4') is True
+    assert _subnet_validator("255.0.0.0", protocol='IPV4') is True
+    assert _subnet_validator("255.0.0.0", protocol='ipv6') is True
+    assert _subnet_validator('255.255.255.128', protocol='ipv6') is True
+    assert _subnet_validator("255.128.0.0", protocol='ipv4') is True
+    assert _subnet_validator("1.1.1.1", protocol='ipv4') is False
+    assert _subnet_validator("255.128.192.224", protocol='ipv4') is False
+    assert _subnet_validator("255.128.128.0", protocol='ipv4') is False
+
+
+
