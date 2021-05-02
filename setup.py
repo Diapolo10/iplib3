@@ -2,13 +2,21 @@
 
 from setuptools import setup, find_packages # type: ignore
 from pathlib import Path
+import re
+
 
 with open(Path(__file__).parent / 'README.md', encoding='utf-8') as f:
     long_description = f.read()
 
+with open(Path(__file__).parent / 'pyproject.toml', encoding='utf-8') as f:
+    version = re.search(
+        r"version = '(?P<version>[0-9\-]+\.[0-9\-]+\.[0-9\-]+(\..+)?)'",
+        f.read()
+    ).groupdict().get('version')
+
 setup(
     name='iplib3',
-    version='0.1.5-7',
+    version=version,
     description="A modern, object-oriented approach to IP addresses.",
     license="MIT License",
     long_description=long_description,
