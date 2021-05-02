@@ -10,8 +10,8 @@ with open(Path(__file__).parent / 'README.md', encoding='utf-8') as f:
 
 with open(Path(__file__).parent / 'pyproject.toml', encoding='utf-8') as f:
     version = re.search(
-        r"version = '(?P<version>.+?)'",
-        f.read()
+        r"^version = '(?P<version>.+?)'$",
+        f.read(), flags=re.MULTILINE
     ).groupdict().get('version')
 
 setup(
