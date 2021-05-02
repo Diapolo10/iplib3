@@ -54,7 +54,7 @@ jobs:
         
     - name: Test with pytest and run coveralls
       run: |
-        coverage run --source=iplib3 -m pytest tests/
+        coverage run --source=iplib3 -m pytest --color=yes tests/
         coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,20 +63,30 @@ jobs:
         COVERALLS_SERVICE_NAME: github-actions
         COVERALLS_PARALLEL: true
 
-  coveralls_finish:
-    name: Finish coveralls
+  # coveralls_finish:
+  #   name: Finish coveralls
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   container: python:3-slim
+  #   steps:
+  #   - name: Coveralls Finished
+  #     run: |
+  #       pip3 install --upgrade coveralls
+  #       coveralls debug --finish --service=github-actions
+  #     env:
+  #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  #       GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+  coveralls-finish:
+    name: Finalize coveralls.io
     needs: build-and-test
     runs-on: ubuntu-latest
-    container: python:3-slim
     steps:
-    - name: Coveralls Finished
-      run: |
-        pip3 install --upgrade coveralls
-        coveralls debug --finish --service=github-actions
-      env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
         
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
