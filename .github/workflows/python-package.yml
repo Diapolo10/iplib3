@@ -57,7 +57,8 @@ jobs:
         coverage run --source=iplib3 -m pytest tests/
         coveralls
       env:
-        GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
         COVERALLS_SERVICE_NAME: github-actions
         COVERALLS_PARALLEL: true
@@ -73,7 +74,8 @@ jobs:
         pip3 install --upgrade coveralls
         coveralls --finish
       env:
-        GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
