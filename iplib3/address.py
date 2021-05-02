@@ -418,7 +418,7 @@ class PureAddress(metaclass=ABCMeta):
         return ':'.join(segments[::-1])
 
 
-    def __eq__(self, other: Union[PureAddress, str]) -> bool:
+    def __eq__(self, other) -> bool:
 
         # To accommodate strings
         if str(self) == str(other):
