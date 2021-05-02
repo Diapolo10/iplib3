@@ -21,6 +21,7 @@ from iplib3.address import ( # pylint: disable=import-error,no-name-in-module
     PORT_NUMBER_MIN_VALUE, PORT_NUMBER_MAX_VALUE,
 )
 
+
 def test_ipv4():
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
     assert str(IPAddress('192.168.1.1')) == '192.168.1.1'
@@ -97,6 +98,9 @@ def test_ipv4_validator():
     assert _ipv4_validator('1.1.1.1:314159') is False
     assert _ipv4_validator('12.23.34.45.56') is False
     assert _ipv4_validator('12.23.34.45.56', strict=False) is False
+    assert _ipv4_validator('255,255,255,255') is False
+    assert _ipv4_validator('128.0.0.1:notaport') is False
+    assert _ipv4_validator([128, 0, 0, 1]) is False
 
     assert _ipv4_validator('1337.1337.1337.1337') is False
     assert _ipv4_validator('1337.1337.1337.1337:314159') is False
@@ -117,6 +121,19 @@ def test_ipv6_validator():
     assert _ipv6_validator('::12') is True
     assert _ipv6_validator('314::') is True
     assert _ipv6_validator('2606:4700:4700::1111') is True
+    assert _ipv6_validator('2606:4700:4700::10000', strict=False) is True
+
+    assert _ipv6_validator('[2606:4700:4700::1111]:notaport') is False
+    assert _ipv6_validator('2606:4700:4700::10000') is False
+    assert _ipv6_validator('2606:4700::4700::1111') is False
+    assert _ipv6_validator('2606:4700:4700::HACK') is False
+    assert _ipv6_validator('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0001') is False
+    assert _ipv6_validator('2606:4700:4700:1111') is False
+
+    assert _ipv6_validator(IPV6_MIN_VALUE) is True
+    assert _ipv6_validator(IPV6_MAX_VALUE) is True
+    assert _ipv6_validator(IPV6_MIN_VALUE-1) is False
+    assert _ipv6_validator(IPV6_MAX_VALUE+1) is False
 
 
 def test_port_validator():
@@ -160,6 +177,9 @@ def test_ipv4_subnet_validator():
     assert _ipv4_subnet_validator("255.128.128.0") is False
     assert _ipv4_subnet_validator("256.256.256.0") is False
     assert _ipv4_subnet_validator("128.0.0.1") is False
+    assert _ipv4_subnet_validator("255.128") is False
+    assert _ipv4_subnet_validator("255.255.255.255.128") is False
+
 
     for subnet in range(IPV4_MIN_SUBNET_VALUE, IPV4_MAX_SUBNET_VALUE+1):
         assert _ipv4_subnet_validator(subnet) is True
