@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from numbers import Integral
 from typing import List, Tuple, Optional, Union
 
 __all__ = ('IPAddress', 'IPv4', 'IPv6')
@@ -44,7 +43,7 @@ IPV6_MAX_VALUE         = 340282366920938463463374607431768211455 # 0xFFFF*0x10_0
 # - L
 
 
-def _port_validator(port_num: Optional[Integral]) -> bool:
+def _port_validator(port_num: Optional[int]) -> bool:
     """
     Validates an address port
 
@@ -59,7 +58,7 @@ def _port_validator(port_num: Optional[Integral]) -> bool:
     if port_num is None:
         pass # OK
         
-    elif not isinstance(port_num, Integral):
+    elif not isinstance(port_num, int):
         return False
     elif not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
         return False
@@ -67,7 +66,7 @@ def _port_validator(port_num: Optional[Integral]) -> bool:
     return True
 
 
-def _ipv4_subnet_validator(subnet: Union[str, Integral]) -> bool:
+def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
     """
     Validates an IPv4-compliant subnet mask
 
@@ -79,7 +78,7 @@ def _ipv4_subnet_validator(subnet: Union[str, Integral]) -> bool:
     of the used type.
     """
 
-    if isinstance(subnet, Integral):
+    if isinstance(subnet, int):
         return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
 
     elif isinstance(subnet, str):
@@ -106,7 +105,7 @@ def _ipv4_subnet_validator(subnet: Union[str, Integral]) -> bool:
     raise TypeError(f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}'; only strings and integers supported")
 
 
-def _ipv6_subnet_validator(subnet: Integral) -> bool: # IPv6 subnets have no string representation
+def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string representation
     """
     Validates an IPv6-compliant subnet mask
 
@@ -118,14 +117,14 @@ def _ipv6_subnet_validator(subnet: Integral) -> bool: # IPv6 subnets have no str
     with the name of the used type.
     """
 
-    if isinstance(subnet, Integral):
+    if isinstance(subnet, int):
         return IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE and isinstance(subnet, int)
     
     raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
 
 
 
-def _subnet_validator(subnet: Union[str, Integral], protocol='ipv4') -> bool:
+def _subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
     """
     Validates a given subnet mask, defaulting to IPv4 protocol
     """
@@ -139,7 +138,7 @@ def _subnet_validator(subnet: Union[str, Integral], protocol='ipv4') -> bool:
     raise ValueError("Invalid protocol")
 
 
-def _ipv4_validator(address: Union[str, Integral], strict: bool = True) -> bool:
+def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
     """
     Validates an IPv4 address, returning a boolean.
 
@@ -183,13 +182,13 @@ def _ipv4_validator(address: Union[str, Integral], strict: bool = True) -> bool:
 
         return True
 
-    elif isinstance(address, Integral):
+    elif isinstance(address, int):
         return IPV4_MIN_VALUE <= address <= IPV4_MAX_VALUE
 
     return False
 
 
-def _ipv6_validator(address: Union[str, Integral], strict: bool = True) -> bool:
+def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
     """
     Validates an IPv6 address, returning a boolean.
 
@@ -259,13 +258,13 @@ def _ipv6_validator(address: Union[str, Integral], strict: bool = True) -> bool:
 
         return True
 
-    elif isinstance(address, Integral):
+    elif isinstance(address, int):
         return IPV6_MIN_VALUE <= address <= IPV6_MAX_VALUE
 
     return False
 
 
-def _ip_validator(address: Union[str, Integral], strict: bool = True):
+def _ip_validator(address: Union[str, int], strict: bool = True):
     if _ipv4_validator(address, strict):
         return True
     return _ipv6_validator(address, strict)
@@ -281,7 +280,7 @@ class PureAddress(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self):
         self._num: int = 0
-        self._port: Optional[Integral] = None
+        self._port: Optional[int] = None
 
 
     @property
@@ -297,11 +296,11 @@ class PureAddress(metaclass=ABCMeta):
 
 
     @property
-    def port(self) -> Optional[Integral]:
+    def port(self) -> Optional[int]:
         """
         Returns the port in the address, or None if no port is specified
 
-        TODO: Consider whether invalid numbers should raise an exception
+        TODO: Consider whether invalid port numbers should raise an exception
         """
         
         if self._port is None:
@@ -311,7 +310,7 @@ class PureAddress(metaclass=ABCMeta):
 
 
     @port.setter
-    def port(self, value: Optional[Integral]) -> None:
+    def port(self, value: Optional[int]) -> None:
         """
         Sets a new port value. Value must be a valid integer and within the range of valid ports.
 
@@ -321,7 +320,7 @@ class PureAddress(metaclass=ABCMeta):
         if value is None:
             pass # OK
         
-        elif not isinstance(value, Integral):
+        elif not isinstance(value, int):
             raise TypeError(f"Port '{value}' is not a valid integer")
         elif not PORT_NUMBER_MIN_VALUE <= value <= PORT_NUMBER_MAX_VALUE:
             raise ValueError(f"Port number '{value}' not in valid range ({PORT_NUMBER_MIN_VALUE}-{PORT_NUMBER_MAX_VALUE})")
@@ -339,19 +338,26 @@ class PureAddress(metaclass=ABCMeta):
 
 
     def num_to_ipv4(self) -> str:
+        """
+        A wrapper method for the otherwise equivalent static method
+        """
 
         return self._num_to_ipv4(self.num)
 
 
     def num_to_ipv6(self, shorten: bool = True, remove_zeroes: bool = False) -> str:
-        """ Todo: toggleable shortening and optionally
-        remove one section of zeroes """
+        """
+        A wrapper method for the otherwise equivalent static method
+
+        TODO: toggleable shortening and optionally
+              remove one section of zeroes
+        """
 
         return self._num_to_ipv6(self.num, shorten, remove_zeroes)
 
 
     @staticmethod
-    def _num_to_ipv4(num: Integral) -> str:
+    def _num_to_ipv4(num: int) -> str:
         """
         Generates an IPv4 string from an integer
         """
@@ -364,7 +370,7 @@ class PureAddress(metaclass=ABCMeta):
 
 
     @staticmethod
-    def _num_to_ipv6(num: Integral, shorten: bool, remove_zeroes: bool) -> str:
+    def _num_to_ipv6(num: int, shorten: bool, remove_zeroes: bool) -> str:
         """
         Generates an IPv6 string from an integer,
         with optional zero removal and shortening.
@@ -436,7 +442,7 @@ class PureAddress(metaclass=ABCMeta):
 class IPAddress(PureAddress):
     __slots__ = ('_num', '_port', '_ipv4', '_ipv6', '_submask')
 
-    def __new__(cls, address: Union[Integral, str, None] = None, *args, **kwargs):
+    def __new__(cls, address: Union[int, str, None] = None, *args, **kwargs):
 
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
@@ -489,7 +495,7 @@ class IPAddress(PureAddress):
 class IPv4(IPAddress):
     __slots__ = ('_num', '_address', '_port')
 
-    def __init__(self, address: str, port_num: Optional[Integral] = None):
+    def __init__(self, address: str, port_num: Optional[int] = None):
         
         self._port = port_num
 
@@ -531,7 +537,7 @@ class IPv4(IPAddress):
 class IPv6(IPAddress):
     __slots__ = ('_num', '_address', '_port')
 
-    def __init__(self, address: str, port_num: Optional[Integral] = None):
+    def __init__(self, address: str, port_num: Optional[int] = None):
 
         self._port = port_num
 
@@ -594,15 +600,15 @@ class IPv6(IPAddress):
             raise ValueError(f"Invalid IPv6 address format; address contains invalid characters")
 
         segment_count = len(processed_segments)
-        if segment_count > IPV6_MAX_SEGMENT_COUNT:
+        if IPV6_MAX_SEGMENT_COUNT < segment_count:
             raise ValueError(f"Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})")
 
         highest = max(processed_segments)
-        if highest > IPV6_MAX_SEGMENT_VALUE:
+        if IPV6_MAX_SEGMENT_VALUE < highest:
             raise ValueError(f"Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})")
 
         lowest = min(processed_segments)
-        if 0 > lowest:
+        if lowest < IPV6_MIN_SEGMENT_VALUE:
             raise ValueError(f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)")
         
         total = 0
