@@ -34,10 +34,9 @@ def test_ipv4():
     assert str(IPAddress(0xDEADBEEF, port_num=80).as_ipv4) == '222.173.190.239:80'
 
     assert IPAddress(0xDEADBEEF) == IPAddress(0xDEADBEEF)
-    assert IPAddress(0xDEADBEEF) != IPAddress(0xDEADBEEF, port_num=8080)
+    assert (IPAddress(0xDEADBEEF) == IPAddress(0xDEADBEEF, port_num=8080)) is False
     assert IPAddress(0xDEADBEEF) != IPAddress(0x1057B317)
     assert IPAddress(0xDEADBEEF) != "Hello, world!"
-
 
 
 def test_ipv4_port_initialisation():
@@ -51,8 +50,10 @@ def test_ipv4_port_initialisation():
     assert first == second == third == fourth
     assert str(third) == '222.173.190.239:80'
 
-    assert IPv4.port.func(first, 42) == 42
-    assert IPv4.port.func(first, None) is None
+    first.port = 42
+    assert first.port == 42
+    first.port = None
+    assert first.port is None
 
     with pytest.raises(TypeError) as e_info: # pylint: disable=unused-variable
         first.port = "1337"
@@ -225,21 +226,19 @@ def test_pure_address():
         pass
 
     address = Dummy()
-    assert address._num == 0
-    assert address._port is None
 
 
 def test_ipaddress():
     """Test the IPAddress class"""
 
     instance = IPAddress()
-    instance2 = IPAddress(0xDEADBEEF)
+    instance2 = IPAddress(0xDEAD_DEAD_BEEF)
 
     assert repr(IPAddress()) == "iplib3.IPAddress('128.0.0.1')"
     assert str(instance) == '128.0.0.1'
     assert str(instance) == '128.0.0.1'
-    assert str(instance2) == '0:0:0:0:0:0:DEAD:BEEF'
-    assert str(instance2) == '0:0:0:0:0:0:DEAD:BEEF'
+    assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
+    assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
 
     rigged = IPAddress()
     rigged.num.func.setter = (lambda self, x: setattr(self._num, x))

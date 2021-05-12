@@ -88,7 +88,7 @@ class SubnetMask(PureSubnetMask):
         if self._subnet_type.lower() == 'ipv4' and self._prefix_length is not None:
             return (
                 f"iplib3.{self.__class__.__name__}"
-                f"({self._prefix_to_subnet_mask(self._prefix_length, self._subnet_type)})"
+                f"('{self._prefix_to_subnet_mask(self._prefix_length, self._subnet_type)}')"
             )
         return super().__repr__()
 
@@ -153,11 +153,14 @@ class SubnetMask(PureSubnetMask):
         if not IPV4_MIN_SUBNET_VALUE <= prefix_length <= IPV4_MAX_SUBNET_VALUE:
             raise ValueError(f"Invalid subnet value for IPv4: '{prefix_length}'")
 
-        segments = []
-        for _ in range(IPV4_MAX_SEGMENT_COUNT):
-            prefix_length, segment = divmod(prefix_length, IPV4_MAX_SEGMENT_VALUE+1)
-            segments.append(segment)
-        return '.'.join(map(str, segments[::-1]))
+        segments = [0, 0, 0, 0]
+        idx = 0
+        while prefix_length % 8 == 0:
+            prefix_length, _ = divmod(prefix_length, 8)
+            segments[idx] = 255
+            idx += 1
+        segments[idx+1] = 2**(8 - prefix_length % 8) - 1
+        return '.'.join(map(str, segments))
 
 
 def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:

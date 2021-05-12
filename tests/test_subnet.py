@@ -90,8 +90,8 @@ def test_pure_subnet_mask():
     subnet = Dummy()
     another = Dummy()
     another._prefix_length = None
-    assert subnet.prefix_length == 0
-    assert another.prefix_length is None
+    assert subnet._prefix_length == 0
+    assert another._prefix_length is None
     
     assert str(subnet) == '0'
     assert repr(subnet) == "iplib3.PureSubnetMask('0')"
