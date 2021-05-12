@@ -1,36 +1,42 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Tuple, Optional, Union
+from typing import Any, List, Tuple, Optional, Union
+
+from .constants.address import (
+    IPV4_LOCALHOST,
+    IPV6_LOCALHOST,
+)
+from .constants.port import (
+    PORT_NUMBER_MIN_VALUE,
+    PORT_NUMBER_MAX_VALUE,
+)
+from .constants.ipv4 import (
+    IPV4_SEGMENT_BIT_COUNT,
+    IPV4_MIN_SEGMENT_COUNT,
+    IPV4_MAX_SEGMENT_COUNT,
+    IPV4_MIN_SEGMENT_VALUE,
+    IPV4_MAX_SEGMENT_VALUE,
+    IPV4_MIN_VALUE,
+    IPV4_MAX_VALUE,
+)
+from .constants.ipv6 import (
+    IPV6_NUMBER_BIT_COUNT,
+    IPV6_SEGMENT_BIT_COUNT,
+    IPV6_MIN_SEGMENT_COUNT,
+    IPV6_MAX_SEGMENT_COUNT,
+    IPV6_MIN_SEGMENT_VALUE,
+    IPV6_MAX_SEGMENT_VALUE,
+    IPV6_MIN_VALUE,
+    IPV6_MAX_VALUE,
+)
+from .constants.subnet import (
+    IPV4_VALID_SUBNET_SEGMENTS,
+    IPV4_MIN_SUBNET_VALUE,
+    IPV4_MAX_SUBNET_VALUE,
+    IPV6_MIN_SUBNET_VALUE,
+    IPV6_MAX_SUBNET_VALUE,
+)
 
 __all__ = ('IPAddress', 'IPv4', 'IPv6')
-
-# Port number constants (agnostic between IPV4 and IPV6)
-PORT_NUMBER_MIN_VALUE = 0
-PORT_NUMBER_MAX_VALUE = 65535 # 2 ** 16 - 1 == 0xFFFF
-
-# IPv4 constants
-IPV4_SEGMENT_BIT_COUNT     = 8
-IPV4_MIN_SEGMENT_COUNT     = 4 # IPv4 shortening is not valid
-IPV4_MAX_SEGMENT_COUNT     = 4
-IPV4_MIN_SEGMENT_VALUE     = 0x0 # (0)
-IPV4_MAX_SEGMENT_VALUE     = 0xFF # (255)
-IPV4_VALID_SUBNET_SEGMENTS = (0, 128, 192, 224, 240, 248, 252, 254, 255)
-IPV4_MIN_SUBNET_VALUE      = 0 # Usually 1 is a better choice, 0 is technically valid though
-IPV4_MAX_SUBNET_VALUE      = IPV4_SEGMENT_BIT_COUNT * IPV4_MAX_SEGMENT_COUNT - 1 # == 31
-IPV4_MIN_VALUE             = 0 # 0x0*0x100**0
-IPV4_MAX_VALUE             = 4294967295 # 0xFF*0x100**3 + 0xFF*0x100**2 + 0xFF*0x100**1 + 0xFF*0x100**0
-                           # 0xFF_FF_FF_FF (8)
-
-# IPv6 constants
-IPV6_SEGMENT_BIT_COUNT = 16
-IPV6_MIN_SEGMENT_COUNT = 0 # Technically legal as long as there are at least two colons (::)
-IPV6_MAX_SEGMENT_COUNT = 8
-IPV6_MIN_SEGMENT_VALUE = 0x0 # (0)
-IPV6_MAX_SEGMENT_VALUE = 0xFFFF # (65535)
-IPV6_MIN_SUBNET_VALUE  = 0 # Unlike in IPV4, this should *always* be valid
-IPV6_MAX_SUBNET_VALUE  = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1 # == 127
-IPV6_MIN_VALUE         = 0 # 0x0*0x10_000**0
-IPV6_MAX_VALUE         = 340282366920938463463374607431768211455 # 0xFFFF*0x10_000**7 + ... + 0xFFFF*0x10_000**0
-                       # 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF (32)
 
 
 # Note; all functions with leading underscores are considered
@@ -118,7 +124,11 @@ def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string r
     """
 
     if isinstance(subnet, int):
-        return IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE and isinstance(subnet, int)
+        return (
+            IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE
+            and isinstance(subnet, int)
+            and subnet % IPV6_NUMBER_BIT_COUNT == 0
+        )
     
     raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
 
@@ -160,7 +170,7 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
                 return False
 
             if strict:
-                if not 0 <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
                     # Port number was too high or too low to be strictly valid
                     return False
 
@@ -176,7 +186,7 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
 
         if strict:
             for seg in segments:
-                if not 0 <= seg <= IPV4_MAX_SEGMENT_VALUE:
+                if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
                     # Segment value was too high or too low to be strictly valid
                     return False
 
@@ -208,7 +218,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
                 return False
 
             if strict:
-                if not 0 <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
                     # Port number was too high or too low to be strictly valid
                     return False
 
@@ -241,7 +251,10 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
             return False
 
         try:
-            processed_segments: List[int] = list(map(lambda x: int(x, 16) if x else 0, segments))
+            processed_segments: List[int] = list(map(
+                lambda x: int(x, IPV6_SEGMENT_BIT_COUNT) if x else 0,
+                segments
+            ))
         except ValueError:
             # IPv6 address was not made of valid hexadecimal numbers
             return False
@@ -252,7 +265,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
 
         if strict:
             for seg in processed_segments:
-                if not 0 <= seg <= IPV6_MAX_SEGMENT_VALUE:
+                if not IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE:
                     # Segment value was too high or too low to be strictly valid
                     return False
 
@@ -271,9 +284,8 @@ def _ip_validator(address: Union[str, int], strict: bool = True):
 
 
 class PureAddress(metaclass=ABCMeta):
-    """
-    Abstract base class for IP addresses
-    """
+    """Abstract base class for IP addresses"""
+
     __slots__ = ('_num', '_port')
 
 
@@ -281,6 +293,21 @@ class PureAddress(metaclass=ABCMeta):
     def __init__(self):
         self._num: int = 0
         self._port: Optional[int] = None
+
+
+    def __eq__(self, other: Any) -> bool:
+
+        # To accommodate strings
+        if str(self) == str(other):
+            return True
+        
+        if not isinstance(other, PureAddress):
+            return False
+        
+        if not self.num == other.num and self.port == other.port:
+            return False
+
+        return True
 
 
     @property
@@ -334,7 +361,7 @@ class PureAddress(metaclass=ABCMeta):
         Returns a hexadecimal representation of the address
         """
 
-        return f"0x{hex(self.num)[2:].upper()}"
+        return f"0x{self.num:0X}"
 
 
     def num_to_ipv4(self) -> str:
@@ -409,9 +436,17 @@ class PureAddress(metaclass=ABCMeta):
                     longest_idx = current_idx
 
             segments = (
-                (segments[:longest_idx] if 0 < longest_idx < IPV6_MAX_SEGMENT_COUNT-1 else [''])
+                (
+                    segments[:longest_idx]
+                    if IPV6_MIN_SEGMENT_COUNT < longest_idx < IPV6_MAX_SEGMENT_COUNT-1
+                    else ['']
+                )
                 + ['']
-                + (segments[longest_idx+longest:] if 0 < longest_idx+longest < IPV6_MAX_SEGMENT_COUNT else [''])
+                + (
+                    segments[longest_idx+longest:]
+                    if IPV6_MIN_SEGMENT_COUNT < longest_idx+longest < IPV6_MAX_SEGMENT_COUNT
+                    else ['']
+                  )
             )
 
         if not shorten:
@@ -419,28 +454,17 @@ class PureAddress(metaclass=ABCMeta):
             # Fills up any segments to full length by
             # adding missing zeroes to the front, if any.
 
-            segments = [seg.zfill(4) if seg else '' for seg in segments]
+            segments = [
+                seg.zfill(IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT)
+                if seg else ''
+                for seg in segments
+            ]
 
         return ':'.join(segments[::-1])
 
 
-    def __eq__(self, other) -> bool:
-
-        # To accommodate strings
-        if str(self) == str(other):
-            return True
-        
-        if not isinstance(other, PureAddress):
-            return False
-        
-        if not self.num == other.num and self.port == other.port:
-            return False
-
-        return True
-
-
 class IPAddress(PureAddress):
-    __slots__ = ('_num', '_port', '_ipv4', '_ipv6', '_submask')
+    __slots__ = ('_ipv4', '_ipv6', '_submask')
 
     def __new__(cls, address: Union[int, str, None] = None, *args, **kwargs):
 
@@ -454,7 +478,7 @@ class IPAddress(PureAddress):
         return self
 
 
-    def __init__(self, address_num=0, port_num=None):
+    def __init__(self, address_num=IPV4_LOCALHOST, port_num=None):
         self._num = address_num if address_num is not None else 0
         self._port = port_num if _port_validator(port_num) else None
         self._ipv4 = None
@@ -493,7 +517,7 @@ class IPAddress(PureAddress):
 
 
 class IPv4(IPAddress):
-    __slots__ = ('_num', '_address', '_port')
+    __slots__ = ('_address',)
 
     def __init__(self, address: str, port_num: Optional[int] = None):
         
@@ -535,7 +559,7 @@ class IPv4(IPAddress):
 
 
 class IPv6(IPAddress):
-    __slots__ = ('_num', '_address', '_port')
+    __slots__ = ('_address',)
 
     def __init__(self, address: str, port_num: Optional[int] = None):
 
