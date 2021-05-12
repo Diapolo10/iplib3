@@ -1,9 +1,15 @@
+"""iplib3's functionality specific to subnetting"""
+
 from abc import ABCMeta, abstractmethod
 from typing import Optional, Union, Any
 
 from .constants.ipv4 import (
+    IPV4_MIN_SEGMENT_COUNT,
     IPV4_MAX_SEGMENT_COUNT,
     IPV4_MAX_SEGMENT_VALUE,
+)
+from .constants.ipv6 import (
+    IPV6_NUMBER_BIT_COUNT,
 )
 from .constants.subnet import (
     IPV4_VALID_SUBNET_SEGMENTS,
@@ -134,3 +140,78 @@ class SubnetMask(PureSubnetMask):
             prefix_length, segment = divmod(prefix_length, IPV4_MAX_SEGMENT_VALUE+1)
             segments.append(segment)
         return '.'.join(map(str, segments[::-1]))
+
+
+def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
+    """
+    Validates an IPv4-compliant subnet mask
+
+    The function uses the IPv4-standard to
+    validate a subnet, including all values.
+    
+    Types other than strings or integers
+    *will raise a TypeError* with the name
+    of the used type.
+    """
+
+    if isinstance(subnet, int):
+        return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
+
+    elif isinstance(subnet, str):
+        segments = tuple(map(int, subnet.split('.')))
+        if len(segments) != IPV4_MIN_SEGMENT_COUNT:
+            return False
+
+        root_found = False # Flag for catching invalid subnets where bits are flipped out of order, eg. 255.128.128.0
+        for segment in segments[:-1]:
+            
+            if segment == IPV4_VALID_SUBNET_SEGMENTS[-1] and not root_found:
+                continue # Skip preceding 255s
+
+            if root_found and segment != IPV4_VALID_SUBNET_SEGMENTS[0] or segment not in IPV4_VALID_SUBNET_SEGMENTS:
+                return False
+                
+            root_found = True
+                
+        if root_found and segments[-1] != IPV4_VALID_SUBNET_SEGMENTS[0] or not IPV4_VALID_SUBNET_SEGMENTS[0] <= segments[-1] <= IPV4_VALID_SUBNET_SEGMENTS[-1] - 1:
+            return False # At least one bit must be available for end devices
+
+        return True
+
+    raise TypeError(f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}'; only strings and integers supported")
+
+
+def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string representation
+    """
+    Validates an IPv6-compliant subnet mask
+
+    The IPv6-standard has no string
+    representation for subnests, so
+    only integers need to be handled.
+
+    Non-integer types will raise a ValueError
+    with the name of the used type.
+    """
+
+    if isinstance(subnet, int):
+        return (
+            IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE
+            and isinstance(subnet, int)
+            and subnet % IPV6_NUMBER_BIT_COUNT == 0
+        )
+    
+    raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
+
+
+def _subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
+    """
+    Validates a given subnet mask, defaulting to IPv4 protocol
+    """
+
+    if isinstance(subnet, str) or protocol.lower() == 'ipv4':
+        return _ipv4_subnet_validator(subnet)
+
+    elif protocol.lower() == 'ipv6':
+        return _ipv6_subnet_validator(subnet)
+
+    raise ValueError("Invalid protocol")
