@@ -1,3 +1,7 @@
+"""Unit tests for iplib3.subnet"""
+
+from dataclasses import dataclass
+
 import pytest
 
 from iplib3.subnet import ( # pylint: disable=import-error,no-name-in-module
@@ -8,21 +12,14 @@ from iplib3.subnet import ( # pylint: disable=import-error,no-name-in-module
     _ipv6_subnet_validator,
 )
 from iplib3.constants import ( # pylint: disable=import-error,no-name-in-module
-    IPV4_SEGMENT_BIT_COUNT, IPV6_SEGMENT_BIT_COUNT,
-    IPV4_MIN_SEGMENT_COUNT, IPV6_MIN_SEGMENT_COUNT,
-    IPV4_MAX_SEGMENT_COUNT, IPV6_MAX_SEGMENT_COUNT,
-    IPV4_MIN_SEGMENT_VALUE, IPV6_MIN_SEGMENT_VALUE,
-    IPV4_MAX_SEGMENT_VALUE, IPV6_MAX_SEGMENT_VALUE,
     IPV4_MIN_SUBNET_VALUE,  IPV6_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,  IPV6_MAX_SUBNET_VALUE,
-    IPV4_MIN_VALUE,         IPV6_MIN_VALUE,
-    IPV4_MAX_VALUE,         IPV6_MAX_VALUE,
-
-    PORT_NUMBER_MIN_VALUE, PORT_NUMBER_MAX_VALUE,
 )
 
 
 def test_ipv4_subnet_validator():
+    """Test the IPv4 subnet validator"""
+
     assert _ipv4_subnet_validator("255.0.0.0") is True
     assert _ipv4_subnet_validator("255.255.0.0") is True
     assert _ipv4_subnet_validator("255.255.128.0") is True
@@ -42,7 +39,6 @@ def test_ipv4_subnet_validator():
     assert _ipv4_subnet_validator("255.128") is False
     assert _ipv4_subnet_validator("255.255.255.255.128") is False
 
-
     for subnet in range(IPV4_MIN_SUBNET_VALUE, IPV4_MAX_SUBNET_VALUE+1):
         assert _ipv4_subnet_validator(subnet) is True
 
@@ -54,6 +50,7 @@ def test_ipv4_subnet_validator():
 
 
 def test_ipv6_subnet_validator():
+    """Test the IPv6 subnet validator"""
 
     for subnet in range(IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE+1, 4):
         assert _ipv6_subnet_validator(subnet) is True
@@ -67,6 +64,8 @@ def test_ipv6_subnet_validator():
 
 
 def test_subnet_validator():
+    """Test the general subnet validator"""
+
     assert _subnet_validator("255.0.0.0", protocol='ipv4') is True
     assert _subnet_validator("255.0.0.0", protocol='IPV4') is True
     assert _subnet_validator("255.0.0.0", protocol='ipv6') is True
@@ -106,6 +105,8 @@ def test_pure_subnet_mask():
 
 
 def test_subnet_mask():
+    """Test the SubnetMask class"""
+
     assert SubnetMask()._subnet_type == 'ipv6'
     assert SubnetMask('255.255.255.0')._subnet_type == 'ipv4'
 
