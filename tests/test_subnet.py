@@ -53,11 +53,12 @@ def test_ipv4_subnet_validator():
 
 def test_ipv6_subnet_validator():
 
-    for subnet in range(IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE+1):
+    for subnet in range(IPV6_MIN_SUBNET_VALUE, IPV6_MAX_SUBNET_VALUE+1, 4):
         assert _ipv6_subnet_validator(subnet) is True
 
     assert _ipv6_subnet_validator(IPV6_MAX_SUBNET_VALUE+1) is False
     assert _ipv6_subnet_validator(IPV6_MIN_SUBNET_VALUE-1) is False
+    assert _ipv6_subnet_validator(17) is False
 
     with pytest.raises(TypeError) as e_info: # pylint: disable=unused-variable
         _ipv6_subnet_validator("Hello, world!")
