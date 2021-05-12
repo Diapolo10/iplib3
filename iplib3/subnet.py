@@ -74,6 +74,7 @@ class SubnetMask(PureSubnetMask):
     __slots__ = ('_subnet_type',)
 
     def __init__(self, subnet_mask: Union[int, str, None] = None, subnet_type: str = 'ipv6'):
+        super().__init__()
 
         if isinstance(subnet_mask, str) and '.' in subnet_mask:
             # Only subnets for IPv4 use strings
@@ -85,18 +86,24 @@ class SubnetMask(PureSubnetMask):
 
     def __repr__(self):
         if self._subnet_type.lower() == 'ipv4' and self._prefix_length is not None:
-            return f"iplib3.{self.__class__.__name__}({self._prefix_to_subnet_mask(self._prefix_length, self._subnet_type)})"
+            return (
+                f"iplib3.{self.__class__.__name__}"
+                f"({self._prefix_to_subnet_mask(self._prefix_length, self._subnet_type)})"
+            )
         return super().__repr__()
 
 
     @staticmethod
-    def _subnet_to_num(subnet_mask: Union[int, str, None], subnet_type: str = 'ipv6') -> Optional[int]:
+    def _subnet_to_num(subnet_mask: Union[int, str, None], subnet_type: str) -> Optional[int]:
 
         if subnet_mask is None:
             return None
 
         if not isinstance(subnet_mask, (int, str)):
-            raise TypeError(f"Invalid type for subnet value: '{subnet_mask.__class__.__name__}'\nExpected int, string or None")
+            raise TypeError(
+                f"Invalid type for subnet value: '{subnet_mask.__class__.__name__}'\n"
+                f"Expected int, string or None"
+            )
 
         if isinstance(subnet_mask, str):
             if '.' in subnet_mask:
@@ -113,15 +120,26 @@ class SubnetMask(PureSubnetMask):
 
             try:
                 subnet_mask = int(subnet_mask)
-            except ValueError:
-                raise ValueError(f"Subnet value not valid; '{subnet_mask}' is neither a valid string representation nor an integer")
+            except ValueError as err:
+                raise ValueError(
+                    f"Subnet value not valid; '{subnet_mask}' is neither a valid string "
+                    f"representation nor an integer"
+                ) from err
 
 
-        if subnet_type.lower() == 'ipv4' and not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE:
-            raise ValueError(f"Subnet '{subnet_mask}' not in valid range ({IPV4_MIN_SUBNET_VALUE}-{IPV4_MAX_SUBNET_VALUE})")
+        if (subnet_type.lower() == 'ipv4'
+            and not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE):
+            raise ValueError(
+                f"Subnet '{subnet_mask}' not in valid range "
+                f"({IPV4_MIN_SUBNET_VALUE}-{IPV4_MAX_SUBNET_VALUE})"
+            )
 
-        if subnet_type.lower() == 'ipv6' and not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE:
-            raise ValueError(f"Subnet '{subnet_mask}' not in valid range ({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})")
+        if (subnet_type.lower() == 'ipv6'
+            and not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE):
+            raise ValueError(
+                f"Subnet '{subnet_mask}' not in valid range "
+                f"({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})"
+            )
 
         return subnet_mask
 
@@ -157,28 +175,36 @@ def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
     if isinstance(subnet, int):
         return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
 
-    elif isinstance(subnet, str):
+    if isinstance(subnet, str):
         segments = tuple(map(int, subnet.split('.')))
         if len(segments) != IPV4_MIN_SEGMENT_COUNT:
             return False
 
-        root_found = False # Flag for catching invalid subnets where bits are flipped out of order, eg. 255.128.128.0
+        # Flag for catching invalid subnets where bits
+        # are flipped out of order, eg. 255.128.128.0
+        root_found = False
         for segment in segments[:-1]:
             
             if segment == IPV4_VALID_SUBNET_SEGMENTS[-1] and not root_found:
                 continue # Skip preceding 255s
 
-            if root_found and segment != IPV4_VALID_SUBNET_SEGMENTS[0] or segment not in IPV4_VALID_SUBNET_SEGMENTS:
+            if (root_found and segment != IPV4_VALID_SUBNET_SEGMENTS[0]
+                or segment not in IPV4_VALID_SUBNET_SEGMENTS):
                 return False
                 
             root_found = True
                 
-        if root_found and segments[-1] != IPV4_VALID_SUBNET_SEGMENTS[0] or not IPV4_VALID_SUBNET_SEGMENTS[0] <= segments[-1] <= IPV4_VALID_SUBNET_SEGMENTS[-1] - 1:
-            return False # At least one bit must be available for end devices
+        return not (root_found
+            and segments[-1] != IPV4_VALID_SUBNET_SEGMENTS[0]
+            or not
+                IPV4_VALID_SUBNET_SEGMENTS[0]
+                <= segments[-1]
+                <= IPV4_VALID_SUBNET_SEGMENTS[-1] - 1)
 
-        return True
-
-    raise TypeError(f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}'; only strings and integers supported")
+    raise TypeError(
+        f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}';"
+        f" only strings and integers supported"
+    )
 
 
 def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string representation
@@ -211,7 +237,7 @@ def _subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
     if isinstance(subnet, str) or protocol.lower() == 'ipv4':
         return _ipv4_subnet_validator(subnet)
 
-    elif protocol.lower() == 'ipv6':
+    if protocol.lower() == 'ipv6':
         return _ipv6_subnet_validator(subnet)
 
     raise ValueError("Invalid protocol")

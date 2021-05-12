@@ -126,3 +126,6 @@ dmypy.json
 
 # Local GitHub Actions tool (ACT)
 .actrc
+
+# coverage
+cov.xml

@@ -1,19 +1,16 @@
 """iplib3's functionality specific to addresses"""
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, List, Tuple, Optional, Union
+from typing import Any, List, Optional, Union
 
 from .constants.address import (
     IPV4_LOCALHOST,
-    IPV6_LOCALHOST,
 )
 from .constants.port import (
     PORT_NUMBER_MIN_VALUE,
     PORT_NUMBER_MAX_VALUE,
 )
 from .constants.ipv4 import (
-    IPV4_SEGMENT_BIT_COUNT,
-    IPV4_MIN_SEGMENT_COUNT,
     IPV4_MAX_SEGMENT_COUNT,
     IPV4_MIN_SEGMENT_VALUE,
     IPV4_MAX_SEGMENT_VALUE,
@@ -29,13 +26,6 @@ from .constants.ipv6 import (
     IPV6_MAX_SEGMENT_VALUE,
     IPV6_MIN_VALUE,
     IPV6_MAX_VALUE,
-)
-from .constants.subnet import (
-    IPV4_VALID_SUBNET_SEGMENTS,
-    IPV4_MIN_SUBNET_VALUE,
-    IPV4_MAX_SUBNET_VALUE,
-    IPV6_MIN_SUBNET_VALUE,
-    IPV6_MAX_SUBNET_VALUE,
 )
 
 __all__ = ('IPAddress', 'IPv4', 'IPv6')
@@ -64,13 +54,13 @@ def _port_validator(port_num: Optional[int]) -> bool:
     """
 
     if port_num is None:
-        pass # OK
-        
+        pass
+
     elif not isinstance(port_num, int):
         return False
     elif not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
         return False
-    
+
     return True
 
 
@@ -88,7 +78,9 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
             return False
 
         address, *port = address.split(':')
-        if port: # Handles ports separately to keep the rest of the code intact
+
+        # Handles ports separately to keep the rest of the code intact
+        if port:
             try:
                 port_num = int(port[0])
             except ValueError:
@@ -96,7 +88,7 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
                 return False
 
             if strict:
-                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
                     # Port number was too high or too low to be strictly valid
                     return False
 
@@ -134,9 +126,11 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
 
     if isinstance(address, str):
 
-        address, *port = address.split(']:') # Try split on closing bracket and port separator
+        # Try split on closing bracket and port separator
+        address, *port = address.split(']:')
         if port:
-            address = address[1:] # Gets rid of the opening bracket that contained the address
+            # Gets rid of the opening bracket that contained the address
+            address = address[1:]
             try:
                 port_num = int(port[0])
             except ValueError:
@@ -144,7 +138,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
                 return False
 
             if strict:
-                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE: # 2**16
+                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
                     # Port number was too high or too low to be strictly valid
                     return False
 
@@ -160,7 +154,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
                 segments.extend(left)
             else:
                 segments.append('0000')
-            
+
             segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
             if halves[1]:
@@ -226,10 +220,10 @@ class PureAddress(metaclass=ABCMeta):
         # To accommodate strings
         if str(self) == str(other):
             return True
-        
+
         if not isinstance(other, PureAddress):
             return False
-        
+
         if not self.num == other.num and self.port == other.port:
             return False
 
@@ -255,10 +249,10 @@ class PureAddress(metaclass=ABCMeta):
 
         TODO: Consider whether invalid port numbers should raise an exception
         """
-        
+
         if self._port is None:
             return None
-        
+
         return min(max(PORT_NUMBER_MIN_VALUE, self._port), PORT_NUMBER_MAX_VALUE)
 
 
@@ -272,12 +266,15 @@ class PureAddress(metaclass=ABCMeta):
 
         if value is None:
             pass # OK
-        
+
         elif not isinstance(value, int):
             raise TypeError(f"Port '{value}' is not a valid integer")
         elif not PORT_NUMBER_MIN_VALUE <= value <= PORT_NUMBER_MAX_VALUE:
-            raise ValueError(f"Port number '{value}' not in valid range ({PORT_NUMBER_MIN_VALUE}-{PORT_NUMBER_MAX_VALUE})")
-        
+            raise ValueError(
+                f"Port number '{value}' not in valid range "
+                f"({PORT_NUMBER_MIN_VALUE}-{PORT_NUMBER_MAX_VALUE})"
+            )
+
         self._port = value
 
 
@@ -345,7 +342,7 @@ class PureAddress(metaclass=ABCMeta):
             longest_idx = 0
             current = 0
             current_idx = 0
-            
+
             for idx, seg in enumerate(segments):
 
                 if seg == '0':
@@ -405,6 +402,7 @@ class IPAddress(PureAddress):
 
 
     def __init__(self, address_num=IPV4_LOCALHOST, port_num=None):
+        super().__init__()
         self._num = address_num if address_num is not None else 0
         self._port = port_num if _port_validator(port_num) else None
         self._ipv4 = None
@@ -417,7 +415,7 @@ class IPAddress(PureAddress):
 
 
     def __str__(self) -> str:
-        
+
         if IPV4_MIN_VALUE <= self.num <= IPV4_MAX_VALUE:
             if self._ipv4 is None:
                 self._ipv4 = self.as_ipv4
@@ -427,7 +425,7 @@ class IPAddress(PureAddress):
             if self._ipv6 is None:
                 self._ipv6 = self.as_ipv6
             return str(self._ipv6)
-        
+
         else:
             raise ValueError(f"No valid address representation exists for {self.num}")
 
@@ -446,7 +444,7 @@ class IPv4(IPAddress):
     __slots__ = ('_address',)
 
     def __init__(self, address: str, port_num: Optional[int] = None):
-        
+
         self._port = port_num
 
         _address, *_port = address.split(':')
@@ -480,7 +478,7 @@ class IPv4(IPAddress):
 
         for idx, num in enumerate(segments):
             total += num * 2**(idx * 8)
-    
+
         return total
 
 
@@ -492,8 +490,11 @@ class IPv6(IPAddress):
         self._port = port_num
 
         _address, *_port = address.split(']:')
+
         if _port:
-            address = _address[1:] # Removes the opening square bracket
+
+            # Removes the opening square bracket
+            address = _address[1:]
 
             if port_num is None:
                 self._port = int(_port[0])
@@ -521,7 +522,7 @@ class IPv6(IPAddress):
         segments = []
 
         if len(halves) == 2:
-        # Address with zero-skip part
+            # Address with zero-skip part
             left, right = map(lambda x: x.split(':'), halves)
             total_length = len(left) + len(right)
 
@@ -529,7 +530,7 @@ class IPv6(IPAddress):
                 segments.extend(left)
             else:
                 segments.append('0000')
-            
+
             segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
             if halves[1]:
@@ -543,24 +544,37 @@ class IPv6(IPAddress):
 
         else:
             raise ValueError("Invalid IPv6 address format; only one zero-skip allowed")
-        
+
         try:
-            processed_segments: List[int] = list(map(lambda num: int(num, 16) if num != '' else 0, segments[::-1]))
-        except ValueError:
-            raise ValueError(f"Invalid IPv6 address format; address contains invalid characters")
+            processed_segments: List[int] = list(map(
+                lambda num: int(num, 16) if num != '' else 0,
+                segments[::-1]
+            ))
+        except ValueError as err:
+            raise ValueError(
+                f"Invalid IPv6 address format; address contains invalid characters"
+            ) from err
 
         segment_count = len(processed_segments)
         if IPV6_MAX_SEGMENT_COUNT < segment_count:
-            raise ValueError(f"Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})")
+            raise ValueError(
+                f"Invalid IPv6 address format; too many segments "
+                f"({segment_count} > {IPV6_MAX_SEGMENT_COUNT})"
+            )
 
         highest = max(processed_segments)
         if IPV6_MAX_SEGMENT_VALUE < highest:
-            raise ValueError(f"Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})")
+            raise ValueError(
+                f"Invalid IPv6 address format; segment max value "
+                f"passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})"
+            )
 
         lowest = min(processed_segments)
         if lowest < IPV6_MIN_SEGMENT_VALUE:
-            raise ValueError(f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)")
-        
+            raise ValueError(
+                f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)"
+            )
+
         total = 0
         for idx, num in enumerate(processed_segments):
             total += num * 2**(idx * 16)
