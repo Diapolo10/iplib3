@@ -4,9 +4,9 @@ from iplib3 import ( # pylint: disable=import-error,no-name-in-module
     IPAddress, IPv4, IPv6
 )
 from iplib3.address import ( # pylint: disable=import-error,no-name-in-module
-    _ipv4_validator, _ipv6_validator,
-    _port_validator, _subnet_validator,
-    _ipv4_subnet_validator, _ipv6_subnet_validator,
+    _ipv4_validator,
+    _ipv6_validator,
+    _port_validator,
 )
 from iplib3.constants import ( # pylint: disable=import-error,no-name-in-module
     IPV4_SEGMENT_BIT_COUNT, IPV6_SEGMENT_BIT_COUNT,
