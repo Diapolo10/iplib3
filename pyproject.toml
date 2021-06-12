@@ -20,7 +20,7 @@ max-complexity = 10
 
 [tool.poetry]
 name = 'iplib3'
-version = '0.1.6'
+version = '0.1.6-1'
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
