@@ -5,8 +5,8 @@ from typing import Optional, Union, Any
 
 from .constants.ipv4 import (
     IPV4_MIN_SEGMENT_COUNT,
-    IPV4_MAX_SEGMENT_COUNT,
-    IPV4_MAX_SEGMENT_VALUE,
+    # IPV4_MAX_SEGMENT_COUNT,
+    # IPV4_MAX_SEGMENT_VALUE,
 )
 from .constants.ipv6 import (
     IPV6_NUMBER_BIT_COUNT,
@@ -31,7 +31,7 @@ class PureSubnetMask(metaclass=ABCMeta):
     def __init__(self):
         self._prefix_length: Optional[int] = 0
 
-    
+
     def __str__(self) -> str:
         return str(self.prefix_length)
 
@@ -45,10 +45,10 @@ class PureSubnetMask(metaclass=ABCMeta):
         # To accommodate strings and integers
         if self.prefix_length == other or str(self) == other:
             return True
-        
+
         if not isinstance(other, PureSubnetMask):
             return False
-        
+
         if not self.prefix_length == other.prefix_length:
             return False
 
@@ -71,6 +71,8 @@ class PureSubnetMask(metaclass=ABCMeta):
 
 
 class SubnetMask(PureSubnetMask):
+    """Subnet mask for defining subnets"""
+
     __slots__ = ('_subnet_type',)
 
     def __init__(self, subnet_mask: Union[int, str, None] = None, subnet_type: str = 'ipv6'):
@@ -169,7 +171,7 @@ def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
 
     The function uses the IPv4-standard to
     validate a subnet, including all values.
-    
+
     Types other than strings or integers
     *will raise a TypeError* with the name
     of the used type.
@@ -187,16 +189,16 @@ def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
         # are flipped out of order, eg. 255.128.128.0
         root_found = False
         for segment in segments[:-1]:
-            
+
             if segment == IPV4_VALID_SUBNET_SEGMENTS[-1] and not root_found:
                 continue # Skip preceding 255s
 
             if (root_found and segment != IPV4_VALID_SUBNET_SEGMENTS[0]
                 or segment not in IPV4_VALID_SUBNET_SEGMENTS):
                 return False
-                
+
             root_found = True
-                
+
         return not (root_found
             and segments[-1] != IPV4_VALID_SUBNET_SEGMENTS[0]
             or not
@@ -228,7 +230,7 @@ def _ipv6_subnet_validator(subnet: int) -> bool: # IPv6 subnets have no string r
             and isinstance(subnet, int)
             and subnet % IPV6_NUMBER_BIT_COUNT == 0
         )
-    
+
     raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
 
 

@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v2.2.1
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -33,17 +33,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         poetry install
-        python -m pip install tox tox-gh-actions
+        PYTHONPATH=src/ poetry run python -m pip install tox tox-gh-actions
         
     - name: Install dependencies (Linux / Mac OS)
       if: ${{ startsWith(matrix.os, 'windows') == false }}
       run: |
-        if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+        if [ -f requirements.txt ]; then PYTHONPATH=src/ poetry run python3 -m pip install -r requirements.txt; fi
 
     - name: Install dependencies (Windows)
       if: ${{ startsWith(matrix.os, 'windows') == true }}
       run: |
-        if(Test-Path -Path requirements.txt) {pip install -r requirements.txt}
+        if(Test-Path -Path requirements.txt) {poetry run python -m pip install -r requirements.txt}
         
     # - name: Install library
     #   run: |
@@ -68,7 +68,7 @@ jobs:
     #     COVERALLS_PARALLEL: true
 
     - name: Run Tox (Pytest + Coveralls)
-      run: tox
+      run: PYTHONPATH=src/ poetry run tox
 
   # coveralls_finish:
   #   name: Finish coveralls

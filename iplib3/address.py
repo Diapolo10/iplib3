@@ -110,7 +110,7 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
 
         return True
 
-    elif isinstance(address, int):
+    if isinstance(address, int):
         return IPV4_MIN_VALUE <= address <= IPV4_MAX_VALUE
 
     return False
@@ -191,7 +191,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
 
         return True
 
-    elif isinstance(address, int):
+    if isinstance(address, int):
         return IPV6_MIN_VALUE <= address <= IPV6_MAX_VALUE
 
     return False
@@ -387,9 +387,11 @@ class PureAddress(metaclass=ABCMeta):
 
 
 class IPAddress(PureAddress):
+    """More flexible PureAddress subclass"""
+
     __slots__ = ('_ipv4', '_ipv6', '_submask')
 
-    def __new__(cls, address: Union[int, str, None] = None, *args, **kwargs):
+    def __new__(cls, *args, address: Union[int, str, None] = None, **kwargs):
 
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
@@ -421,31 +423,34 @@ class IPAddress(PureAddress):
                 self._ipv4 = self.as_ipv4
             return str(self._ipv4)
 
-        elif IPV4_MAX_VALUE < self.num <= IPV6_MAX_VALUE:
+        if IPV4_MAX_VALUE < self.num <= IPV6_MAX_VALUE:
             if self._ipv6 is None:
                 self._ipv6 = self.as_ipv6
             return str(self._ipv6)
 
-        else:
-            raise ValueError(f"No valid address representation exists for {self.num}")
+        raise ValueError(f"No valid address representation exists for {self.num}")
 
 
     @property
     def as_ipv4(self) -> 'IPv4':
+        """Creates and returns an IPv4 version of the address, if possible"""
+
         return IPv4(self.num_to_ipv4(), port_num=self.port)
 
 
     @property
     def as_ipv6(self) -> 'IPv6':
+        """Creates and returns an IPv6-version of the address"""
+
         return IPv6(self.num_to_ipv6(), port_num=self.port)
 
 
 class IPv4(IPAddress):
+    """An IPAddress subclass specific to IPv4"""
+
     __slots__ = ('_address',)
 
     def __init__(self, address: str, port_num: Optional[int] = None):
-
-        self._port = port_num
 
         _address, *_port = address.split(':')
         if _port:
@@ -455,14 +460,15 @@ class IPv4(IPAddress):
                 self._port = int(_port[0])
 
         self._address = address
-        self._num = self._ipv4_to_num()
+        super().__init__(address_num=self._ipv4_to_num(), port_num=port_num)
 
 
     def __str__(self) -> str:
+
         if self.port is not None:
             return f"{self._address}:{self.port}"
-        else:
-            return self._address
+
+        return self._address
 
 
     def _ipv4_to_num(self) -> int:
@@ -483,11 +489,11 @@ class IPv4(IPAddress):
 
 
 class IPv6(IPAddress):
+    """An IPAddress subclass specific to IPv6"""
+
     __slots__ = ('_address',)
 
     def __init__(self, address: str, port_num: Optional[int] = None):
-
-        self._port = port_num
 
         _address, *_port = address.split(']:')
 
@@ -500,14 +506,15 @@ class IPv6(IPAddress):
                 self._port = int(_port[0])
 
         self._address = address
-        self._num = self._ipv6_to_num()
+        super().__init__(address_num=self._ipv6_to_num(), port_num=port_num)
 
 
     def __str__(self) -> str:
+
         if self.port is not None:
             return f"[{self._address}]:{self.port}"
-        else:
-            return self._address
+
+        return self._address
 
 
     def _ipv6_to_num(self) -> int:
@@ -551,9 +558,7 @@ class IPv6(IPAddress):
                 segments[::-1]
             ))
         except ValueError as err:
-            raise ValueError(
-                f"Invalid IPv6 address format; address contains invalid characters"
-            ) from err
+            raise ValueError("Invalid IPv6 address format; address contains invalid characters") from err
 
         segment_count = len(processed_segments)
         if IPV6_MAX_SEGMENT_COUNT < segment_count:

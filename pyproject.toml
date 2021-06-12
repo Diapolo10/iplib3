@@ -77,6 +77,10 @@ wheel = "*"
 "Source code" = 'https://github.com/Diapolo10/iplib3'
 "Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
 
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = ['R0911', 'R0912', 'W0642']
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]

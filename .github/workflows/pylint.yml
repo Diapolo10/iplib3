@@ -20,20 +20,10 @@ jobs:
     - name: Install Poetry
       uses: Gr1N/setup-poetry@v4
 
-    - name: Cache Poetry virtualenv
-      uses: actions/cache@v1
-      id: cache
-      with:
-        path: ~/.virtualenvs
-        key: poetry-$
-        restore-keys: |
-          poetry-$
-
     - name: Install library and dependencies
       run: |
         python -m pip install --upgrade pip
         poetry install
-      if: steps.cache.outputs.cache-hit != 'true'
     
     - name: Analysing the code with pylint
       run: |
