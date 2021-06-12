@@ -37,5 +37,5 @@ jobs:
     
     - name: Analysing the code with pylint
       run: |
-        PYTHONPATH=src/ poetry run python -m pylint .
+        PYTHONPATH=src/ poetry run python -m pylint iplib3
       # find . -name '*.py' -exec pylint {} \;
