@@ -129,3 +129,6 @@ dmypy.json
 
 # coverage
 cov.xml
+
+# Editor config files
+.vscode

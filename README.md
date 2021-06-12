@@ -1,8 +1,9 @@
 # iplib3
+
  A `pathlib.Path` equivalent for IP addresses.
 
 <!-- Badge chain start -->
- [![Version](https://img.shields.io/pypi/v/iplib3)](https://pypi.org/project/iplib3/) ![Build Status](https://github.com/diapolo10/iplib3/workflows/iplib3%20CI/badge.svg) [![License](https://img.shields.io/github/license/diapolo10/iplib3)](https://opensource.org/licenses/MIT) [![Coverage Status](https://coveralls.io/repos/github/Diapolo10/iplib3/badge.svg?branch=main?logo=coveralls)](https://coveralls.io/github/Diapolo10/iplib3?branch=main)  
+ [![Version](https://img.shields.io/pypi/v/iplib3)](https://pypi.org/project/iplib3/) ![Build Status](https://github.com/diapolo10/iplib3/workflows/iplib3%20CI/badge.svg) [![License](https://img.shields.io/github/license/diapolo10/iplib3)](https://opensource.org/licenses/MIT) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_shield) [![Coverage Status](https://coveralls.io/repos/github/Diapolo10/iplib3/badge.svg?branch=main?logo=coveralls)](https://coveralls.io/github/Diapolo10/iplib3?branch=main)  
  [![Dependencies](https://img.shields.io/librariesio/github/diapolo10/iplib3)](https://libraries.io/github/Diapolo10/iplib3) [![CodeFactor](https://www.codefactor.io/repository/github/diapolo10/iplib3/badge?logo=codefactor)](https://www.codefactor.io/repository/github/diapolo10/iplib3) [![Rating](https://img.shields.io/librariesio/sourcerank/pypi/iplib3)](https://libraries.io/github/Diapolo10/iplib3/sourcerank) ![Python versions](https://img.shields.io/pypi/pyversions/iplib3?logo=python)  
  ![Downloads](https://img.shields.io/pypi/dm/iplib3?logo=pypi) ![Wheel](https://img.shields.io/pypi/wheel/iplib3?logo=pypi) ![Repository size](https://img.shields.io/github/repo-size/diapolo10/iplib3?logo=github) ![Code size](https://img.shields.io/github/languages/code-size/diapolo10/iplib3?logo=github)  
  ![Lines of code](https://img.shields.io/tokei/lines/github/diapolo10/iplib3?logo=github) ![File count](https://img.shields.io/github/directory-file-count/diapolo10/iplib3?logo=github) ![Last commit](https://img.shields.io/github/last-commit/diapolo10/iplib3?logo=github)
@@ -87,9 +88,13 @@ print(address.num) # 3735928559
 ```
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
 
 ## License
+
 This project is licensed under an [MIT license](./LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_large)

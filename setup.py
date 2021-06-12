@@ -43,6 +43,13 @@ setup(
 
     install_requires=[],
     python_requires='>=3.6',
-    setup_requires=['pytest-runner', 'flake8', 'setuptools', 'wheel'],
+    setup_requires=[
+        'coveralls',
+        'flake8',
+        'pyproject-flake8',
+        'pytest-runner',
+        'setuptools',
+        'wheel',
+    ],
     tests_require=['pytest'],
 )

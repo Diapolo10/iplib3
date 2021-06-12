@@ -1,14 +1,120 @@
 [build-system]
-requires = ['pytest-runner', 'flake8', 'setuptools', 'wheel']
-build-backend = "setuptools.build_meta"
+requires = ['poetry>=0.12',]
+build-backend = "poetry.masonry.api"
 
-[metadata]
-name = 'iplib3'
-version = '0.1.5-8'
-description = 'A modern, object-oriented approach to IP addresses.'
+# [metadata]
+# name = 'iplib3'
+# version = '0.1.5-8'
+# description = "A modern, object-oriented approach to IP addresses."
 
 [tool.coverage]
 
 [tool.coverage.run]
 branch = true
 relative_files = true
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = 'E203,'
+max-complexity = 10
+
+[tool.poetry]
+name = 'iplib3'
+version = '0.1.6'
+description = "A modern, object-oriented approach to IP addresses."
+
+authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
+maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
+
+include = ['CHANGELOG.md', 'LICENSE',]
+license = 'MIT'
+readme = 'README.md'
+
+homepage = 'https://pypi.org/project/iplib3/'
+repository = 'https://github.com/Diapolo10/iplib3'
+documentation = ''
+
+keywords = [
+    'network',
+    'networking',
+    'ip',
+    'ipaddress',
+    'address',
+    'python3',
+    'pathlib',
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Topic :: Internet',
+    'Topic :: Software Development :: Libraries',
+    'Typing :: Typed',
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+coverage = {version = "*", extras = ["toml",]}
+coveralls = "*"
+flake8 = "*"
+pylint = "*"
+pyproject-flake8 = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-runner = "*"
+
+[tool.poetry.urls]
+"Source code" = 'https://github.com/Diapolo10/iplib3'
+"Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py36, py37, py38, py39, pypy3, mypy
+
+[gh-actions]
+python =
+    2.7: py27
+    3.6: py36
+    3.7: py37
+    3.8: py38, mypy
+    3.9: py39
+    pypy-3.7: pypy3
+
+[gh-actions:env]
+PLATFORM =
+    ubuntu-latest: linux
+    macos-latest: macos
+    windows-latest: windows
+
+[testenv]
+passenv = GITHUB_*
+deps =
+    coverage
+    coveralls
+    pytest
+    pytest-cov
+commands =
+    coverage run --source=iplib3 -m pytest tests/
+    coveralls
+
+[testenv:check]
+commands = pytest --cov=project --cov-report=term tests/
+deps =
+    coverage
+    pytest
+    pytest-cov
+
+[pytest]
+python_files = test_*.py
+norecursedirs = .tox
+"""
