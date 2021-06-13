@@ -1,9 +1,8 @@
 """iplib3's functionality specific to addresses"""
 
-from abc import ABCMeta, abstractmethod
-from iplib3.subnet import SubnetMask
 from typing import Any, List, Optional, Union
 
+from iplib3.subnet import SubnetMask
 from .constants.address import (
     IPV4_LOCALHOST,
     IPV6_LOCALHOST,

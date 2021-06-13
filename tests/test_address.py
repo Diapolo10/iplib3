@@ -1,7 +1,5 @@
 """Unit tests for iplib3.address"""
 
-from dataclasses import dataclass
-
 import pytest
 
 from iplib3 import ( # pylint: disable=import-error,no-name-in-module

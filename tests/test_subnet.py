@@ -1,7 +1,5 @@
 """Unit tests for iplib3.subnet"""
 
-from dataclasses import dataclass
-
 import pytest
 
 from iplib3.subnet import ( # pylint: disable=import-error,no-name-in-module
@@ -83,14 +81,14 @@ def test_pure_subnet_mask():
     subnet = PureSubnetMask()
     another = PureSubnetMask()
     another._prefix_length = None
-    assert subnet._prefix_length == 0
+    assert subnet._prefix_length == IPV4_MIN_SUBNET_VALUE
     assert another._prefix_length is None
     
     assert str(subnet) == '0'
     assert repr(subnet) == "iplib3.PureSubnetMask('0')"
 
     assert subnet == PureSubnetMask()
-    assert subnet == 0
+    assert subnet == IPV4_MIN_SUBNET_VALUE
     assert subnet == '0'
 
     assert (subnet == 3.14) is False

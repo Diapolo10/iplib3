@@ -1,14 +1,10 @@
 """iplib3's functionality specific to subnetting"""
 
-from abc import ABCMeta, abstractmethod
 from typing import Optional, Union, Any
 
 from .constants.ipv4 import (
     IPV4_MIN_SEGMENT_COUNT,
-    IPV4_MIN_SEGMENT_VALUE,
     IPV4_SEGMENT_BIT_COUNT,
-    # IPV4_MAX_SEGMENT_COUNT,
-    # IPV4_MAX_SEGMENT_VALUE,
 )
 from .constants.ipv6 import (
     IPV6_NUMBER_BIT_COUNT,
