@@ -79,16 +79,9 @@ def test_subnet_validator():
 
 def test_pure_subnet_mask():
     """Test the PureSubnetMask base class"""
-    
-    # Override the abstract methods to enable testing
-    PureSubnetMask.__abstractmethods__ = set()
 
-    @dataclass
-    class Dummy(PureSubnetMask):
-        pass
-
-    subnet = Dummy()
-    another = Dummy()
+    subnet = PureSubnetMask()
+    another = PureSubnetMask()
     another._prefix_length = None
     assert subnet._prefix_length == 0
     assert another._prefix_length is None
@@ -96,7 +89,7 @@ def test_pure_subnet_mask():
     assert str(subnet) == '0'
     assert repr(subnet) == "iplib3.PureSubnetMask('0')"
 
-    assert subnet == Dummy()
+    assert subnet == PureSubnetMask()
     assert subnet == 0
     assert subnet == '0'
 

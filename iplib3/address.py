@@ -1,10 +1,12 @@
 """iplib3's functionality specific to addresses"""
 
 from abc import ABCMeta, abstractmethod
+from iplib3.subnet import SubnetMask
 from typing import Any, List, Optional, Union
 
 from .constants.address import (
     IPV4_LOCALHOST,
+    IPV6_LOCALHOST,
 )
 from .constants.port import (
     PORT_NUMBER_MIN_VALUE,
@@ -203,13 +205,12 @@ def _ip_validator(address: Union[str, int], strict: bool = True):
     return _ipv6_validator(address, strict)
 
 
-class PureAddress(metaclass=ABCMeta):
+class PureAddress:
     """Abstract base class for IP addresses"""
 
     __slots__ = ('_num', '_port')
 
 
-    @abstractmethod
     def __init__(self):
         self._num: int = 0
         self._port: Optional[int] = None
@@ -221,13 +222,10 @@ class PureAddress(metaclass=ABCMeta):
         if str(self) == str(other):
             return True
 
-        if not isinstance(other, PureAddress):
-            return False
+        if isinstance(other, PureAddress):
+            return self.num == other.num and self.port == other.port
 
-        if not self.num == other.num and self.port == other.port:
-            return False
-
-        return True
+        return False
 
 
     @property
@@ -320,7 +318,7 @@ class PureAddress(metaclass=ABCMeta):
 
 
     @staticmethod
-    def _num_to_ipv6(num: int, shorten: bool, remove_zeroes: bool) -> str:
+    def _num_to_ipv6(num: int, shorten: bool = True, remove_zeroes: bool = False) -> str:
         """
         Generates an IPv6 string from an integer,
         with optional zero removal and shortening.
@@ -391,7 +389,7 @@ class IPAddress(PureAddress):
 
     __slots__ = ('_ipv4', '_ipv6', '_submask')
 
-    def __new__(cls, *args, address: Union[int, str, None] = None, **kwargs):
+    def __new__(cls, address: Union[int, str, None] = None, port_num: Optional[int] = None, **kwargs):
 
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
@@ -399,17 +397,17 @@ class IPAddress(PureAddress):
 
         self = object.__new__(cls)
 
-        self.__init__(address, *args, **kwargs)
+        self.__init__(address=address, port_num=port_num, **kwargs)
         return self
 
 
-    def __init__(self, address_num=IPV4_LOCALHOST, port_num=None):
+    def __init__(self, address: Optional[int] = IPV4_LOCALHOST, port_num=None):
         super().__init__()
-        self._num = address_num if address_num is not None else 0
-        self._port = port_num if _port_validator(port_num) else None
-        self._ipv4 = None
-        self._ipv6 = None
-        self._submask = None
+        self._num: int = address if address is not None else 0
+        self._port: Optional[int] = port_num if _port_validator(port_num) else None
+        self._ipv4: Optional[IPv4] = None
+        self._ipv6: Optional[IPv6] = None
+        self._submask: Optional[SubnetMask] = None
 
 
     def __repr__(self) -> str:
@@ -450,17 +448,20 @@ class IPv4(IPAddress):
 
     __slots__ = ('_address',)
 
-    def __init__(self, address: str, port_num: Optional[int] = None):
+    def __init__(self, address: Optional[str] = None, port_num: Optional[int] = None):
+
+        if address is None:
+            address = self._num_to_ipv4(IPV4_LOCALHOST)
 
         _address, *_port = address.split(':')
         if _port:
             address = _address
 
             if port_num is None:
-                self._port = int(_port[0])
+                port_num = int(_port[0])
 
         self._address = address
-        super().__init__(address_num=self._ipv4_to_num(), port_num=port_num)
+        super().__init__(address=self._ipv4_to_num(), port_num=port_num)
 
 
     def __str__(self) -> str:
@@ -493,7 +494,10 @@ class IPv6(IPAddress):
 
     __slots__ = ('_address',)
 
-    def __init__(self, address: str, port_num: Optional[int] = None):
+    def __init__(self, address: Optional[str] = None, port_num: Optional[int] = None):
+
+        if address is None:
+            address = self._num_to_ipv6(IPV6_LOCALHOST)
 
         _address, *_port = address.split(']:')
 
@@ -503,10 +507,10 @@ class IPv6(IPAddress):
             address = _address[1:]
 
             if port_num is None:
-                self._port = int(_port[0])
+                port_num = int(_port[0])
 
         self._address = address
-        super().__init__(address_num=self._ipv6_to_num(), port_num=port_num)
+        super().__init__(address=self._ipv6_to_num(), port_num=port_num)
 
 
     def __str__(self) -> str:

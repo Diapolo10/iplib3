@@ -5,6 +5,8 @@ from typing import Optional, Union, Any
 
 from .constants.ipv4 import (
     IPV4_MIN_SEGMENT_COUNT,
+    IPV4_MIN_SEGMENT_VALUE,
+    IPV4_SEGMENT_BIT_COUNT,
     # IPV4_MAX_SEGMENT_COUNT,
     # IPV4_MAX_SEGMENT_VALUE,
 )
@@ -20,14 +22,13 @@ from .constants.subnet import (
 )
 
 
-class PureSubnetMask(metaclass=ABCMeta):
+class PureSubnetMask:
     """
-    Abstract base class for subnets
+    Platform and version-independent base class for subnets
     """
     __slots__ = ('_prefix_length',)
 
 
-    @abstractmethod
     def __init__(self):
         self._prefix_length: Optional[int] = 0
 
@@ -46,13 +47,11 @@ class PureSubnetMask(metaclass=ABCMeta):
         if self.prefix_length == other or str(self) == other:
             return True
 
-        if not isinstance(other, PureSubnetMask):
-            return False
+        if isinstance(other, PureSubnetMask):
+            print("puresubnetmask")
+            return self.prefix_length == other.prefix_length
 
-        if not self.prefix_length == other.prefix_length:
-            return False
-
-        return True
+        return False
 
 
     @property
@@ -83,7 +82,7 @@ class SubnetMask(PureSubnetMask):
             subnet_type = 'ipv4'
 
         self._prefix_length: Optional[int] = self._subnet_to_num(subnet_mask, subnet_type)
-        self._subnet_type = subnet_type
+        self._subnet_type = subnet_type.lower()
 
 
     def __repr__(self):
@@ -96,7 +95,7 @@ class SubnetMask(PureSubnetMask):
 
 
     @staticmethod
-    def _subnet_to_num(subnet_mask: Union[int, str, None], subnet_type: str) -> Optional[int]:
+    def _subnet_to_num(subnet_mask: Union[int, str, None], subnet_type: str = 'ipv6') -> Optional[int]:
 
         if subnet_mask is None:
             return None
@@ -104,7 +103,7 @@ class SubnetMask(PureSubnetMask):
         if not isinstance(subnet_mask, (int, str)):
             raise TypeError(
                 f"Invalid type for subnet value: '{subnet_mask.__class__.__name__}'\n"
-                f"Expected int, string or None"
+                f"Expected int, string, or None"
             )
 
         if isinstance(subnet_mask, str):
@@ -115,8 +114,14 @@ class SubnetMask(PureSubnetMask):
                 segments = list(map(int, subnet_mask.split('.')))[::-1]
                 total = 0
 
-                for idx, num in enumerate(segments):
-                    total += num * 2**(idx * 8)
+                try:
+                    for segment in segments:
+                        total += {
+                            subnet: idx
+                            for idx, subnet in enumerate(IPV4_VALID_SUBNET_SEGMENTS)
+                        }[segment]
+                except KeyError as err:
+                    raise ValueError(f"'{segment}' is an invalid value in a subnet mask") from err
 
                 return total
 
@@ -124,8 +129,7 @@ class SubnetMask(PureSubnetMask):
                 subnet_mask = int(subnet_mask)
             except ValueError as err:
                 raise ValueError(
-                    f"Subnet value not valid; '{subnet_mask}' is neither a valid string "
-                    f"representation nor an integer"
+                    f"Subnet value not valid; '{subnet_mask}' is neither a valid string representation nor an integer"
                 ) from err
 
 
@@ -156,12 +160,10 @@ class SubnetMask(PureSubnetMask):
             raise ValueError(f"Invalid subnet value for IPv4: '{prefix_length}'")
 
         segments = [0, 0, 0, 0]
-        idx = 0
-        while prefix_length % 8 == 0:
-            prefix_length, _ = divmod(prefix_length, 8)
-            segments[idx] = 255
-            idx += 1
-        segments[idx+1] = 2**(8 - prefix_length % 8) - 1
+
+        for idx, _ in enumerate(segments):
+            segments[idx] = 2 ** max(min(IPV4_SEGMENT_BIT_COUNT, prefix_length), 0) - 1
+            prefix_length -= IPV4_SEGMENT_BIT_COUNT
         return '.'.join(map(str, segments))
 
 

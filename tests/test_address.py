@@ -218,14 +218,7 @@ def test_port_validator():
 def test_pure_address():
     """Test the PureAddress base class"""
     
-    # Override the abstract methods to enable testing
-    PureAddress.__abstractmethods__ = set()
-
-    @dataclass
-    class Dummy(PureAddress):
-        pass
-
-    address = Dummy()
+    address = PureAddress()
 
 
 def test_ipaddress():
@@ -240,9 +233,9 @@ def test_ipaddress():
     assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
     assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
 
-    rigged = IPAddress()
-    rigged.num.func.setter = (lambda self, x: setattr(self._num, x))
-    rigged.num = IPV6_MAX_VALUE+1
+    rigged = IPAddress(IPV6_MAX_VALUE+1)
+    # rigged.num.func.setter = (lambda self, x: setattr(self._num, x))
+    # rigged.num = IPV6_MAX_VALUE+1
 
     with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
         str(rigged)
