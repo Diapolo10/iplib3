@@ -97,26 +97,18 @@ jobs:
       run: PYTHONPATH=./iplib3/ poetry run tox
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
-        COVERALLS_SERVICE_NAME: github-actions
-        COVERALLS_PARALLEL: true
+        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        # COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
+        # COVERALLS_SERVICE_NAME: github-actions
+        # COVERALLS_PARALLEL: true
 
     - name: Upload results to Coveralls
       if: success()
-      # uses: codecov/codecov-action@v1
       uses: coverallsapp/github-action@master
       with:
-        file: ./tests/reports/coverage.xml
-        flags: unittests
-        name: ${{ matrix.platform }}-${{ matrix.tox-env }}
-        fail_ci_if_error: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
-        COVERALLS_SERVICE_NAME: github-actions
-        COVERALLS_PARALLEL: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel: true
+        flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
 
 
   # coveralls_finish:
