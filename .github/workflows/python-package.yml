@@ -17,7 +17,13 @@ jobs:
       matrix:
         # python-version: [3.6, 3.7, 3.8, 3.9]
         os: [macos-latest, ubuntu-latest, windows-latest]
-        tox-env: [py36, py37, py38, py39, pypy3]
+        tox-env: [
+          py36,
+          py37,
+          py38,
+          py39,
+          # pypy3
+        ]
         include:
           - tox-env: py36
             python-version: 3.6
