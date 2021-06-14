@@ -31,9 +31,9 @@ jobs:
             python-version: pypy3
 
         exclude:
-          - platform: windows-latest
+          - os: windows-latest
             tox-env: pypy3
-          - platform: macos-latest
+          - os: macos-latest
             tox-env: pypy3
     env:
       TOXENV: ${{ matrix.tox-env }}
