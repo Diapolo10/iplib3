@@ -117,6 +117,6 @@ deps =
     pytest-cov
     wheel
 commands =
-    coverage run --source=iplib3 -m pytest
+    coverage run -m pytest
     coveralls
 """
