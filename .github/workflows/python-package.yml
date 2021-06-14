@@ -104,12 +104,13 @@ jobs:
 
     - name: Upload results to Coveralls
       if: success()
-      uses: coverallsapp/github-action@master
+      # uses: coverallsapp/github-action@master
+      uses: AndreMiras/coveralls-python-action@develop
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel: true
         flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
-        path-to-lcov: tests/reports/coverage.xml
+        # path-to-lcov: tests/reports/coverage.xml
 
 
   # coveralls_finish:
@@ -132,7 +133,8 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
-      - uses: coverallsapp/github-action@master
+      - # uses: coverallsapp/github-action@master
+        uses: AndreMiras/coveralls-python-action@develop
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
