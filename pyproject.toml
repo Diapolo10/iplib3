@@ -91,14 +91,13 @@ testpaths = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36, py37, py38, py39, pypy3, mypy
+envlist = py36, py37, py38, py39, pypy3
 
 [gh-actions]
 python =
-    2.7: py27
     3.6: py36
     3.7: py37
-    3.8: py38, mypy
+    3.8: py38
     3.9: py39
     pypy-3.7: pypy3
 
@@ -118,5 +117,4 @@ deps =
     wheel
 commands =
     coverage run -m pytest
-    coveralls
 """
