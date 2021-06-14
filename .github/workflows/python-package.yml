@@ -109,6 +109,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel: true
         flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
+        path-to-lcov: tests/reports/coverage.xml
 
 
   # coveralls_finish:
