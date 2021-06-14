@@ -33,7 +33,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         poetry install
-        PYTHONPATH=src/ poetry run python -m pip install tox tox-gh-actions
+        PYTHONPATH=./iplib3/ poetry run python -m pip install tox tox-gh-actions
         
     - name: Install dependencies (Linux / Mac OS)
       if: ${{ startsWith(matrix.os, 'windows') == false }}
@@ -68,7 +68,7 @@ jobs:
     #     COVERALLS_PARALLEL: true
 
     - name: Run Tox (Pytest + Coveralls)
-      run: PYTHONPATH=src/ poetry run tox
+      run: PYTHONPATH=./iplib3/ poetry run tox
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

@@ -81,6 +81,13 @@ wheel = "*"
 max-line-length = 120
 disable = ['R0911', 'R0912', 'W0642']
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--doctest-modules --cov=./iplib3 --cov-append --cov-report html:tests/reports/coverage.html --cov-report xml:tests/reports/coverage.xml --pep8 --ignore=docs/"
+testpaths = [
+    'tests',
+]
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]
@@ -110,17 +117,6 @@ deps =
     pytest-cov
     wheel
 commands =
-    coverage run --source=iplib3 -m pytest tests/
+    coverage run --source=iplib3 -m pytest
     coveralls
-
-[testenv:check]
-commands = pytest --cov=project --cov-report=term tests/
-deps =
-    coverage
-    pytest
-    pytest-cov
-
-[pytest]
-python_files = test_*.py
-norecursedirs = .tox
 """
