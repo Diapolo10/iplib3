@@ -111,7 +111,7 @@ PLATFORM =
 passenv = GITHUB_*
 deps =
     coverage
-    coveralls
+    coveralls[toml]
     pytest
     pytest-cov
     wheel
