@@ -102,15 +102,24 @@ jobs:
         # COVERALLS_SERVICE_NAME: github-actions
         # COVERALLS_PARALLEL: true
 
-    - name: Upload results to Coveralls
+    # - name: Upload results to Coveralls
+    #   if: success()
+    #   # uses: coverallsapp/github-action@master
+    #   uses: AndreMiras/coveralls-python-action@develop
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     parallel: true
+    #     flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
+    #     # path-to-lcov: tests/reports/coverage.xml
+
+    - name: Upload Results to CodeCov
       if: success()
-      # uses: coverallsapp/github-action@master
-      uses: AndreMiras/coveralls-python-action@develop
+      uses: codecov/codecov-action@v1
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel: true
-        flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
-        # path-to-lcov: tests/reports/coverage.xml
+        file: ./tests/reports/coverage.xml
+        flags: unittests
+        name: ${{ matrix.platform }}-${{ matrix.tox-env }}
+        fail_ci_if_error: false
 
 
   # coveralls_finish:
