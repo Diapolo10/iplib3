@@ -46,66 +46,66 @@ The module mainly provides a single class, `iplib3.IPAddress`, which can be used
 
 The primary class has the advantage that it also supports raw numbers; you can initialise it with any positive integer in addition to stringified addresses, and since you can directly convert between the two sub-classes at any time you can use all functionality with just `iplib3.IPAddress`. Since `iplib3.IPv4` and `iplib3.IPv6` are subclasses of `iplib3.IPAddress`, you can use `isinstance` to recognise any of the three types.
 
-###IP Address
+### IP Address
 
 In `iplib3`, *IPAddress* is a single class to initialise IP address objects of any supported type. *IPAddress* by default initialise IP Addresses of IPv4 type.
 
-######Example:
+###### Example:
 ```python
 from iplib3 import IPAddress, IPv6
 address = IPAddress('222.173.190.239')
 print(address) 
 
 ```
-######Output:
+###### Output:
 ```
 222.173.190.239
 ```
 
-###Port Number
+### Port Number
 In `iplib3`, *port* is used to specify port number to IP address.
 
-######Example:
+###### Example:
 ```python
 print(address.port) 
 ```
-######Output:
+###### Output:
 ```
 None
 ```
 As *port* is not assigned a number, it shows results as *None*.
 
-######Example:
+###### Example:
 ```python
 address.port = 80
 print(address) 
 ```
-######Output:
+###### Output:
 ```
 222.173.190.239:80
 ```
 IP Address is shown along with the specified port number.
 
-###Printable Representation of IP Address
+### Printable Representation of IP Address
 *repr()* function returns a printable representation of the IP Address.
 
-######Example:
+###### Example:
 ```python
 print(repr(address))
 ```
-######Output:
+###### Output:
 ```
 iplib3.IPv4('222.173.190.239:80')
 ```
 ### IP Address IPv6
 In `iplib3`, declare IP Address for IPv6 using `.as_ipv6`. By using `.as_ipv6`, convert IP Address from IPv4 to IPv6. 
 
-######Example:
+###### Example:
 ```python
 ipv6_address = address.as_ipv6
 print(ipv6_address)
 ```
-######Output:
+###### Output:
 ```
 [0:0:0:0:0:0:DEAD:BEEF]:80
 ```
@@ -113,30 +113,30 @@ print(ipv6_address)
 
 In `iplib3`, *port* is used to specify port number to IP address for IPv6.
 
-######Example:
+###### Example:
 ```python
 ipv6_address.port = None
 print(ipv6_address)
 ```
-######Output:
+###### Output:
 ```
 0:0:0:0:0:0:DEAD:BEEF
 ```
-###Printable Representation of IP Address IPv6
+### Printable Representation of IP Address IPv6
 *repr()* function returns a printable representation of the IP Address for IPv6.
 
-######Example:
+###### Example:
 ```python
 print(repr(ipv6_address))
 ```
-######Output:
+###### Output:
 ```
 iplib3.IPv6('0:0:0:0:0:0:DEAD:BEEF')
 ```
-###Different Formats of IP Address IPv6
+### Different Formats of IP Address IPv6
 IP Address of IPv6 exists in different formats.
 
-######Example:
+###### Example:
 ```python
 foo = IPv6('[::1337:1337:1337:1337]:25565')
 bar = IPv6('::1337:1337:1337:1337', 25565)
@@ -144,64 +144,64 @@ baz = IPv6('::1337:1337:1337:1337', port_num=25565)
 print(f"Addresses are {'equal' if foo == bar == baz else 'not equal'}")
 print(baz)
 ```
-######Output:
+###### Output:
 ```
 Addresses are equal
 [::1337:1337:1337:1337]:25565
 ```
-###Convert IP Address IPv6 to IPv4
+### Convert IP Address IPv6 to IPv4
 In `iplib3`, convert IP Address of IPv6 to IPv4 using `.as_ipv4`.
-######Example:
+###### Example:
 ```python
 baz=baz.as_ipv4
 print(baz)
 print(repr(baz))
 ```
-######Output:
+###### Output:
 ```
 19.55.19.55:25565
 iplib3.IPv4('19.55.19.55:25565')
 ```
 In `iplib3`, subsequent conversions of IPv4 and IPv6 are not the same.
-######Example:
+###### Example:
 ```python
 print(baz.as_ipv4.as_ipv6 == baz)
 ```
-######Output:
+###### Output:
 ```
 False
 ```
-###Update Port Number
+### Update Port Number
 To update an existing port number of an IP Address, specify a new port number using *port_num*.
-######Example:
+###### Example:
 ```python
 spam = IPv6('[::1337:1337:1337:1337]:80', port_num=25565)
 print(spam) 
 ```
-######Output:
+###### Output:
 ```
 [::1337:1337:1337:1337]:25565
 ```
 
-###Convert IP Address to Hexa values
+### Convert IP Address to Hexa values
 In `iplib3`, convert IP Address to hexa values using `.hex`.
-######Example:
+###### Example:
 ```python
 print(address.hex) 
 ```
 
-######Output:
+###### Output:
 ```
 0xDEADBEEF
 ```
-###Convert IP Address to Numbers
+### Convert IP Address to Numbers
 In `iplib3`, convert IP Address to numbers using `.num`.
-######Example:
+###### Example:
 ```python
 print(address.num) 
 ```
 
-######Output:
+###### Output:
 ```
 3735928559
 ```
