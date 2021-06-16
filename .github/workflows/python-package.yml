@@ -118,13 +118,12 @@ jobs:
       if: success()
       uses: codecov/codecov-action@v1.5.2
       with:
-        # file: ./coverage.xml
+        # file: ./tests/reports/coverage.xml
         flags: unittests
         name: ${{ matrix.platform }}-${{ matrix.tox-env }}
         fail_ci_if_error: false
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage.xml,./coverage.html
-        directory: ./tests/reports
+        files: ./tests/reports/coverage.xml,./tests/reports/coverage.html
         env_vars: TOXENV
         path_to_write_report: ./tests/reports/codecov_report.txt
         verbose: true
