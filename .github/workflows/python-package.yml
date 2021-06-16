@@ -94,7 +94,9 @@ jobs:
     #     COVERALLS_PARALLEL: true
 
     - name: Run Tox (Pytest + Coverage)
-      run: poetry run tox
+      run: |
+        poetry run tox
+        cat ./tests/reports/coverage.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
@@ -114,7 +116,7 @@ jobs:
 
     - name: Upload Results to CodeCov
       if: success()
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v1.5.2
       with:
         file: ./tests/reports/coverage.xml
         flags: unittests
@@ -137,16 +139,16 @@ jobs:
   #       COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
   #       GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
-  coveralls-finish:
-    name: Finalize coveralls.io
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - # uses: coverallsapp/github-action@master
-        uses: AndreMiras/coveralls-python-action@develop
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
+  # coveralls-finish:
+  #   name: Finalize coveralls.io
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - # uses: coverallsapp/github-action@master
+  #       uses: AndreMiras/coveralls-python-action@develop
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         parallel-finished: true
         
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
