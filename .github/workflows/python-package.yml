@@ -78,8 +78,9 @@ jobs:
     - name: Run Tox (Pytest + Coverage)
       run: |
         poetry run tox
-        cat ./tests/reports/coverage.xml
         ls -l ./tests/reports/coverage-html
+      
+      # cat ./tests/reports/coverage.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,7 +90,7 @@ jobs:
       with:
         env_vars: TOXENV
         fail_ci_if_error: false
-        files: ./tests/reports/coverage-html,./tests/reports/coverage.xml
+        files: ./tests/reports/coverage-html/index.html,./tests/reports/coverage.xml
         flags: unittests
         name: ${{ matrix.os }}-${{ matrix.tox-env }}
         path_to_write_report: ./tests/reports/codecov_report.txt

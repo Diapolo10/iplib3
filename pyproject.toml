@@ -12,6 +12,10 @@ build-backend = "poetry.masonry.api"
 [tool.coverage.run]
 branch = true
 relative_files = true
+omit = [
+    '.tox/*',
+    'tests/*',
+]
 
 [tool.flake8]
 max-line-length = 120
