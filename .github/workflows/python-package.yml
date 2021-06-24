@@ -1,13 +1,13 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# This workflow will install Python dependencies,
+# run tests with a variety of Python versions,
+# and upload a new build to PyPI on master branch.
+# 
+# For more information see:
+# https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: iplib3 CI
 
 on: [ push, pull_request ]
-  # push:
-  #   branches: [ main, nightly ]
-  # pull_request:
-  #   branches: [ main, nightly ]
 
 jobs:
 
@@ -64,34 +64,16 @@ jobs:
     - name: Install dependencies (Linux / Mac OS)
       if: ${{ startsWith(matrix.os, 'windows') == false }}
       run: |
-        if [ -f requirements.txt ]; then PYTHONPATH=src/ poetry run python3 -m pip install -r requirements.txt; fi
+        if [ -f requirements.txt ];
+        then poetry run python3 -m pip install -r requirements.txt;
+        fi
 
     - name: Install dependencies (Windows)
       if: ${{ startsWith(matrix.os, 'windows') == true }}
       run: |
-        if(Test-Path -Path requirements.txt) {poetry run python -m pip install -r requirements.txt}
-        
-    # - name: Install library
-    #   run: |
-    #     pip install -e .
-        
-    # - name: Lint with flake8
-    #   run: |
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-        
-    # - name: Test with pytest and run coveralls
-    #   run: |
-    #     coverage run --source=iplib3 -m pytest tests/
-    #     coveralls
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-    #     COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
-    #     COVERALLS_SERVICE_NAME: github-actions
-    #     COVERALLS_PARALLEL: true
+        if(Test-Path -Path requirements.txt) {
+          poetry run python -m pip install -r requirements.txt
+        }
 
     - name: Run Tox (Pytest + Coverage)
       run: |
@@ -99,112 +81,38 @@ jobs:
         cat ./tests/reports/coverage.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        # COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
-        # COVERALLS_SERVICE_NAME: github-actions
-        # COVERALLS_PARALLEL: true
-
-    # - name: Upload results to Coveralls
-    #   if: success()
-    #   # uses: coverallsapp/github-action@master
-    #   uses: AndreMiras/coveralls-python-action@develop
-    #   with:
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #     parallel: true
-    #     flag-name: Unit-${{ matrix.os }}-${{ matrix.python-version }}
-    #     # path-to-lcov: tests/reports/coverage.xml
 
     - name: Upload Results to CodeCov
       if: success()
       uses: codecov/codecov-action@v1.5.2
       with:
-        # file: ./coverage.xml
+        env_vars: TOXENV
+        fail_ci_if_error: false
+        files: ./tests/reports/coverage-html,./tests/reports/coverage.xml
         flags: unittests
         name: ${{ matrix.platform }}-${{ matrix.tox-env }}
-        fail_ci_if_error: false
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./tests/reports/coverage-html,./tests/reports/coverage.xml
-        env_vars: TOXENV
         path_to_write_report: ./tests/reports/codecov_report.txt
-        verbose: false
+        token: ${{ secrets.CODECOV_TOKEN }}
 
-
-  # coveralls_finish:
-  #   name: Finish coveralls
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   container: python:3-slim
-  #   steps:
-  #   - name: Coveralls Finished
-  #     run: |
-  #       pip3 install --upgrade coveralls
-  #       coveralls debug --finish --service=github-actions
-  #     env:
-  #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  #       GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-
-  # coveralls-finish:
-  #   name: Finalize coveralls.io
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - # uses: coverallsapp/github-action@master
-  #       uses: AndreMiras/coveralls-python-action@develop
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         parallel-finished: true
         
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     runs-on: ubuntu-latest
-    if: endsWith(github.ref, 'master')
+    if: endsWith(github.ref, 'master') # TODO: Find a permanent solution
 
     steps:
     - uses: actions/checkout@master
-
-    # - name: Set up Python 3.9
-    #   uses: actions/setup-python@v1
-    #   with:
-    #     python-version: 3.9
-
-    # - name: Install pep517
-    #   run: >-
-    #     python -m
-    #     pip install pep517
-    #     --user
-
-    # - name: Build a binary wheel and a source tarball
-    #   run: >-
-    #     python -m
-    #     pep517.build
-    #     --source
-    #     --binary
-    #     --out-dir dist/
-    #     .
-
-    # - name: Publish distribution 📦 to Test PyPI
-    #   uses: pypa/gh-action-pypi-publish@master
-    #   with:
-    #     password: ${{ secrets.TEST_PYPI_PASSWORD }}
-    #     repository_url: https://test.pypi.org/legacy/
-
-    # - name: Publish distribution 📦 to PyPI
-    #   #if: startsWith(github.ref, 'refs/tags/v') # TODO: Find a permanent solution
-    #   uses: pypa/gh-action-pypi-publish@master
-    #   with:
-    #     password: ${{ secrets.PYPI_PASSWORD }}
     
     - name: Publish distribution 📦 to Test PyPI
-      uses: JRubics/poetry-publish@v1.6
+      uses: JRubics/poetry-publish@v1.7
       with:
+        ignore_dev_requirements: "yes"
         pypi_token: ${{ secrets.TEST_PYPI_PASSWORD }}
         repository_name: 'testpypi'
         repository_url: 'https://test.pypi.org/legacy/'
-        ignore_dev_requirements: "yes"
 
     - name: Publish distribution 📦 to PyPI
-      uses: JRubics/poetry-publish@v1.6
+      uses: JRubics/poetry-publish@v1.7
       with:
         pypi_token: ${{ secrets.PYPI_PASSWORD }}
         ignore_dev_requirements: "yes"
