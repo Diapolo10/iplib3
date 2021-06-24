@@ -111,6 +111,7 @@ testpaths = [
 legacy_tox_ini = """
 [tox]
 envlist = py36, py37, py38, py39, pypy3
+isolated_build = True
 
 [gh-actions]
 python =
