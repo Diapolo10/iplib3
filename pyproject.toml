@@ -15,6 +15,7 @@ relative_files = true
 omit = [
     '.tox/*',
     'tests/*',
+    'setup.py',
 ]
 
 [tool.flake8]
@@ -68,7 +69,6 @@ python = "^3.6"
 
 [tool.poetry.dev-dependencies]
 coverage = {version = "*", extras = ["toml",]}
-coveralls = "*"
 flake8 = "*"
 pylint = "*"
 pyproject-flake8 = "*"
@@ -83,11 +83,22 @@ wheel = "*"
 
 [tool.pylint.'MESSAGES CONTROL']
 max-line-length = 120
-disable = ['R0911', 'R0912', 'W0642']
+disable = [
+    'R0911', # Too many return statements
+    'R0912', # Too many branches
+    'W0642', # Invalid assignment to self or cls in instance or class method, respectively.
+]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--doctest-modules --cov=./ --cov-append --cov-report html:tests/reports/coverage-html --cov-report xml:tests/reports/coverage.xml --ignore=docs/"
+addopts = """
+--doctest-modules \
+--cov=./ \
+--cov-append \
+--cov-report html:tests/reports/coverage-html \
+--cov-report xml:tests/reports/coverage.xml \
+--ignore=docs/
+"""
 testpaths = [
     'tests',
 ]
