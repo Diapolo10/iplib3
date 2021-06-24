@@ -83,7 +83,7 @@ disable = ['R0911', 'R0912', 'W0642']
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--doctest-modules --cov=./ --cov-append --cov-report html:tests/reports/coverage.html --cov-report xml:tests/reports/coverage.xml --ignore=docs/"
+addopts = "--doctest-modules --cov=./ --cov-append --cov-report html:tests/reports/coverage-html --cov-report xml:tests/reports/coverage.xml --ignore=docs/"
 testpaths = [
     'tests',
 ]
