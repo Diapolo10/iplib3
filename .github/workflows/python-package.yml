@@ -126,7 +126,7 @@ jobs:
         files: ./tests/reports/coverage-html,./tests/reports/coverage.xml
         env_vars: TOXENV
         path_to_write_report: ./tests/reports/codecov_report.txt
-        verbose: true
+        verbose: false
 
 
   # coveralls_finish:
