@@ -147,8 +147,6 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
     don't exceed legal bounds, otherwise focuses on form.
     """
 
-    # TODO: Further break down the function into sub-functions
-
     if isinstance(address, str):
 
         address, _, valid = _ipv6_port_stripper(address, strict=strict)
