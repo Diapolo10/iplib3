@@ -126,3 +126,12 @@ dmypy.json
 
 # Local GitHub Actions tool (ACT)
 .actrc
+
+# coverage
+cov.xml
+
+# Editor config files
+.vscode
+
+# DeepCode/Snyk
+.dccache

@@ -1,8 +1,147 @@
 [build-system]
-requires = ['pytest-runner', 'flake8', 'setuptools', 'wheel']
-build-backend = "setuptools.build_meta"
+requires = ['poetry>=0.12', 'wheel',]
+build-backend = "poetry.masonry.api"
 
-[metadata]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = [
+    '.tox/*',
+    'tests/*',
+    'setup.py',
+]
+
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = 'E203,'
+max-complexity = 15 # Info: https://en.wikipedia.org/wiki/Cyclomatic_complexity
+per-file-ignores = """\
+# F401: Ignore "unused" imports
+# F403: Ignore star imports
+# F405: Ignore names from star imports
+__init__.py:F401,F403,F405\
+"""
+
+
+[tool.poetry]
 name = 'iplib3'
-version = '0.1.5-7'
-description = 'A modern, object-oriented approach to IP addresses.'
+version = '0.1.6-2'
+description = "A modern, object-oriented approach to IP addresses."
+
+authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
+maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
+
+include = ['CHANGELOG.md', 'LICENSE',]
+license = 'MIT'
+readme = 'README.md'
+
+homepage = 'https://pypi.org/project/iplib3/'
+repository = 'https://github.com/Diapolo10/iplib3'
+documentation = 'https://github.com/Diapolo10/iplib3/tree/main/docs'
+
+keywords = [
+    'network',
+    'networking',
+    'ip',
+    'ipaddress',
+    'address',
+    'python3',
+    'pathlib',
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Programming Language :: Python :: Implementation :: PyPy',
+    'Topic :: Internet',
+    'Topic :: Software Development :: Libraries',
+    'Typing :: Typed',
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+
+[tool.poetry.dev-dependencies]
+coverage = {version = "*", extras = ["toml",]}
+flake8 = "*"
+pylint = "*"
+pyproject-flake8 = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-runner = "*"
+wheel = "*"
+
+
+[tool.poetry.urls]
+"Source code" = 'https://github.com/Diapolo10/iplib3'
+"Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
+"Changelog" = 'https://github.com/Diapolo10/iplib3/blob/nightly/CHANGELOG.md' # TODO: Change to use main branch when ready to deploy live
+
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = [  # TODO: Improve code so that these can be dropped
+    'R0911', # Too many return statements
+    'R0912', # Too many branches
+    'W0642', # Invalid assignment to self or cls in instance or class method, respectively.
+]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = """
+--doctest-modules \
+--cov=./ \
+--cov-append \
+--cov-report html:tests/reports/coverage-html \
+--cov-report xml:tests/reports/coverage.xml \
+--ignore=docs/
+"""
+testpaths = [
+    'tests',
+]
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py36, py37, py38, py39, pypy3
+isolated_build = True
+
+[gh-actions]
+python =
+    3.6: py36
+    3.7: py37
+    3.8: py38
+    3.9: py39
+    pypy-3.7: pypy3
+
+[gh-actions:env]
+PLATFORM =
+    ubuntu-latest: linux
+    macos-latest: macos
+    windows-latest: windows
+
+[testenv]
+passenv = GITHUB_*
+deps =
+    coverage
+    coveralls[toml]
+    pytest
+    pytest-cov
+    wheel
+commands =
+    coverage run -m pytest
+"""
