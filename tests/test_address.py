@@ -31,10 +31,11 @@ def test_ipv4():
     assert str(IPAddress(0xDEADBEEF).as_ipv4) == '222.173.190.239'
     assert str(IPAddress(0xDEADBEEF, port_num=80).as_ipv4) == '222.173.190.239:80'
 
-    assert IPAddress(0xDEADBEEF) == IPAddress(0xDEADBEEF)
-    assert (IPAddress(0xDEADBEEF) == IPAddress(0xDEADBEEF, port_num=8080)) is False
-    assert IPAddress(0xDEADBEEF) != IPAddress(0x1057B317)
-    assert IPAddress(0xDEADBEEF) != "Hello, world!"
+    address = IPAddress(0xDEADBEEF)
+    assert address == IPAddress(0xDEADBEEF)
+    assert (address == IPAddress(0xDEADBEEF, port_num=8080)) is False
+    assert address != IPAddress(0x1057B317)
+    assert address != "Hello, world!"
 
 
 def test_ipv4_port_initialisation():

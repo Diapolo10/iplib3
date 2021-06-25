@@ -132,3 +132,6 @@ cov.xml
 
 # Editor config files
 .vscode
+
+# DeepCode/Snyk
+.dccache

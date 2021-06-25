@@ -57,12 +57,10 @@ def _port_validator(port_num: Optional[int]) -> bool:
     if port_num is None:
         pass
 
-    elif not isinstance(port_num, int):
-        return False
-    elif not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
-        return False
-
-    return True
+    return (
+        isinstance(port_num, int)
+        and PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE
+    )
 
 
 def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
@@ -148,7 +146,7 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
 
         if len(halves) == 2:
             # Address with zero-skip part
-            left, right = map(lambda x: x.split(':'), halves)
+            left, right = (half.split(':') for half in halves)
             total_length = len(left) + len(right)
 
             if halves[0]:
@@ -172,10 +170,10 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
             return False
 
         try:
-            processed_segments: List[int] = list(map(
-                lambda x: int(x, IPV6_SEGMENT_BIT_COUNT) if x else 0,
-                segments
-            ))
+            processed_segments: List[int] = [
+                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0
+                for segment in segments
+            ]
         except ValueError:
             # IPv6 address was not made of valid hexadecimal numbers
             return False
@@ -225,6 +223,9 @@ class PureAddress:
             return self.num == other.num and self.port == other.port
 
         return False
+
+    def __ne__(self, other: Any) -> bool:
+        return not self == other
 
 
     @property
@@ -533,7 +534,7 @@ class IPv6(IPAddress):
 
         if len(halves) == 2:
             # Address with zero-skip part
-            left, right = map(lambda x: x.split(':'), halves)
+            left, right = (half.split(':') for half in halves)
             total_length = len(left) + len(right)
 
             if halves[0]:
@@ -556,10 +557,10 @@ class IPv6(IPAddress):
             raise ValueError("Invalid IPv6 address format; only one zero-skip allowed")
 
         try:
-            processed_segments: List[int] = list(map(
-                lambda num: int(num, 16) if num != '' else 0,
-                segments[::-1]
-            ))
+            processed_segments: List[int] = [
+                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0
+                for segment in segments[::-1]
+            ]
         except ValueError as err:
             raise ValueError("Invalid IPv6 address format; address contains invalid characters") from err
 

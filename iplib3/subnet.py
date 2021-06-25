@@ -50,6 +50,10 @@ class PureSubnetMask:
         return False
 
 
+    def __ne__(self, other: Any) -> bool:
+        return not self == other
+
+
     @property
     def prefix_length(self) -> Optional[int]:
         """

@@ -33,7 +33,7 @@ readme = 'README.md'
 
 homepage = 'https://pypi.org/project/iplib3/'
 repository = 'https://github.com/Diapolo10/iplib3'
-documentation = ''
+documentation = 'https://github.com/Diapolo10/iplib3/tree/main/docs'
 
 keywords = [
     'network',
@@ -81,11 +81,12 @@ wheel = "*"
 [tool.poetry.urls]
 "Source code" = 'https://github.com/Diapolo10/iplib3'
 "Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
+"Changelog" = 'https://github.com/Diapolo10/iplib3/blob/nightly/CHANGELOG.md' # TODO: Change to use main branch when ready to deploy live
 
 
 [tool.pylint.'MESSAGES CONTROL']
 max-line-length = 120
-disable = [
+disable = [  # TODO: Improve code so that these can be dropped
     'R0911', # Too many return statements
     'R0912', # Too many branches
     'W0642', # Invalid assignment to self or cls in instance or class method, respectively.
