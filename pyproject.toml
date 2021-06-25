@@ -17,6 +17,12 @@ omit = [
 max-line-length = 120
 extend-ignore = 'E203,'
 max-complexity = 15 # Info: https://en.wikipedia.org/wiki/Cyclomatic_complexity
+per-file-ignores = """\
+# F401: Ignore "unused" imports
+# F403: Ignore star imports
+# F405: Ignore names from star imports
+__init__.py:F401,F403,F405\
+"""
 
 
 [tool.poetry]

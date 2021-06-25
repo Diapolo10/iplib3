@@ -1,6 +1,6 @@
 """iplib3's functionality specific to addresses"""
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from iplib3.subnet import SubnetMask
 from .constants.address import (
@@ -115,6 +115,30 @@ def _ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
     return False
 
 
+def _ipv6_port_stripper(address: str, strict: bool = True) -> Tuple[str, Optional[int], bool]:
+
+    valid = True
+    port_num = None
+
+    # Try split on closing bracket and port separator
+    address, *port = address.split(']:')
+    if port:
+        # Gets rid of the opening bracket that contained the address
+        address = address[1:]
+        try:
+            port_num = int(port[0])
+        except ValueError:
+            # Port number wasn't a valid integer
+            valid = False
+
+        if strict and port_num is not None:
+            if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
+                # Port number was too high or too low to be strictly valid
+                valid = False
+
+    return address, port_num, valid
+
+
 def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
     """
     Validates an IPv6 address, returning a boolean.
@@ -123,23 +147,14 @@ def _ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
     don't exceed legal bounds, otherwise focuses on form.
     """
 
+    # TODO: Further break down the function into sub-functions
+
     if isinstance(address, str):
 
-        # Try split on closing bracket and port separator
-        address, *port = address.split(']:')
-        if port:
-            # Gets rid of the opening bracket that contained the address
-            address = address[1:]
-            try:
-                port_num = int(port[0])
-            except ValueError:
-                # Port number wasn't a valid integer
-                return False
+        address, _, valid = _ipv6_port_stripper(address, strict=strict)
 
-            if strict:
-                if not PORT_NUMBER_MIN_VALUE <= port_num <= PORT_NUMBER_MAX_VALUE:
-                    # Port number was too high or too low to be strictly valid
-                    return False
+        if not valid:
+            return valid
 
         halves = address.split('::')
         segments = []
@@ -207,11 +222,9 @@ class PureAddress:
 
     __slots__ = ('_num', '_port')
 
-
     def __init__(self):
         self._num: int = 0
         self._port: Optional[int] = None
-
 
     def __eq__(self, other: Any) -> bool:
 
@@ -227,7 +240,6 @@ class PureAddress:
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-
     @property
     def num(self) -> int:
         """
@@ -238,7 +250,6 @@ class PureAddress:
         """
 
         return max(0, self._num)
-
 
     @property
     def port(self) -> Optional[int]:
@@ -253,7 +264,6 @@ class PureAddress:
 
         return min(max(PORT_NUMBER_MIN_VALUE, self._port), PORT_NUMBER_MAX_VALUE)
 
-
     @port.setter
     def port(self, value: Optional[int]) -> None:
         """
@@ -263,7 +273,7 @@ class PureAddress:
         """
 
         if value is None:
-            pass # OK
+            pass  # OK
 
         elif not isinstance(value, int):
             raise TypeError(f"Port '{value}' is not a valid integer")
@@ -275,7 +285,6 @@ class PureAddress:
 
         self._port = value
 
-
     @property
     def as_hex(self) -> str:
         """
@@ -284,14 +293,12 @@ class PureAddress:
 
         return f"0x{self.num:0X}"
 
-
     def num_to_ipv4(self) -> str:
         """
         A wrapper method for the otherwise equivalent static method
         """
 
         return self._num_to_ipv4(self.num)
-
 
     def num_to_ipv6(self, shorten: bool = True, remove_zeroes: bool = False) -> str:
         """
@@ -302,7 +309,6 @@ class PureAddress:
         """
 
         return self._num_to_ipv6(self.num, shorten, remove_zeroes)
-
 
     @staticmethod
     def _num_to_ipv4(num: int) -> str:
@@ -315,7 +321,6 @@ class PureAddress:
             num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE+1)
             segments.append(segment)
         return '.'.join(map(str, segments[::-1]))
-
 
     @staticmethod
     def _num_to_ipv6(num: int, shorten: bool = True, remove_zeroes: bool = False) -> str:
@@ -400,7 +405,6 @@ class IPAddress(PureAddress):
         self.__init__(address=address, port_num=port_num, **kwargs)
         return self
 
-
     def __init__(self, address: Optional[int] = IPV4_LOCALHOST, port_num=None):
         super().__init__()
         self._num: int = address if address is not None else 0
@@ -409,10 +413,8 @@ class IPAddress(PureAddress):
         self._ipv6: Optional[IPv6] = None
         self._submask: Optional[SubnetMask] = None
 
-
     def __repr__(self) -> str:
         return f"iplib3.{self.__class__.__name__}('{self}')"
-
 
     def __str__(self) -> str:
 
@@ -428,13 +430,11 @@ class IPAddress(PureAddress):
 
         raise ValueError(f"No valid address representation exists for {self.num}")
 
-
     @property
     def as_ipv4(self) -> 'IPv4':
         """Creates and returns an IPv4 version of the address, if possible"""
 
         return IPv4(self.num_to_ipv4(), port_num=self.port)
-
 
     @property
     def as_ipv6(self) -> 'IPv6':
@@ -463,14 +463,12 @@ class IPv4(IPAddress):
         self._address = address
         super().__init__(address=self._ipv4_to_num(), port_num=port_num)
 
-
     def __str__(self) -> str:
 
         if self.port is not None:
             return f"{self._address}:{self.port}"
 
         return self._address
-
 
     def _ipv4_to_num(self) -> int:
         """
@@ -512,14 +510,12 @@ class IPv6(IPAddress):
         self._address = address
         super().__init__(address=self._ipv6_to_num(), port_num=port_num)
 
-
     def __str__(self) -> str:
 
         if self.port is not None:
             return f"[{self._address}]:{self.port}"
 
         return self._address
-
 
     def _ipv6_to_num(self) -> int:
         """

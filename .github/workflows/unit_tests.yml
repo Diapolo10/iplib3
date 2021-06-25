@@ -10,8 +10,7 @@ name: Unit tests
 on: [ push, pull_request ]
 
 jobs:
-
-  build-and-test:
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

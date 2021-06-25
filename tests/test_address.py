@@ -2,17 +2,17 @@
 
 import pytest
 
-from iplib3 import ( # pylint: disable=import-error,no-name-in-module
+from iplib3 import (  # pylint: disable=import-error,no-name-in-module
     IPAddress, IPv4, IPv6
 )
-from iplib3.address import ( # pylint: disable=import-error,no-name-in-module
+from iplib3.address import (  # pylint: disable=import-error,no-name-in-module
     _ip_validator,
     _ipv4_validator,
     _ipv6_validator,
     _port_validator,
     PureAddress,
 )
-from iplib3.constants import ( # pylint: disable=import-error,no-name-in-module
+from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
     IPV4_MIN_VALUE,         IPV6_MIN_VALUE,
     IPV4_MAX_VALUE,         IPV6_MAX_VALUE,
 
@@ -22,7 +22,7 @@ from iplib3.constants import ( # pylint: disable=import-error,no-name-in-module
 
 def test_ipv4():
     """Unit tests for IPv4"""
-    
+
     assert str(IPAddress(25601440).as_ipv4) == '1.134.165.160'
     assert str(IPAddress('192.168.1.1')) == '192.168.1.1'
     assert str(IPv4('192.168.1.1')) == '192.168.1.1'
@@ -42,9 +42,9 @@ def test_ipv4_port_initialisation():
     """Unit tests for IPv4 port number initialisation"""
 
     first = IPv4('222.173.190.239:80')
-    second = IPv4('222.173.190.239', 80) # pylint: disable=too-many-function-args
+    second = IPv4('222.173.190.239', 80)  # pylint: disable=too-many-function-args
     third = IPv4('222.173.190.239', port_num=80)
-    fourth = IPv4('222.173.190.239:25565', port_num=80) # Argument-given ports should be preferred
+    fourth = IPv4('222.173.190.239:25565', port_num=80)  # Argument-given ports should be preferred
 
     assert first == second == third == fourth
     assert str(third) == '222.173.190.239:80'
@@ -54,10 +54,10 @@ def test_ipv4_port_initialisation():
     first.port = None
     assert first.port is None
 
-    with pytest.raises(TypeError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(TypeError):
         first.port = "1337"
 
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         first.port = PORT_NUMBER_MAX_VALUE+1
 
 
@@ -92,7 +92,7 @@ def test_ipv6_port_initialisation():
     """Test IPv6 port number initialisation"""
 
     first = IPv6('[::1337:1337:1337:1337]:25565')
-    second = IPv6('::1337:1337:1337:1337', 25565) # pylint: disable=too-many-function-args
+    second = IPv6('::1337:1337:1337:1337', 25565)  # pylint: disable=too-many-function-args
     third = IPv6('::1337:1337:1337:1337', port_num=25565)
     fourth = IPv6('[::1337:1337:1337:1337]:80', port_num=25565)
 
@@ -108,14 +108,14 @@ def test_chaining():
 
 def test_hex_output():
     """Test hex number output"""
-    
+
     base = IPAddress(0xDEADBEEF)
     four = base.as_ipv4
     six = base.as_ipv6
 
     assert base.as_hex == '0xDEADBEEF'
-    assert four.as_hex   == '0xDEADBEEF'
-    assert six.as_hex   == '0xDEADBEEF'
+    assert four.as_hex == '0xDEADBEEF'
+    assert six.as_hex == '0xDEADBEEF'
 
 
 def test_ipv4_validator():
@@ -216,8 +216,8 @@ def test_port_validator():
 
 def test_pure_address():
     """Test the PureAddress base class"""
-    
-    address = PureAddress()
+
+    _ = PureAddress()
 
 
 def test_ipaddress():
@@ -236,7 +236,7 @@ def test_ipaddress():
     # rigged.num.func.setter = (lambda self, x: setattr(self._num, x))
     # rigged.num = IPV6_MAX_VALUE+1
 
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         str(rigged)
 
 
@@ -244,13 +244,13 @@ def test_ipv6_to_num():
     """Test leftover functionality on IPv6"""
 
     assert IPv6('70::')._ipv6_to_num()
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         IPv6('12::34::')._ipv6_to_num()
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         IPv6('::H07:AF')._ipv6_to_num()
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         IPv6('1:1:1:1:1:1:1:1:1')._ipv6_to_num()
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         IPv6('::7:FFFFF')._ipv6_to_num()
-    with pytest.raises(ValueError) as e_info: # pylint: disable=unused-variable
+    with pytest.raises(ValueError):
         IPv6('::7:-34')._ipv6_to_num()
