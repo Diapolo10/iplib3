@@ -55,7 +55,7 @@ def _port_validator(port_num: Optional[int]) -> bool:
     """
 
     if port_num is None:
-        pass
+        return True
 
     return (
         isinstance(port_num, int)

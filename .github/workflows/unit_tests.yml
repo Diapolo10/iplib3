@@ -12,7 +12,6 @@ on: [ push, pull_request ]
 jobs:
 
   build-and-test:
-    name: Run unit tests on multiple versions of Python
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
