@@ -5,7 +5,7 @@ name: Flake8
 on: [ push, pull_request ]
 
 jobs:
-  lint:
+  flake8:
 
     runs-on: ubuntu-latest
 
