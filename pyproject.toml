@@ -27,13 +27,13 @@ __init__.py:F401,F403,F405\
 
 [tool.poetry]
 name = 'iplib3'
-version = '0.1.6-3'
+version = '0.1.6-4'
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 
-include = ['CHANGELOG.md', 'LICENSE',]
+include = ['CHANGELOG.md', 'LICENSE', 'requirements.txt']
 license = 'MIT'
 readme = 'README.md'
 

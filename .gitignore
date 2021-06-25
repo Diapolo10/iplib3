@@ -138,3 +138,6 @@ cov.xml
 
 # Poetry lock file (may be committed at some point)
 poetry.lock
+
+# Tox stuff
+tests/reports
