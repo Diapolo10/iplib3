@@ -30,6 +30,7 @@ def test_ipv4():
     assert str(IPv4('1.1.1.1:8080')) == '1.1.1.1:8080'
     assert str(IPAddress(0xDEADBEEF).as_ipv4) == '222.173.190.239'
     assert str(IPAddress(0xDEADBEEF, port_num=80).as_ipv4) == '222.173.190.239:80'
+    assert str(IPv4()) == '127.0.0.1'
 
     address = IPAddress(0xDEADBEEF)
     assert address == IPAddress(0xDEADBEEF)
@@ -70,6 +71,7 @@ def test_ipv6():
     assert str(IPAddress('[2606:4700:4700::1111]:8080')) == '[2606:4700:4700::1111]:8080'
     assert str(IPv6('[2606:4700:4700::1111]:8080')) == '[2606:4700:4700::1111]:8080'
     assert str(IPAddress(0xDEADBEEF).as_ipv6) == '0:0:0:0:0:0:DEAD:BEEF'
+    assert str(IPv6()) == '0:0:0:0:0:0:0:1'
 
 
 def test_ipv6_full():
@@ -226,9 +228,9 @@ def test_ipaddress():
     instance = IPAddress()
     instance2 = IPAddress(0xDEAD_DEAD_BEEF)
 
-    assert repr(IPAddress()) == "iplib3.IPAddress('128.0.0.1')"
-    assert str(instance) == '128.0.0.1'
-    assert str(instance) == '128.0.0.1'
+    assert repr(IPAddress()) == "iplib3.IPAddress('127.0.0.1')"
+    assert str(instance) == '127.0.0.1'
+    assert str(instance) == '127.0.0.1'
     assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
     assert str(instance2) == '0:0:0:0:0:DEAD:DEAD:BEEF'
 

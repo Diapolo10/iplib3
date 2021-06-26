@@ -67,12 +67,16 @@ def test_subnet_validator():
     assert _subnet_validator("255.0.0.0", protocol='ipv4') is True
     assert _subnet_validator("255.0.0.0", protocol='IPV4') is True
     assert _subnet_validator("255.0.0.0", protocol='ipv6') is True
-    assert _subnet_validator('255.255.255.128', protocol='ipv6') is True
+    assert _subnet_validator("255.255.255.128", protocol='ipv6') is True
     assert _subnet_validator("255.128.0.0", protocol='ipv4') is True
+    assert _subnet_validator(16, protocol='ipv6') is True
 
     assert _subnet_validator("1.1.1.1", protocol='ipv4') is False
     assert _subnet_validator("255.128.192.224", protocol='ipv4') is False
     assert _subnet_validator("255.128.128.0", protocol='ipv4') is False
+
+    with pytest.raises(ValueError):
+        _subnet_validator(24, protocol='ipv8')
 
 
 def test_pure_subnet_mask():
@@ -91,8 +95,8 @@ def test_pure_subnet_mask():
     assert subnet == IPV4_MIN_SUBNET_VALUE
     assert subnet == '0'
 
-    assert (subnet == 3.14) is False
-    assert (subnet == another) is False
+    assert (subnet != 3.14) is True
+    assert (subnet != another) is True
 
 
 def test_subnet_mask():
@@ -124,6 +128,8 @@ def test_subnet_mask():
         SubnetMask._subnet_to_num(IPV4_MAX_SUBNET_VALUE+1, subnet_type='ipv4')
     with pytest.raises(ValueError):
         SubnetMask._subnet_to_num(IPV6_MAX_SUBNET_VALUE+1)
+    with pytest.raises(ValueError):
+        SubnetMask._subnet_to_num('255.6.0.0')
 
     assert (
         SubnetMask._prefix_to_subnet_mask(24, subnet_type='ipv4')
