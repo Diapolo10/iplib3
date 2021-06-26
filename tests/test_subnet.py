@@ -129,7 +129,7 @@ def test_subnet_mask():
     with pytest.raises(ValueError):
         SubnetMask._subnet_to_num(IPV6_MAX_SUBNET_VALUE+1)
     with pytest.raises(ValueError):
-        SubnetMask._subnet_to_num('255.6.0.0')
+        SubnetMask._subnet_to_num('255.6.0.0', subnet_type = 'ipv4')
 
     assert (
         SubnetMask._prefix_to_subnet_mask(24, subnet_type='ipv4')
