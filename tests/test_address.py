@@ -6,17 +6,11 @@ from iplib3 import (  # pylint: disable=import-error,no-name-in-module
     IPAddress, IPv4, IPv6
 )
 from iplib3.address import (  # pylint: disable=import-error,no-name-in-module
-    _ip_validator,
-    _ipv4_validator,
-    _ipv6_validator,
-    _port_validator,
     PureAddress,
 )
 from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
-    IPV4_MIN_VALUE,         IPV6_MIN_VALUE,
-    IPV4_MAX_VALUE,         IPV6_MAX_VALUE,
-
-    PORT_NUMBER_MIN_VALUE,  PORT_NUMBER_MAX_VALUE,
+    IPV6_MAX_VALUE,
+    PORT_NUMBER_MAX_VALUE,
 )
 
 
@@ -120,106 +114,13 @@ def test_hex_output():
     assert six.as_hex == '0xDEADBEEF'
 
 
-def test_ipv4_validator():
-    """Test the IPv4 address validator"""
-
-    assert _ipv4_validator('1.1.1.1') is True
-    assert _ipv4_validator('0.0.0.0') is True
-    assert _ipv4_validator('255.255.255.255') is True
-
-    assert _ipv4_validator('192.168.0.1:8080') is True
-    assert _ipv4_validator('12.123.234.345') is False
-    assert _ipv4_validator('FF.FF.FF.FF') is False
-    assert _ipv4_validator('1.1.1.1:314159') is False
-    assert _ipv4_validator('12.23.34.45.56') is False
-    assert _ipv4_validator('12.23.34.45.56', strict=False) is False
-    assert _ipv4_validator('255,255,255,255') is False
-    assert _ipv4_validator('128.0.0.1:notaport') is False
-    assert _ipv4_validator([128, 0, 0, 1]) is False
-
-    assert _ipv4_validator('1337.1337.1337.1337') is False
-    assert _ipv4_validator('1337.1337.1337.1337:314159') is False
-    assert _ipv4_validator('1337.1337.1337.1337', strict=False) is True
-    assert _ipv4_validator('1337.1337.1337.1337:314159', strict=False) is True
-
-    assert _ipv4_validator(25601440) is True
-    assert _ipv4_validator(0xDEADBEEF) is True
-    assert _ipv4_validator(25601440, strict=False) is True
-    assert _ipv4_validator(0xDEADBEEF, strict=False) is True
-    assert _ipv4_validator(IPV4_MIN_VALUE) is True
-    assert _ipv4_validator(IPV4_MAX_VALUE) is True
-    assert _ipv4_validator(IPV4_MIN_VALUE-1) is False
-    assert _ipv4_validator(IPV4_MAX_VALUE+1) is False
-
-
-def test_ipv6_validator():
-    """Test the IPv6 address validator"""
-
-    assert _ipv6_validator('0:0:0:0:0:0:0:0') is True
-    assert _ipv6_validator('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF') is True
-    assert _ipv6_validator('[0:0:0:0:0:0:0:0]:80') is True
-    assert _ipv6_validator('[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:65535') is True
-    assert _ipv6_validator('::12') is True
-    assert _ipv6_validator('314::') is True
-    assert _ipv6_validator('2606:4700:4700::1111') is True
-    assert _ipv6_validator('2606:4700:4700::10000', strict=False) is True
-
-    assert _ipv6_validator('[2606:4700:4700::1111]:notaport') is False
-    assert _ipv6_validator('[2606:4700:4700::1111]:-1') is False
-    assert _ipv6_validator('[2606:4700:4700::1111]:314159') is False
-    assert _ipv6_validator('2606:4700:4700::10000') is False
-    assert _ipv6_validator('2606:4700::4700::1111') is False
-    assert _ipv6_validator('2606:4700:4700::HACK') is False
-    assert _ipv6_validator('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0001') is False
-    assert _ipv6_validator('2606:4700:4700:1111') is False
-
-    assert _ipv6_validator(IPV6_MIN_VALUE) is True
-    assert _ipv6_validator(IPV6_MAX_VALUE) is True
-    assert _ipv6_validator(IPV6_MIN_VALUE-1) is False
-    assert _ipv6_validator(IPV6_MAX_VALUE+1) is False
-
-    assert _ipv6_validator([2606, 4700, 4700, 0, 0, 0, 0, 1111]) is False
-
-
-def test_ip_validator():
-    """Test the generic IP address validator"""
-
-    assert _ip_validator('128.0.0.1') is True
-    assert _ip_validator(0xDE_AD_BE_EF) is True
-    assert _ip_validator('2606:4700:4700::1111') is True
-    assert _ip_validator(IPV6_MAX_VALUE) is True
-
-
-def test_port_validator():
-    """Test the port number validator"""
-
-    assert _port_validator(None) is True
-    assert _port_validator(False) is True
-    assert _port_validator(True) is True
-    assert _port_validator(13) is True
-    assert _port_validator(21) is True
-    assert _port_validator(22) is True
-    assert _port_validator(25) is True
-    assert _port_validator(80) is True
-    assert _port_validator(104) is True
-    assert _port_validator(192) is True
-    assert _port_validator(443) is True
-    assert _port_validator(554) is True
-    assert _port_validator(3724) is True
-    assert _port_validator(8080) is True
-    assert _port_validator(25565) is True
-
-    assert _port_validator(PORT_NUMBER_MIN_VALUE-1) is False
-    assert _port_validator(PORT_NUMBER_MAX_VALUE+1) is False
-    assert _port_validator(0xDEADBEEF) is False
-    assert _port_validator("Hello, world!") is False
-    assert _port_validator([3, 1, 4]) is False
-
-
 def test_pure_address():
     """Test the PureAddress base class"""
 
-    _ = PureAddress()
+    assert PureAddress()
+    assert PureAddress(0xDE_AD_BE_EF)
+    assert PureAddress(port=80)
+    assert PureAddress(0x7F_00_00_01, 80)
 
 
 def test_ipaddress():
