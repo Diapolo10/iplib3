@@ -27,7 +27,7 @@ __init__.py:F401,F403,F405\
 
 [tool.poetry]
 name = 'iplib3'
-version = '0.1.6-4'
+version = '0.2.0'
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
