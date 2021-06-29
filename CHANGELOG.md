@@ -12,13 +12,13 @@ TEMPLATE
 ## [major.minor.patch] - yyyy-mm-dd
 
 A message that notes the main changes in the update.
- 
+
 ### Added
-   
+
 ### Changed
 
 ### Deprecated
- 
+
 ### Fixed
 
 ### Removed
@@ -49,6 +49,68 @@ Lorem Ipsum dolor sit amet.
 
 _______________________________________________________________________________
 
+## [0.2.0] - 2021-06-29
+
+This release focuses mostly on back-end changes, but there are a few additions
+to functionality as well. Things have moved around, new unit tests have been
+added, and the overall structure of the project is now more manageable. Most
+importantly, however, the project has now been transitioned to use `poetry` as
+its build system and this transition has enabled many of the old config files
+to be removed. The entire project now uses `pyproject.toml` for all
+configuration, from builds to unit tests. In addition, the GitHub Actions
+workflow has been split into multiple workflows, it now uses Tox, and the
+project is now additionally linted using `flake8`; previously only `pylint`
+was used.
+
+### Added
+
+- `iplib3.constants`, a new sub-package used to store all of the constant
+  values used by the project.
+- `iplib3.subnet`, a new submodule housing new subnet objects. At this
+  stage they remain unused, though the code has been unit tested.
+- `iplib3.validators`, a new submodule for validator functions.
+
+### Changed
+
+- Validator functions from `iplib3.address` and `iplib3.subnet` have been
+  moved to `iplib3.validators` to keep the codebase more maintainable.
+- Constants originally defined in `iplib3.address` and `iplib3.subnet`
+  have been moved to `iplib3.constants`.
+- Some validators, including `port_validator`, `ip_validator`,
+  `ipv4_validator`, `ipv6_validator`, and `subnet_validator`, have been
+  added to the public interface. Previously they were considered private.
+- Steps have been taken to reduce code duplication and complexity by creating
+  new, currently private helper functions. This will be a key point in
+  future development.
+- `iplib3.PureAddress` is no longer an abstract base class, as it caused
+  difficulties in unit testing. It has been reworked into a concrete class.
+- Updated localisation files
+
+### Deprecated
+
+- The `requirements.txt`-file is no longer used for anything, it may be removed
+  in a future version. Then again, it has been kept empty so far as the library
+  currently lacks non-development dependencies.
+
+### Fixed
+
+- Hundreds of linter errors
+- Unit test coverage (previously ~70%, now 100%)
+- Bugs related to equality testing of addresses
+- Bugs related to initialisation and construction of `iplib3.IPAddress`
+
+### Removed
+
+- `setup.cfg`
+- `setup.py`
+- Scripts related to running tests (now handled by Makefile and/or Poetry)
+
+### Security
+
+- Added Snyk integration to sniff out vulnerabilities
+
+_______________________________________________________________________________
+
 ## [0.1.5] - 2021-05-01
 
 This is the beginning of the changelog. Previously made commits have not been
@@ -57,7 +119,8 @@ the initial commit.
 
 ### Added
 
-- Added project URLs, more classifiers and a minimum Python version requirement to PyPI
+- Added project URLs, more classifiers,
+  and a minimum Python version requirement to PyPI
 
 ### Changed
 
@@ -68,3 +131,16 @@ the initial commit.
 ### Fixed
 
 - Fixed the CI/CD build process
+
+<!-- markdownlint-configure-file {
+    "MD022": false,
+    "MD024": false,
+    "MD030": false,
+    "MD032": false
+} -->
+<!--
+    MD022: Blanks around headings
+    MD024: No duplicate headings
+    MD030: Spaces after list markers
+    MD032: Blanks around lists
+-->

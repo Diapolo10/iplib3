@@ -5,7 +5,7 @@ name: Flake8
 on: [ push, pull_request ]
 
 jobs:
-  lint:
+  flake8:
 
     runs-on: ubuntu-latest
 
@@ -16,15 +16,15 @@ jobs:
       uses: actions/setup-python@v2.2.2
       with:
         python-version: 3.9
-    
+
     - name: Install Poetry
       uses: Gr1N/setup-poetry@v4
-    
+
     - name: Install library and dependencies
       run: |
         python3 -m pip install --upgrade pip
         poetry install
-    
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
