@@ -9,7 +9,6 @@ relative_files = true
 omit = [
     '.tox/*',
     'tests/*',
-    'setup.py',
 ]
 
 
@@ -27,13 +26,13 @@ __init__.py:F401,F403,F405\
 
 [tool.poetry]
 name = 'iplib3'
-version = '0.2.0'
+version = '0.2.1'
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 
-include = ['CHANGELOG.md', 'LICENSE', 'requirements.txt']
+include = ['CHANGELOG.md', 'LICENSE',]
 license = 'MIT'
 readme = 'README.md'
 

@@ -27,6 +27,27 @@ def test_pure_address():
     assert PureAddress(-42)
 
 
+def test_pure_address_equality():
+    """Test PureAddress equality"""
+
+    address = PureAddress(0xDE_AD_BE_EF)
+
+    assert address == PureAddress(0xDE_AD_BE_EF)
+    assert (address == PureAddress(0xDE_AD_BE_EF, 80)) is False
+    assert (address == 0xDE_AD_BE_EF) is False
+    assert (address == 'cheese') is False
+
+
+def test_pure_address_inequality():
+    """Test PureAddress inequality"""
+
+    address = PureAddress(0xDE_AD_BE_EF)
+
+    assert address != PureAddress(0xC0_01_BA_5E)
+    assert address != PureAddress(0xDE_AD_BE_EF, 80)
+    assert address != 0xC0_01_BA_5E
+
+
 def test_pure_address_num():
     """Test PureAddress num property"""
 
@@ -55,6 +76,9 @@ def test_pure_address_port_setter():
 
     address.port = 80
     assert address.port == 80
+
+    address.port = None
+    assert address.port is None
 
     with pytest.raises(TypeError):
         address.port = 3.14
@@ -127,6 +151,16 @@ def test_ipaddress():
     assert isinstance(IPAddress(IPV4_LOCALHOST, 80), IPAddress)
     assert isinstance(IPAddress('127.0.0.1', 80), IPv4)
     assert isinstance(IPAddress('::DEAD:BEEF', 80), IPv6)
+
+
+def test_ipaddress_equality():
+    """Test IPAddress equality"""
+
+    address = IPAddress(IPV4_LOCALHOST)
+
+    assert address == IPAddress(IPV4_LOCALHOST)
+    assert address == '127.0.0.1'
+    assert address == PureAddress(IPV4_LOCALHOST)
 
 
 def test_ipaddress_string():
