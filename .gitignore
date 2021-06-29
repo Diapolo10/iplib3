@@ -126,3 +126,18 @@ dmypy.json
 
 # Local GitHub Actions tool (ACT)
 .actrc
+
+# coverage
+cov.xml
+
+# Editor config files
+.vscode
+
+# DeepCode/Snyk
+.dccache
+
+# Poetry lock file (may be committed at some point)
+poetry.lock
+
+# Tox stuff
+tests/reports

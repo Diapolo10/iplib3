@@ -1,15 +1,17 @@
-# iplib3
- A `pathlib.Path` equivalent for IP addresses.
+# IPLib3
+
+A `pathlib.Path`-equivalent for IP addresses.
 
 <!-- Badge chain start -->
- [![Version](https://img.shields.io/pypi/v/iplib3)](https://pypi.org/project/iplib3/) ![Build Status](https://github.com/diapolo10/iplib3/workflows/iplib3%20CI/badge.svg) [![License](https://img.shields.io/github/license/diapolo10/iplib3)](https://opensource.org/licenses/MIT) [![Coverage Status](https://coveralls.io/repos/github/Diapolo10/iplib3/badge.svg?branch=main?logo=coveralls)](https://coveralls.io/github/Diapolo10/iplib3?branch=main) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_shield)
- 
- [![Dependencies](https://img.shields.io/librariesio/github/diapolo10/iplib3)](https://libraries.io/github/Diapolo10/iplib3) [![CodeFactor](https://www.codefactor.io/repository/github/diapolo10/iplib3/badge?logo=codefactor)](https://www.codefactor.io/repository/github/diapolo10/iplib3) [![Rating](https://img.shields.io/librariesio/sourcerank/pypi/iplib3)](https://libraries.io/github/Diapolo10/iplib3/sourcerank) ![Python versions](https://img.shields.io/pypi/pyversions/iplib3?logo=python)  
- ![Downloads](https://img.shields.io/pypi/dm/iplib3?logo=pypi) ![Wheel](https://img.shields.io/pypi/wheel/iplib3?logo=pypi) ![Repository size](https://img.shields.io/github/repo-size/diapolo10/iplib3?logo=github) ![Code size](https://img.shields.io/github/languages/code-size/diapolo10/iplib3?logo=github)  
- ![Lines of code](https://img.shields.io/tokei/lines/github/diapolo10/iplib3?logo=github) ![File count](https://img.shields.io/github/directory-file-count/diapolo10/iplib3?logo=github) ![Last commit](https://img.shields.io/github/last-commit/diapolo10/iplib3?logo=github)
+[![License](https://img.shields.io/github/license/diapolo10/iplib3)](https://opensource.org/licenses/MIT)[![CodeFactor](https://www.codefactor.io/repository/github/diapolo10/iplib3/badge?logo=codefactor)](https://www.codefactor.io/repository/github/diapolo10/iplib3)![Build Status](https://github.com/diapolo10/iplib3/workflows/iplib3%20CI/badge.svg)![Last commit](https://img.shields.io/github/last-commit/diapolo10/iplib3?logo=github)[![codecov](https://codecov.io/gh/Diapolo10/iplib3/branch/main/graph/badge.svg?token=JUWGSVLIF3)](https://codecov.io/gh/Diapolo10/iplib3)  
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_shield)![Wheel](https://img.shields.io/pypi/wheel/iplib3?logo=pypi)![Downloads](https://img.shields.io/pypi/dm/iplib3?logo=pypi)[![Version](https://img.shields.io/pypi/v/iplib3)](https://pypi.org/project/iplib3/)[![Rating](https://img.shields.io/librariesio/sourcerank/pypi/iplib3)](https://libraries.io/github/Diapolo10/iplib3/sourcerank)  
+![Repository size](https://img.shields.io/github/repo-size/diapolo10/iplib3?logo=github)![Code size](https://img.shields.io/github/languages/code-size/diapolo10/iplib3?logo=github)![Lines of code](https://img.shields.io/tokei/lines/github/diapolo10/iplib3?logo=github)![Python versions](https://img.shields.io/pypi/pyversions/iplib3?logo=python)
+<!-- Broken/unused badges -->
+<!-- [![Coverage Status](https://coveralls.io/repos/github/Diapolo10/iplib3/badge.svg?branch=main?logo=coveralls)](https://coveralls.io/github/Diapolo10/iplib3?branch=main) -->
+<!-- ![File count](https://img.shields.io/github/directory-file-count/diapolo10/iplib3?logo=github) -->
 <!-- Badge chain end -->
 
-This module was heavily inspired by the built-in `pathlib` module to provide a similiar, flexible interface for IP addresses. `iplib3` can effortlessly convert between IPv4, IPv6, raw numbers and hex values and it can also verify IP address syntax. It can recognise optional port numbers and store them separately from the main address. The `iplib.IPAddress` class works like `pathlib.Path` in that it accepts both IPv4 and IPv6 addresses, returning an object representing whichever format was used. The module also uses some unit tests, and these will be added more over time as functionality grows and becomes more set in stone.
+This module was heavily inspired by the built-in `pathlib` module to provide a similar, flexible interface for IP addresses. `iplib3` can effortlessly convert between IPv4, IPv6, raw numbers and hex values and it can also verify IP address syntax. It can recognise optional port numbers and store them separately from the main address. The `iplib.IPAddress` class works like `pathlib.Path` in that it accepts both IPv4 and IPv6 addresses, returning an object representing whichever format was used. The module also uses some unit tests, and these will be added more over time as functionality grows and becomes more set in stone.
 
 The module is currently lacking in long-term vision as I used it as a practice project, but there are some plans to further flesh it out. It could incorporate URL support in the future and may be extended with `requests` integration.
 
@@ -29,7 +31,7 @@ Use the package manager [`pip`](https://pip.pypa.io/en/stable/) to install `ipli
 On Windows:
 
 ```sh
-py -3 -m pip install iplib3
+py -m pip install iplib3
 ```
 
 On most Unix-like platforms:
@@ -43,6 +45,8 @@ On other platforms, you may try:
 ```sh
 pip install iplib3
 ```
+
+The library is distributed as wheels and source distributions, and the source distributions use Poetry as the build back-end instead of `setuptools`.
 
 ## Usage
 
@@ -91,9 +95,13 @@ print(address.num) # 3735928559
 ```
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
 
 ## License
-This project is licensed under an [MIT](./LICENSE) license.
+
+This project is licensed under an [MIT license](./LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_large)
