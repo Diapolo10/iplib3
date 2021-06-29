@@ -49,6 +49,25 @@ Lorem Ipsum dolor sit amet.
 
 _______________________________________________________________________________
 
+## [0.2.1] - 2021-06-30
+
+A quick fix to resolve Snyk throwing errors due to the empty `requirements.txt`
+file.
+
+### Changed
+
+- Updated localisation files
+
+### Fixed
+
+- Snyk throwing a fit on pull requests
+
+### Removed
+
+- `requirements.txt`
+
+_______________________________________________________________________________
+
 ## [0.2.0] - 2021-06-29
 
 This release focuses mostly on back-end changes, but there are a few additions
