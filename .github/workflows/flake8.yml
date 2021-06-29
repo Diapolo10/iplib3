@@ -2,7 +2,7 @@
 
 name: Flake8
 
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
   flake8:
