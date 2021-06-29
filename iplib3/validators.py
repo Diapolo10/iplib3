@@ -229,7 +229,7 @@ def _port_stripper(address: str, protocol: str = 'ipv4', strict: bool = True) ->
 
     # Try split on closing bracket and port separator
     address, *port = address.strip().split(port_separator)
-    if port:
+    if port and valid:
 
         if protocol.lower() == 'ipv6':
             # Get rid of the opening bracket that contained the address (eg. [::12:34]:8080 -> ::12:34)

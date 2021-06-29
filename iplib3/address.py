@@ -119,9 +119,6 @@ class PureAddress:
     def num_to_ipv6(self, shorten: bool = True, remove_zeroes: bool = False) -> str:
         """
         A wrapper method for the otherwise equivalent static method
-
-        TODO: toggleable shortening and optionally
-              remove one section of zeroes
         """
 
         return self._num_to_ipv6(self.num, shorten, remove_zeroes)
@@ -136,7 +133,7 @@ class PureAddress:
         for _ in range(IPV4_MAX_SEGMENT_COUNT):
             num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE+1)
             segments.append(segment)
-        return '.'.join(map(str, segments[::-1]))
+        return '.'.join(str(segment) for segment in segments[::-1])
 
     @staticmethod
     def _num_to_ipv6(num: int, shorten: bool = True, remove_zeroes: bool = False) -> str:
@@ -292,7 +289,7 @@ class IPv4(IPAddress):
         Raises ValueError on invalid IPv4 format.
         """
 
-        segments = list(map(int, self._address.split('.')))[::-1]
+        segments = [int(segment) for segment in self._address.split('.')][::-1]
         total = 0
 
         for idx, num in enumerate(segments):

@@ -3,6 +3,7 @@
 import pytest
 
 from iplib3.validators import (  # pylint: disable=import-error,no-name-in-module
+    _port_stripper,
     ip_validator,
     ipv4_validator,
     ipv6_validator,
@@ -268,3 +269,78 @@ def test_ipv6_subnet_validator_invalid_type():
 
     with pytest.raises(TypeError):
         _ipv6_subnet_validator("::DEAD:BEEF")
+
+
+def test_port_stripper_ipv4():
+    """Test the port stripper with IPv4"""
+
+    address, port, valid = _port_stripper("127.0.0.1:8080", protocol='ipv4')
+    assert address == '127.0.0.1'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("127.0.0.1:8080", protocol='IPv4')
+    assert address == '127.0.0.1'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("127.0.0.1:8080", protocol='IPV4')
+    assert address == '127.0.0.1'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("222.13.7.42:80", protocol='ipv4')
+    assert address == '222.13.7.42'
+    assert port == 80
+    assert valid
+
+
+def test_port_stripper_ipv4_no_port():
+    """Test the port stripper with IPv4 without port"""
+
+    address, port, valid = _port_stripper("127.0.0.1", protocol='ipv4')
+    assert address == '127.0.0.1'
+    assert port is None
+    assert valid
+    address, port, valid = _port_stripper("222.13.7.42", protocol='ipv4')
+    assert address == '222.13.7.42'
+    assert port is None
+    assert valid
+
+
+def test_port_stripper_ipv6():
+    """Test the port stripper with IPv6"""
+
+    address, port, valid = _port_stripper("[2606:4700:4700::1111]:8080", protocol='ipv6')
+    assert address == '2606:4700:4700::1111'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("[2606:4700:4700::1111]:8080", protocol='IPv6')
+    assert address == '2606:4700:4700::1111'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("[2606:4700:4700::1111]:8080", protocol='IPV6')
+    assert address == '2606:4700:4700::1111'
+    assert port == 8080
+    assert valid
+    address, port, valid = _port_stripper("[::DEAD:BEEF]:80", protocol='ipv6')
+    assert address == '::DEAD:BEEF'
+    assert port == 80
+    assert valid
+
+
+def test_port_stripper_ipv6_no_port():
+    """Test the port stripper with IPv6 without port"""
+
+    address, port, valid = _port_stripper("2606:4700:4700::1111", protocol='ipv6')
+    assert address == '2606:4700:4700::1111'
+    assert port is None
+    assert valid
+    address, port, valid = _port_stripper("::DEAD:BEEF", protocol='ipv6')
+    assert address == '::DEAD:BEEF'
+    assert port is None
+    assert valid
+
+
+def test_port_stripper_invalid_protocol():
+    """Test the port stripper for using invalid protocol"""
+
+    _, _, valid = _port_stripper("127.0.0.1:8080", protocol='IPv9')
+    assert valid is False
