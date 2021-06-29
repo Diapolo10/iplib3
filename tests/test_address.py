@@ -192,6 +192,7 @@ def test_ipv4_string():
     assert str(IPv4('127.0.0.1', 80)) == '127.0.0.1:80'
     assert str(IPv4('127.0.0.1:80', 8080)) == '127.0.0.1:8080'
 
+
 def test_ipv4_ipv4_to_num():
     """Test IPv4 to num conversion"""
 
