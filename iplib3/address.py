@@ -44,10 +44,6 @@ class PureAddress:
 
     def __eq__(self, other: Any) -> bool:
 
-        # To accommodate strings
-        if str(self) == str(other):
-            return True
-
         if isinstance(other, PureAddress):
             return self.num == other.num and self.port == other.port
 
@@ -55,6 +51,12 @@ class PureAddress:
 
     def __ne__(self, other: Any) -> bool:
         return not self == other
+
+    def __repr__(self) -> str:
+        return f"iplib3.{self.__class__.__name__}('{self}')"
+
+    def __str__(self) -> str:
+        return str(self.num)
 
     @property
     def num(self) -> int:
@@ -224,8 +226,13 @@ class IPAddress(PureAddress):
         self._ipv6: Optional[IPv6] = None
         self._submask: Optional[SubnetMask] = None
 
-    def __repr__(self) -> str:
-        return f"iplib3.{self.__class__.__name__}('{self}')"
+    def __eq__(self, other: Any) -> bool:
+
+        # To accommodate strings
+        if str(self) == str(other):
+            return True
+
+        return super().__eq__(other)
 
     def __str__(self) -> str:
 

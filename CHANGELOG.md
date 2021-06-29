@@ -61,6 +61,7 @@ file.
 ### Fixed
 
 - Snyk throwing a fit on pull requests
+- Missing coverage from `iplib3.address`
 
 ### Removed
 
