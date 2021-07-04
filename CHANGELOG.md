@@ -56,7 +56,7 @@ A message that notes the main changes in the update.
 ### Added
 
 - Added a `Makefile` to make testing the codebase easier/more streamlined locally on Linux/Unix platforms
-- Added Mypy and Tox as development dependencies
+- Added Tox as a development dependency
 
 ### Changed
 

@@ -55,9 +55,9 @@ jobs:
 
     - name: Install library and dependencies
       run: |
-        python -m pip install --upgrade pip
+        poetry run pip install --upgrade pip setuptools
         poetry install
-        poetry run python -m pip install tox tox-gh-actions
+        poetry run pip install tox-gh-actions
 
     - name: Run Tox (Pytest + Coverage)
       run: |

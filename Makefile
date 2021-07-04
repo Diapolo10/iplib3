@@ -2,6 +2,7 @@ PYMODULE := iplib3
 TESTS := tests
 INSTALL_STAMP := .install.stamp
 POETRY := $(shell command -v poetry 2> /dev/null)
+MYPY := $(shell command -v mypy 2> /dev/null)
 
 .DEFAULT_GOAL := help
 
@@ -34,9 +35,9 @@ lint: $(INSTALL_STAMP)
     # 
     # $(POETRY) run isort --profile=black --lines-after-imports=2 --check-only $(TESTS) $(PYMODULE)
     # $(POETRY) run black --check $(TESTS) $(PYMODULE) --diff
-	$(POETRY) run mypy $(PYMODULE) $(TESTS)
-	$(POETRY) run pflake8 # This is not a typo
-	$(POETRY) run pylint $(PYMODULE)
+	@if [ -z $(MYPY) ]; then echo "Mypy not found, skipping..."; else echo "Running Mypy..."; $(POETRY) run mypy $(PYMODULE) $(TESTS); fi
+	@echo "Running Flake8..."; $(POETRY) run pflake8 # This is not a typo
+	@echo "Running Pylint..."; $(POETRY) run pylint $(PYMODULE)
 
 .PHONY: test
 test: $(INSTALL_STAMP)
