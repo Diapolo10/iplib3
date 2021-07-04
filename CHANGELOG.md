@@ -49,6 +49,31 @@ Lorem Ipsum dolor sit amet.
 
 _______________________________________________________________________________
 
+## [0.2.2] - yyyy-mm-dd
+
+A message that notes the main changes in the update.
+
+### Added
+
+- Added a `Makefile` to make testing the codebase easier/more streamlined locally on Linux/Unix platforms
+- Added Mypy and Tox as development dependencies
+
+### Changed
+
+- Changed the `README.md` badge chain to a table with the badges split into categories
+- Updated localisation files
+- Changed GitHub Actions to use the new `Makefile`
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+### Security
+
+_______________________________________________________________________________
+
 ## [0.2.1] - 2021-06-30
 
 A quick fix to resolve Snyk throwing errors due to the empty `requirements.txt`
