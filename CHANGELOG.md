@@ -62,7 +62,6 @@ A message that notes the main changes in the update.
 
 - Changed the `README.md` badge chain to a table with the badges split into categories
 - Updated localisation files
-- Changed GitHub Actions to use the new `Makefile`
 
 ### Deprecated
 

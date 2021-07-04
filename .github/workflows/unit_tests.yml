@@ -55,12 +55,13 @@ jobs:
 
     - name: Install library and dependencies
       run: |
-        make install
-      # poetry run python -m pip install tox tox-gh-actions
+        poetry run pip install --upgrade pip setuptools
+        poetry install
+        poetry run pip install tox-gh-actions
 
     - name: Run Tox (Pytest + Coverage)
       run: |
-        make tox
+        poetry run tox
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
