@@ -22,8 +22,9 @@ jobs:
 
     - name: Install library and dependencies
       run: |
-        make install
+        poetry run pip install --upgrade pip setuptools
+        poetry install
 
     - name: Analysing the code with pylint
       run: |
-        make pylint
+        poetry run pylint iplib3

@@ -32,6 +32,7 @@ $(INSTALL_STAMP): pyproject.toml
 .PHONY: lint
 lint: $(INSTALL_STAMP)
     # Configured in pyproject.toml
+    # Skips mypy if not installed
     # 
     # $(POETRY) run isort --profile=black --lines-after-imports=2 --check-only $(TESTS) $(PYMODULE)
     # $(POETRY) run black --check $(TESTS) $(PYMODULE) --diff
