@@ -22,12 +22,12 @@ jobs:
 
     - name: Install library and dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        poetry run pip install --upgrade pip setuptools
         poetry install
 
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        poetry run python3 -m pflake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Stop the build if there are Python syntax errors or undefined names
+        poetry run pflake8 --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings
-        poetry run python3 -m pflake8 . --count --exit-zero --statistics
+        poetry run pflake8 --count --exit-zero --statistics

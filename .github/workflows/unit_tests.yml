@@ -55,23 +55,9 @@ jobs:
 
     - name: Install library and dependencies
       run: |
-        python -m pip install --upgrade pip
+        poetry run pip install --upgrade pip setuptools
         poetry install
-        poetry run python -m pip install tox tox-gh-actions
-
-    - name: Install dependencies (Linux / Mac OS)
-      if: ${{ startsWith(matrix.os, 'windows') == false }}
-      run: |
-        if [ -f requirements.txt ];
-        then poetry run python3 -m pip install -r requirements.txt;
-        fi
-
-    - name: Install dependencies (Windows)
-      if: ${{ startsWith(matrix.os, 'windows') == true }}
-      run: |
-        if(Test-Path -Path requirements.txt) {
-          poetry run python -m pip install -r requirements.txt
-        }
+        poetry run pip install tox-gh-actions
 
     - name: Run Tox (Pytest + Coverage)
       run: |

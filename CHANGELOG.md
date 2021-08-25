@@ -49,6 +49,26 @@ Lorem Ipsum dolor sit amet.
 
 _______________________________________________________________________________
 
+## [0.2.2] - 2021-08-25
+
+Small changes, such as the new `Makefile`.
+
+### Added
+
+- Added a `Makefile` to make testing the codebase easier/more streamlined locally on Linux/Unix platforms
+- Added Tox as a development dependency
+
+### Changed
+
+- Changed the `README.md` badge chain to a table with the badges split into categories
+- Updated localisation files
+
+### Removed
+
+- Removed `pytest-runner` as a development dependency, as it's useless with Poetry
+
+_______________________________________________________________________________
+
 ## [0.2.1] - 2021-06-30
 
 A quick fix to resolve Snyk throwing errors due to the empty `requirements.txt`

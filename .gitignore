@@ -141,3 +141,6 @@ poetry.lock
 
 # Tox stuff
 tests/reports
+
+# Makefile installation stamp
+.install.stamp
