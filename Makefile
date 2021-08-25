@@ -1,3 +1,5 @@
+# Inspired by: https://blog.mathieu-leplatre.info/tips-for-your-makefile-with-python.html
+
 PYMODULE := iplib3
 TESTS := tests
 INSTALL_STAMP := .install.stamp

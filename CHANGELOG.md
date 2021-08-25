@@ -49,9 +49,9 @@ Lorem Ipsum dolor sit amet.
 
 _______________________________________________________________________________
 
-## [0.2.2] - yyyy-mm-dd
+## [0.2.2] - 2021-08-25
 
-A message that notes the main changes in the update.
+Small changes, such as the new `Makefile`.
 
 ### Added
 
@@ -63,13 +63,9 @@ A message that notes the main changes in the update.
 - Changed the `README.md` badge chain to a table with the badges split into categories
 - Updated localisation files
 
-### Deprecated
-
-### Fixed
-
 ### Removed
 
-### Security
+- Removed `pytest-runner` as a development dependency, as it's useless with Poetry
 
 _______________________________________________________________________________
 
