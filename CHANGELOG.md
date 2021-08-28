@@ -47,6 +47,23 @@ Lorem Ipsum dolor sit amet.
 
 -->
 
+<!--
+_______________________________________________________________________________
+
+## [0.2.3] - YYYY-MM-DD
+
+First official documentation.
+
+### Added
+
+- Documentation
+
+### Changed
+
+- Changed the filename of `deploy.yml` to `pypi_deploy.yml` to get rid of a YAML validator complaint
+
+-->
+
 _______________________________________________________________________________
 
 ## [0.2.2] - 2021-08-25
