@@ -75,12 +75,12 @@ python = "^3.6"
 [tool.poetry.dev-dependencies]
 coverage = {version = "^5.5.0", extras = ["toml",]}
 flake8 = "^3.9.2"
-pylint = "^2.10.2"
+pylint = "^2.11.1"
 pyproject-flake8 = "^0.0.1a2" # Wrapper to use pyproject.toml as config file
 pytest = "^6.2.5"
 pytest-cov = "^2.12.1"
-tox = "^3.24.3"
-tox-gh-actions = "^2.6.0"
+tox = "^3.24.4"
+tox-gh-actions = "^2.8.1"
 wheel = "^0.37.0"
 
 

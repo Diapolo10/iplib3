@@ -57,10 +57,12 @@ First official documentation.
 ### Added
 
 - Documentation
+- Now using specific versions for the dependencies
 
 ### Changed
 
 - Changed the filename of `deploy.yml` to `pypi_deploy.yml` to get rid of a YAML validator complaint
+- Updated dependencies
 
 -->
 
