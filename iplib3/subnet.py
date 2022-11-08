@@ -2,10 +2,10 @@
 
 from typing import Optional, Union, Any
 
-from .constants.ipv4 import (
+from iplib3.constants.ipv4 import (
     IPV4_SEGMENT_BIT_COUNT,
 )
-from .constants.subnet import (
+from iplib3.constants.subnet import (
     IPV4_VALID_SUBNET_SEGMENTS,
     IPV4_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,

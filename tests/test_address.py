@@ -1,8 +1,8 @@
 """Unit tests for iplib3.address"""
 
-from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 import pytest
 
+from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 from iplib3 import (  # pylint: disable=import-error,no-name-in-module
     IPAddress, IPv4, IPv6
 )

@@ -69,19 +69,19 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7.2"
 
 
 [tool.poetry.dev-dependencies]
-coverage = {version = "*", extras = ["toml",]}
-flake8 = "*"
-pylint = "*"
-pyproject-flake8 = "*" # Wrapper to use pyproject.toml as config file
-pytest = "*"
-pytest-cov = "*"
-tox = "*"
-tox-gh-actions = "*"
-wheel = "*"
+coverage = {version = "^6.5.0", extras = ["toml",]}
+flake8 = "^4.0.1"
+mypy = "^0.982"
+pylint = "^2.15.5"
+pyproject-flake8 = "^4.0.1" # Wrapper to use pyproject.toml as config file
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+tox = "^3.27.0"
+tox-gh-actions = "^2.10.0"
 
 
 [tool.poetry.urls]
@@ -118,12 +118,11 @@ testpaths = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36, py37, py38, py39, pypy3
+envlist = py37, py38, py39, pypy3
 isolated_build = True
 
 [gh-actions]
 python =
-    3.6: py36
     3.7: py37
     3.8: py38
     3.9: py39

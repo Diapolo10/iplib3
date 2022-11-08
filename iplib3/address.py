@@ -3,21 +3,21 @@
 from typing import Any, List, Optional, Union
 
 from iplib3.subnet import SubnetMask
-from .constants.address import (
+from iplib3.constants.address import (
     IPV4_LOCALHOST,
     IPV6_LOCALHOST,
 )
-from .constants.port import (
+from iplib3.constants.port import (
     PORT_NUMBER_MIN_VALUE,
     PORT_NUMBER_MAX_VALUE,
 )
-from .constants.ipv4 import (
+from iplib3.constants.ipv4 import (
     IPV4_MAX_SEGMENT_COUNT,
     IPV4_MAX_SEGMENT_VALUE,
     IPV4_MIN_VALUE,
     IPV4_MAX_VALUE,
 )
-from .constants.ipv6 import (
+from iplib3.constants.ipv6 import (
     IPV6_NUMBER_BIT_COUNT,
     IPV6_SEGMENT_BIT_COUNT,
     IPV6_MIN_SEGMENT_COUNT,
@@ -26,7 +26,7 @@ from .constants.ipv6 import (
     IPV6_MAX_SEGMENT_VALUE,
     IPV6_MAX_VALUE,
 )
-from .validators import (
+from iplib3.validators import (
     port_validator
 )
 
