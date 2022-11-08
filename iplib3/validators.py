@@ -2,11 +2,11 @@
 
 from typing import List, Optional, Tuple, Union
 
-from .constants.port import (
+from iplib3.constants.port import (
     PORT_NUMBER_MIN_VALUE,
     PORT_NUMBER_MAX_VALUE,
 )
-from .constants.ipv4 import (
+from iplib3.constants.ipv4 import (
     IPV4_MAX_SEGMENT_COUNT,
     IPV4_MIN_SEGMENT_COUNT,
     IPV4_MIN_SEGMENT_VALUE,
@@ -14,7 +14,7 @@ from .constants.ipv4 import (
     IPV4_MIN_VALUE,
     IPV4_MAX_VALUE,
 )
-from .constants.ipv6 import (
+from iplib3.constants.ipv6 import (
     IPV6_NUMBER_BIT_COUNT,
     IPV6_SEGMENT_BIT_COUNT,
     IPV6_MAX_SEGMENT_COUNT,
@@ -23,7 +23,7 @@ from .constants.ipv6 import (
     IPV6_MIN_VALUE,
     IPV6_MAX_VALUE,
 )
-from .constants.subnet import (
+from iplib3.constants.subnet import (
     IPV4_VALID_SUBNET_SEGMENTS,
     IPV4_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,
