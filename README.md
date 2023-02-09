@@ -18,7 +18,6 @@ The module is currently lacking in long-term vision as I used it as a practice p
 
 This project is not affiliated with `iplib`, the naming similarity is merely a coincidence.
 
-
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_large)
 
 ## Installation
