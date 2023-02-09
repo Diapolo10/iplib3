@@ -1,10 +1,10 @@
 
-# IPlib3 Change Log
+# IPlib3 Changelog
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [CHANGELOG.md](http://changelog.md/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format is based on [CHANGELOG.md][CHANGELOG.md]
+and this project adheres to [Semantic Versioning][Semantic Versioning].
 
 <!-- 
 TEMPLATE
@@ -46,6 +46,51 @@ Lorem Ipsum dolor sit amet.
 - Updated localisation files
 
 -->
+
+<!--
+_______________________________________________________________________________
+
+## [0.2.3] - 2023-02-09
+
+Updated dependencies, stopped ignoring `poetry.lock`, and upgraded workflows.
+
+### Added
+
+- New workflows for code analysis and automatic dependency updates
+- Automated GitHub releases
+
+### Changed
+
+- `poetry.lock` is now included in the repository
+- Updated project metadata files for consistency
+- Updated old workflows
+
+### Removed
+
+- The old `deploy.yml` was removed in favour of `pypi_deploy.yml`
+
+-->
+
+_______________________________________________________________________________
+
+## [0.2.3] - 2023-02-09
+
+Updated dependencies, stopped ignoring `poetry.lock`, and upgraded workflows.
+
+### Added
+
+- New workflows for code analysis and automatic dependency updates
+- Automated GitHub releases
+
+### Changed
+
+- `poetry.lock` is now included in the repository
+- Updated project metadata files for consistency
+- Updated old workflows
+
+### Removed
+
+- The old `deploy.yml` was removed in favour of `pypi_deploy.yml`
 
 _______________________________________________________________________________
 
@@ -171,6 +216,9 @@ the initial commit.
 ### Fixed
 
 - Fixed the CI/CD build process
+
+[CHANGELOG.md]: https://web.archive.org/web/20220330064336/https://changelog.md/
+[Semantic Versioning]: http://semver.org/
 
 <!-- markdownlint-configure-file {
     "MD022": false,

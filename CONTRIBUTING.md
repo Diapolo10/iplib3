@@ -1,17 +1,34 @@
-# Contributing
+# Contributing to the `iplib3` project
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+## Filing a bug report
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+To file a bug report, [open the Issues tab][Issues] and add a new issue,
+labeling it as a bug report. If you wish to try and fix it yourself, add
+yourself as a contributor to that issue. You are allowed to group similar
+bugs into one issue report, as long as you don't exceed the limit of three
+different bugs. Otherwise, make another issue.
 
-## Pull Request Process
+## Suggesting a new feature
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
+To suggest a new feature:
+
+- For small suggestions, [you can go directly to the Projects tab][Projects]
+  and write a suggestion to the Suggestions/Ideas column
+- For medium-to-large suggestions, write an issue, mark it as part of the
+  current project and label it as a suggestion
+
+You may NOT suggest features through email to the core developers.
+
+## Setting up your development environment
+
+Since `iplib3` has very little to do beyond programming and testing,
+the following should be enough for 95% of all contributors:
+
+1. A working Git or GitHub Desktop installation
+2. A text editor / Python IDE
+3. An installation of Python that supports Python version 3.10 or higher
+4. The following, non-standard PyPI modules (available through pip):
+    - `poetry`
+
+[Issues]: https://github.com/Diapolo10/iplib3/issues
+[Projects]: https://github.com/Diapolo10/iplib3/projects

@@ -3,22 +3,20 @@
 name: Deploy to PyPI
 
 on:
-  pull_request:
-    types: [ closed ]
-    branches:
-      - main
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   pypi-deploy:
     name: Build and publish Python 🐍 distributions 📦 to live PyPI
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
 
     steps:
     - uses: actions/checkout@master
 
     - name: Publish distribution 📦 to PyPI
-      uses: JRubics/poetry-publish@v1.13
+      uses: JRubics/poetry-publish@v1.16
       with:
         ignore_dev_requirements: 'yes'
         pypi_token: ${{ secrets.PYPI_PASSWORD }}

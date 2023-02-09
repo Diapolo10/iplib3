@@ -136,9 +136,6 @@ cov.xml
 # DeepCode/Snyk
 .dccache
 
-# Poetry lock file (may be committed at some point)
-poetry.lock
-
 # Tox stuff
 tests/reports
 
