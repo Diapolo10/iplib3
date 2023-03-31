@@ -1,5 +1,5 @@
 [build-system]
-requires = ['poetry-core>=1.0.0', 'wheel',]
+requires = ['poetry-core>=1.2.0', 'wheel',]
 build-backend = 'poetry.core.masonry.api'
 
 
@@ -72,12 +72,26 @@ classifiers = [
 python = '^3.8.1'
 
 
-[tool.poetry.dev-dependencies]
-coverage = {version = '^7.2.2', extras = ['toml',]}
+[tool.poetry.group.dev.dependencies]
+mypy = '^1.1.1'
+
+
+[tool.poetry.group.linters]
+optional = true
+
+
+[tool.poetry.group.linters.dependencies]
 flake8 = '^6.0.0'
 flake8-pyproject = '^1.2.3'
-mypy = '^1.1.1'
 pylint = '^2.17.1'
+
+
+[tool.poetry.group.tests]
+optional = true
+
+
+[tool.poetry.group.tests.dependencies]
+coverage = {version = '^7.2.2', extras = ['toml',]}
 pytest = '^7.2.2'
 pytest-cov = '^4.0.0'
 tox = '^4.4.8'
