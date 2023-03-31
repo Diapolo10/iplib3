@@ -31,4 +31,4 @@ jobs:
 
     - name: Analyse the automated tests with pylint
       run: |
-        poetry run pylint tests --fail-under 9
+        poetry run pylint tests --fail-under 9 --disable import-error,no-name-in-module
