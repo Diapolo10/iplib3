@@ -525,13 +525,13 @@ files = [
 
 [[package]]
 name = "tox"
-version = "4.11.0"
+version = "4.11.2"
 description = "tox is a generic virtualenv management and test command line tool"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "tox-4.11.0-py3-none-any.whl", hash = "sha256:7f7e5f1b20115560e610b9a11143bbcf48270ec3293f36c0a18be7b287c3b41f"},
-    {file = "tox-4.11.0.tar.gz", hash = "sha256:cc665e1e6b095f843b952ea5696f7a64bb64982aff62b62547ef171fa60e21eb"},
+    {file = "tox-4.11.2-py3-none-any.whl", hash = "sha256:91bff3220e808759a22b61524bbc8e657ebbc89ff6efde0a1c1372cac4cdf2b0"},
+    {file = "tox-4.11.2.tar.gz", hash = "sha256:0ad5c4b2d3d77a29dc5fb3ce01d55748aabc2972d306605da3d84b17729ce8df"},
 ]
 
 [package.dependencies]
