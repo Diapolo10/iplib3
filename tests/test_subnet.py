@@ -2,14 +2,14 @@
 
 import pytest
 
-from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
-    SubnetMask,
-    PureSubnetMask,
-)
 from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
-    IPV4_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
     IPV6_MAX_SUBNET_VALUE,
+)
+from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
+    PureSubnetMask,
+    SubnetMask,
 )
 
 
@@ -87,17 +87,17 @@ def test_subnet_mask_subnet_to_num():
 def test_subnet_mask_subnet_to_num_errors():
     """Test SubnetMask subnet to number converter errors"""
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Invalid type for subnet value: "):
         SubnetMask._subnet_to_num([255, 255, 255, 0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="IPv6-subnets don't use a string representation"):
         SubnetMask._subnet_to_num('255.255.255.0')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Subnet value not valid; "):
         SubnetMask._subnet_to_num('3e2')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Subnet '"):
         SubnetMask._subnet_to_num(IPV4_MAX_SUBNET_VALUE+1, subnet_type='ipv4')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Subnet '"):
         SubnetMask._subnet_to_num(IPV6_MAX_SUBNET_VALUE+1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=" is an invalid value in a subnet mask"):
         SubnetMask._subnet_to_num('255.6.0.0', subnet_type='ipv4')
 
 
@@ -113,7 +113,7 @@ def test_subnet_mask_prefix_to_subnet_mask():
 def test_subnet_mask_prefix_to_subnet_mask_errors():
     """Test SubnetMask number to mask converter"""
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="IPv6 does not support string representations of subnet masks"):
         SubnetMask._prefix_to_subnet_mask(24, subnet_type='ipv6')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid subnet value for IPv4: "):
         SubnetMask._prefix_to_subnet_mask(IPV4_MAX_SUBNET_VALUE+1, subnet_type='ipv4')
