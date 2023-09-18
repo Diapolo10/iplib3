@@ -39,8 +39,7 @@ lint: $(INSTALL_STAMP)
     # $(POETRY) run isort --profile=black --lines-after-imports=2 --check-only $(TESTS) $(PYMODULE)
     # $(POETRY) run black --check $(TESTS) $(PYMODULE) --diff
 	@if [ -z $(MYPY) ]; then echo "Mypy not found, skipping..."; else echo "Running Mypy..."; $(POETRY) run mypy $(PYMODULE) $(TESTS); fi
-	@echo "Running Flake8..."; $(POETRY) run pflake8 # This is not a typo
-	@echo "Running Pylint..."; $(POETRY) run pylint $(PYMODULE)
+	@echo "Running Ruff..."; $(POETRY) run ruff . --fix
 
 .PHONY: test
 test: $(INSTALL_STAMP)
@@ -51,24 +50,3 @@ test: $(INSTALL_STAMP)
 clean:
     # Delete all files in .gitignore
 	git clean -Xdf
-
-# Intended for workflow use only; *CAN* be ran locally, but they're of little use
-
-.PHONY: flake8
-flake8:
-    # Configured in pyproject.toml
-    # Stop the build if there are Python syntax errors or undefined names
-	$(POETRY) run pflake8 --count --select=E9,F63,F7,F82 --show-source --statistics
-    # exit-zero treats all errors as warnings
-	$(POETRY) run pflake8 --count --exit-zero --statistics
-
-.PHONY: pylint
-pylint:
-    # Configured in pyproject.toml
-	$(POETRY) run pylint $(PYMODULE)
-
-.PHONY: tox
-tox: $(INSTALL_STAMP)
-    # Configured in pyproject.toml
-	$(POETRY) run pip install tox-gh-actions
-	$(POETRY) run tox

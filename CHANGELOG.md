@@ -50,26 +50,51 @@ Lorem Ipsum dolor sit amet.
 <!--
 _______________________________________________________________________________
 
-## [0.2.3] - 2023-02-09
+## [0.2.4] - 2023-09-18
 
-Updated dependencies, stopped ignoring `poetry.lock`, and upgraded workflows.
+Updated dependencies, added `py.typed`, swapped linters to Ruff, fixed lint
+issues, and removed support for Python 3.8 due to type hint changes.
 
 ### Added
 
-- New workflows for code analysis and automatic dependency updates
-- Automated GitHub releases
+- `py.typed` is now present, letting `mypy` use the provided type hints
+- Added a workflow for Ruff
 
 ### Changed
 
-- `poetry.lock` is now included in the repository
-- Updated project metadata files for consistency
-- Updated old workflows
+- Ruff replaces Pylint an Flake8 as linters
+- Cleaned up the source code with Ruff
+- Updated dpendencies
+- Updated `Makefile`
 
 ### Removed
 
-- The old `deploy.yml` was removed in favour of `pypi_deploy.yml`
+- Removed the old workflows for Pylint and Flake8
 
 -->
+
+_______________________________________________________________________________
+
+## [0.2.4] - 2023-09-18
+
+Updated dependencies, added `py.typed`, swapped linters to Ruff, fixed lint
+issues, and removed support for Python 3.8 due to type hint changes.
+
+### Added
+
+- `py.typed` is now present, letting `mypy` use the provided type hints
+- Added a workflow for Ruff
+
+### Changed
+
+- Ruff replaces Pylint an Flake8 as linters
+- Cleaned up the source code with Ruff
+- Updated dpendencies
+- Updated `Makefile`
+
+### Removed
+
+- Removed the old workflows for Pylint and Flake8
 
 _______________________________________________________________________________
 
@@ -217,7 +242,7 @@ the initial commit.
 
 - Fixed the CI/CD build process
 
-[CHANGELOG.md]: https://web.archive.org/web/20220330064336/https://changelog.md/
+[CHANGELOG.md]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: http://semver.org/
 
 <!-- markdownlint-configure-file {
