@@ -45,10 +45,10 @@ TEST_CASES_PURE_ADDRESS_PORT = [
 ]
 
 TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR = [
-    (3.14, TypeError),
-    ('80', TypeError),
-    (PORT_NUMBER_MAX_VALUE + 1, ValueError),
-    (PORT_NUMBER_MIN_VALUE - 1, ValueError),
+    (3.14, TypeError, "Port "),
+    ('80', TypeError, "Port "),
+    (PORT_NUMBER_MAX_VALUE + 1, ValueError, "Port number "),
+    (PORT_NUMBER_MIN_VALUE - 1, ValueError, "Port number "),
 ]
 
 TEST_CASES_PURE_ADDRESS_AS_HEX = [
@@ -166,13 +166,13 @@ TEST_CASES_IPV6_IPV6_TO_NUM = [
 
 TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS = [
     # Two zero-skips
-    ('::DE::AD', ValueError),
+    ('::DE::AD', ValueError, "Invalid IPv6 address format; only one zero-skip allowed"),
     # Invalid hex literal
-    ('::H07:AF', ValueError),
+    ('::H07:AF', ValueError, "Invalid IPv6 address format; address contains invalid characters"),
     # Too many segments
-    ('1:1:1:1:1:1:1:1:1', ValueError),
+    ('1:1:1:1:1:1:1:1:1', ValueError, "Invalid IPv6 address format; too many segments "),
     # Segment value too high
-    ('::7:FFFFF', ValueError),
+    ('::7:FFFFF', ValueError, "Invalid IPv6 address format; segment max value "),
     # Segment value too low (negative)
-    ('::7:-34', ValueError),
+    ('::7:-34', ValueError, "Invalid IPv6 address format; segment min value "),
 ]

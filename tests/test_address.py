@@ -31,6 +31,7 @@ from tests.test_cases_address import (
     TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
+from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
 
 @pytest.mark.parametrize(
@@ -93,12 +94,12 @@ def test_pure_address_port_setter():
 
 
 @pytest.mark.parametrize(
-    "value, error",
+    "value, error, match_message",
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
-def test_pure_address_port_setter_error(value, error):
+def test_pure_address_port_setter_error(value, error, match_message):
     address = PureAddress()
-    with pytest.raises(error):
+    with pytest.raises(error, match=match_message):
         address.port = value
 
 
@@ -183,7 +184,7 @@ def test_ipaddress_string(ip_address, excepted_output):
 
 
 def test_ipaddress_string_error():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No valid address representation exists"):
         str(IPAddress(IPV6_MAX_VALUE + 1))
 
 
@@ -266,9 +267,9 @@ def test_ipv6_ipv6_to_num(input_ipv6, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6, error",
+    "input_ipv6, error, match_message",
     TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS
 )
-def test_ipv6_ipv6_to_num_errors(input_ipv6, error):
-    with pytest.raises(error):
+def test_ipv6_ipv6_to_num_errors(input_ipv6, error, match_message):
+    with pytest.raises(error, match=match_message):
         IPv6(input_ipv6)._ipv6_to_num()

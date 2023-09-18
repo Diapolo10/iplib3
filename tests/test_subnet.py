@@ -15,6 +15,10 @@ from tests.test_cases_subnet import (
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK,
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
 )
+from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
+    PureSubnetMask,
+    SubnetMask,
+)
 
 
 def test_pure_subnet_mask():
@@ -91,12 +95,12 @@ def test_subnet_mask_subnet_to_num(subnet_mask, subnet_type, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet_mask, subnet_type, error",
+    "subnet_mask, subnet_type, error, match_message",
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
 )
-def test_subnet_mask_subnet_to_num_errors(subnet_mask, subnet_type, error):
+def test_subnet_mask_subnet_to_num_errors(subnet_mask, subnet_type, error, match_message):
     """Test SubnetMask subnet to number converter errors"""
-    with pytest.raises(error):
+    with pytest.raises(error, match=match_message):
         SubnetMask._subnet_to_num(subnet_mask=subnet_mask, subnet_type=subnet_type)
 
 
@@ -110,10 +114,10 @@ def test_subnet_mask_prefix_to_subnet_mask(prefix_length, subnet_type, excepted_
 
 
 @pytest.mark.parametrize(
-    "prefix_length, subnet_type, error",
+    "prefix_length, subnet_type, error, match_message",
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
 )
-def test_subnet_mask_prefix_to_subnet_mask_errors(prefix_length, subnet_type, error):
+def test_subnet_mask_prefix_to_subnet_mask_errors(prefix_length, subnet_type, error, match_message):
     """Test SubnetMask number to mask converter"""
-    with pytest.raises(error):
+    with pytest.raises(error, match=match_message):
         SubnetMask._prefix_to_subnet_mask(prefix_length=prefix_length, subnet_type=subnet_type)
