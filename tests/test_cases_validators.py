@@ -1,14 +1,14 @@
 from iplib3.constants import (
-    IPV4_MIN_VALUE,
-    IPV6_MIN_VALUE,
-    IPV4_MAX_VALUE,
-    IPV6_MAX_VALUE,
-    PORT_NUMBER_MIN_VALUE,
-    PORT_NUMBER_MAX_VALUE,
-    IPV4_MIN_SUBNET_VALUE,
-    IPV6_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,
+    IPV4_MAX_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
+    IPV4_MIN_VALUE,
     IPV6_MAX_SUBNET_VALUE,
+    IPV6_MAX_VALUE,
+    IPV6_MIN_SUBNET_VALUE,
+    IPV6_MIN_VALUE,
+    PORT_NUMBER_MAX_VALUE,
+    PORT_NUMBER_MIN_VALUE,
 )
 
 TEST_CASES_PORT_VALIDATOR = [
@@ -43,7 +43,7 @@ TEST_CASES_IP_VALIDATOR = [
 
 TEST_CASES_IPV4_VALIDATOR = [
     ('1.1.1.1', True, True),
-    ('0.0.0.0', True, True),
+    ('0.0.0.0', True, True),  #  noqa: S104
     ('255.255.255.255', True, True),
     ('192.168.0.1:8080', True, True),
     ('12.123.234.345', True, False),
@@ -166,5 +166,5 @@ TEST_CASES_PORT_STRIPPER_IPV6 = [
     ("[2606:4700:4700::1111]:8080", 'IPV6', '2606:4700:4700::1111', 8080, True),
     ("[::DEAD:BEEF]:80", 'ipv6', '::DEAD:BEEF', 80, True),
     ("2606:4700:4700::1111", 'ipv6', '2606:4700:4700::1111', None, True),
-    ("::DEAD:BEEF", 'ipv6', '::DEAD:BEEF', None, True)
+    ("::DEAD:BEEF", 'ipv6', '::DEAD:BEEF', None, True),
 ]

@@ -2,22 +2,21 @@
 
 import pytest
 
-from iplib3.subnet import SubnetMask, PureSubnetMask
-from tests.test_cases_subnet import (
-    TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH,
-    TEST_CASES_PURE_SUBNET_MASK_STRING,
-    TEST_CASES_PURE_SUBNET_MASK_EQUALITY,
-    TEST_CASES_PURE_SUBNET_MASK_INEQUALITY,
-    TEST_CASES_SUBNET_MASK_SUBNET_TYPE,
-    TEST_CASES_SUBNET_MASK_STRING,
-    TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM,
-    TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
-    TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK,
-    TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
-)
 from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
     PureSubnetMask,
     SubnetMask,
+)
+from tests.test_cases_subnet import (
+    TEST_CASES_PURE_SUBNET_MASK_EQUALITY,
+    TEST_CASES_PURE_SUBNET_MASK_INEQUALITY,
+    TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH,
+    TEST_CASES_PURE_SUBNET_MASK_STRING,
+    TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK,
+    TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
+    TEST_CASES_SUBNET_MASK_STRING,
+    TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM,
+    TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
+    TEST_CASES_SUBNET_MASK_SUBNET_TYPE,
 )
 
 
@@ -27,7 +26,7 @@ def test_pure_subnet_mask():
 
 
 @pytest.mark.parametrize(
-    "subnet, prefix_length",
+    ("subnet", "prefix_length"),
     TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH,
 )
 def test_pure_subnet_mask_prefix_length(subnet, prefix_length):
@@ -37,7 +36,7 @@ def test_pure_subnet_mask_prefix_length(subnet, prefix_length):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output, representation",
+    ("subnet", "excepted_output", "representation"),
     TEST_CASES_PURE_SUBNET_MASK_STRING,
 )
 def test_pure_subnet_mask_string(subnet, excepted_output, representation):
@@ -49,7 +48,7 @@ def test_pure_subnet_mask_string(subnet, excepted_output, representation):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_PURE_SUBNET_MASK_EQUALITY,
 )
 def test_pure_subnet_mask_equality(subnet, excepted_output):
@@ -58,7 +57,7 @@ def test_pure_subnet_mask_equality(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_PURE_SUBNET_MASK_INEQUALITY,
 )
 def test_pure_subnet_mask_inequality(subnet, excepted_output):
@@ -68,7 +67,7 @@ def test_pure_subnet_mask_inequality(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_SUBNET_MASK_SUBNET_TYPE,
 )
 def test_subnet_mask_subnet_type(subnet, excepted_output):
@@ -77,7 +76,7 @@ def test_subnet_mask_subnet_type(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_SUBNET_MASK_STRING,
 )
 def test_subnet_mask_string(subnet, excepted_output):
@@ -86,7 +85,7 @@ def test_subnet_mask_string(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet_mask, subnet_type, excepted_output",
+    ("subnet_mask", "subnet_type", "excepted_output"),
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM,
 )
 def test_subnet_mask_subnet_to_num(subnet_mask, subnet_type, excepted_output):
@@ -95,7 +94,7 @@ def test_subnet_mask_subnet_to_num(subnet_mask, subnet_type, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet_mask, subnet_type, error, match_message",
+    ("subnet_mask", "subnet_type", "error", "match_message"),
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
 )
 def test_subnet_mask_subnet_to_num_errors(subnet_mask, subnet_type, error, match_message):
@@ -105,7 +104,7 @@ def test_subnet_mask_subnet_to_num_errors(subnet_mask, subnet_type, error, match
 
 
 @pytest.mark.parametrize(
-    "prefix_length, subnet_type, excepted_output",
+    ("prefix_length", "subnet_type", "excepted_output"),
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK,
 )
 def test_subnet_mask_prefix_to_subnet_mask(prefix_length, subnet_type, excepted_output):
@@ -114,7 +113,7 @@ def test_subnet_mask_prefix_to_subnet_mask(prefix_length, subnet_type, excepted_
 
 
 @pytest.mark.parametrize(
-    "prefix_length, subnet_type, error, match_message",
+    ("prefix_length", "subnet_type", "error", "match_message"),
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
 )
 def test_subnet_mask_prefix_to_subnet_mask_errors(prefix_length, subnet_type, error, match_message):

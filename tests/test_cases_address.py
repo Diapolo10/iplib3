@@ -58,7 +58,7 @@ TEST_CASES_PURE_ADDRESS_AS_HEX = [
 ]
 
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4 = [
-    (PureAddress(IPV4_LOCALHOST), '127.0.0.1')
+    (PureAddress(IPV4_LOCALHOST), '127.0.0.1'),
 ]
 
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6 = [
@@ -86,7 +86,7 @@ TEST_CASES_IPADDRESS = [
     (IPAddress('::DEAD:BEEF'), IPv6),
     (IPAddress(IPV4_LOCALHOST, 80), IPAddress),
     (IPAddress('127.0.0.1', 80), IPv4),
-    (IPAddress('::DEAD:BEEF', 80), IPv6)
+    (IPAddress('::DEAD:BEEF', 80), IPv6),
 ]
 
 TEST_CASES_IPADDRESS_EQUALITY = [

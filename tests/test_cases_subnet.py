@@ -1,9 +1,9 @@
-from iplib3.subnet import PureSubnetMask, SubnetMask
 from iplib3.constants import (
-    IPV4_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
     IPV6_MAX_SUBNET_VALUE,
 )
+from iplib3.subnet import PureSubnetMask, SubnetMask
 
 TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH = [
     (PureSubnetMask(), None),

@@ -3,29 +3,32 @@
 import pytest
 
 from iplib3.validators import (
+    _ipv4_subnet_validator,
+    _ipv6_subnet_validator,
     _port_stripper,
     ip_validator,
     ipv4_validator,
     ipv6_validator,
     port_validator,
     subnet_validator,
-    _ipv4_subnet_validator,
-    _ipv6_subnet_validator,
 )
 from tests.test_cases_validators import (
-    TEST_CASES_PORT_VALIDATOR,
     TEST_CASES_IP_VALIDATOR,
-    TEST_CASES_IPV4_VALIDATOR,
-    TEST_CASES_IPV6_VALIDATOR,
-    TEST_CASES_SUBNET_VALIDATOR,
     TEST_CASES_IPV4_SUBNET_VALIDATOR,
-    TEST_CASES_IPV4_SUBNET_VALIDATOR_ERRORS, TEST_CASES_IPV6_SUBNET_VALIDATOR, TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS,
-    TEST_CASES_PORT_STRIPPER_IPV4, TEST_CASES_PORT_STRIPPER_IPV6
+    TEST_CASES_IPV4_SUBNET_VALIDATOR_ERRORS,
+    TEST_CASES_IPV4_VALIDATOR,
+    TEST_CASES_IPV6_SUBNET_VALIDATOR,
+    TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS,
+    TEST_CASES_IPV6_VALIDATOR,
+    TEST_CASES_PORT_STRIPPER_IPV4,
+    TEST_CASES_PORT_STRIPPER_IPV6,
+    TEST_CASES_PORT_VALIDATOR,
+    TEST_CASES_SUBNET_VALIDATOR,
 )
 
 
 @pytest.mark.parametrize(
-    "port_num, excepted_output",
+    ("port_num", "excepted_output"),
     TEST_CASES_PORT_VALIDATOR,
 )
 def test_port_validator(port_num, excepted_output):
@@ -34,7 +37,7 @@ def test_port_validator(port_num, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "address, excepted_output",
+    ("address", "excepted_output"),
     TEST_CASES_IP_VALIDATOR,
 )
 def test_ip_validator(address, excepted_output):
@@ -43,7 +46,7 @@ def test_ip_validator(address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "address, strict, excepted_output",
+    ("address", "strict", "excepted_output"),
     TEST_CASES_IPV4_VALIDATOR,
 )
 def test_ipv4_validator(address, strict, excepted_output):
@@ -51,7 +54,7 @@ def test_ipv4_validator(address, strict, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "address, strict, excepted_output",
+    ("address", "strict", "excepted_output"),
     TEST_CASES_IPV6_VALIDATOR,
 )
 def test_ipv6_validator(address, strict, excepted_output):
@@ -59,7 +62,7 @@ def test_ipv6_validator(address, strict, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, protocol, excepted_output",
+    ("subnet", "protocol", "excepted_output"),
     TEST_CASES_SUBNET_VALIDATOR,
 )
 def test_subnet_validator(subnet, protocol, excepted_output):
@@ -67,7 +70,7 @@ def test_subnet_validator(subnet, protocol, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_IPV4_SUBNET_VALIDATOR,
 )
 def test_ipv4_subnet_validator(subnet, excepted_output):
@@ -75,7 +78,7 @@ def test_ipv4_subnet_validator(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, error",
+    ("subnet", "error"),
     TEST_CASES_IPV4_SUBNET_VALIDATOR_ERRORS,
 )
 def test_ipv4_subnet_validator_errors(subnet, error):
@@ -85,7 +88,7 @@ def test_ipv4_subnet_validator_errors(subnet, error):
 
 
 @pytest.mark.parametrize(
-    "subnet, excepted_output",
+    ("subnet", "excepted_output"),
     TEST_CASES_IPV6_SUBNET_VALIDATOR,
 )
 def test_ipv6_subnet_validator(subnet, excepted_output):
@@ -93,7 +96,7 @@ def test_ipv6_subnet_validator(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "subnet, error",
+    ("subnet", "error"),
     TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS,
 )
 def test_ipv6_subnet_validator_errors(subnet, error):
@@ -103,7 +106,7 @@ def test_ipv6_subnet_validator_errors(subnet, error):
 
 
 @pytest.mark.parametrize(
-    "address, protocol, excepted_address, excepted_port, excepted_valid",
+    ("address", "protocol", "excepted_address", "excepted_port", "excepted_valid"),
     TEST_CASES_PORT_STRIPPER_IPV4,
 )
 def test_port_stripper_ipv4(address, protocol, excepted_address, excepted_port, excepted_valid):
@@ -115,7 +118,7 @@ def test_port_stripper_ipv4(address, protocol, excepted_address, excepted_port, 
 
 
 @pytest.mark.parametrize(
-    "address, protocol, excepted_address, excepted_port, excepted_valid",
+    ("address", "protocol", "excepted_address", "excepted_port", "excepted_valid"),
     TEST_CASES_PORT_STRIPPER_IPV6,
 )
 def test_port_stripper_ipv6(address, protocol, excepted_address, excepted_port, excepted_valid):

@@ -3,35 +3,35 @@
 import pytest
 
 from iplib3 import IPAddress
-from iplib3.address import PureAddress, IPv6
+from iplib3.address import IPv6, PureAddress
 from iplib3.constants import IPV6_MAX_VALUE
+from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 from tests.test_cases_address import (
+    TEST_CASES_IPADDRESS,
+    TEST_CASES_IPADDRESS_AS_IPV4,
+    TEST_CASES_IPADDRESS_AS_IPV6,
+    TEST_CASES_IPADDRESS_EQUALITY,
+    TEST_CASES_IPADDRESS_REPR,
+    TEST_CASES_IPADDRESS_STRING,
+    TEST_CASES_IPV4,
+    TEST_CASES_IPV4_IPV4_TO_NUM,
+    TEST_CASES_IPV4_STRING,
+    TEST_CASES_IPV6,
+    TEST_CASES_IPV6_IPV6_TO_NUM,
+    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
+    TEST_CASES_IPV6_STRING,
     TEST_CASES_PURE_ADDRESS,
+    TEST_CASES_PURE_ADDRESS_AS_HEX,
     TEST_CASES_PURE_ADDRESS_EQUALITY,
     TEST_CASES_PURE_ADDRESS_INEQUALITY,
     TEST_CASES_PURE_ADDRESS_NUM,
-    TEST_CASES_PURE_ADDRESS_PORT,
-    TEST_CASES_PURE_ADDRESS_AS_HEX,
-    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4,
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING,
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS,
-    TEST_CASES_IPADDRESS,
-    TEST_CASES_IPADDRESS_EQUALITY,
-    TEST_CASES_IPADDRESS_AS_IPV4,
-    TEST_CASES_IPADDRESS_AS_IPV6,
-    TEST_CASES_IPADDRESS_STRING,
-    TEST_CASES_IPADDRESS_REPR,
-    TEST_CASES_IPV4,
-    TEST_CASES_IPV4_STRING,
-    TEST_CASES_IPV4_IPV4_TO_NUM,
-    TEST_CASES_IPV6,
-    TEST_CASES_IPV6_STRING,
-    TEST_CASES_IPV6_IPV6_TO_NUM,
-    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
+    TEST_CASES_PURE_ADDRESS_PORT,
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
-from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
 
 @pytest.mark.parametrize(
@@ -44,7 +44,7 @@ def test_pure_address(pure_address):
 
 
 @pytest.mark.parametrize(
-    "address, input_address, excepted_output",
+    ("address", "input_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_EQUALITY,
 )
 def test_pure_address_equality(address, input_address, excepted_output):
@@ -54,7 +54,7 @@ def test_pure_address_equality(address, input_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "first_address, second_address",
+    ("first_address", "second_address"),
     TEST_CASES_PURE_ADDRESS_INEQUALITY,
 )
 def test_pure_address_inequality(first_address, second_address):
@@ -63,7 +63,7 @@ def test_pure_address_inequality(first_address, second_address):
 
 
 @pytest.mark.parametrize(
-    "address, excepted_output",
+    ("address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM,
 )
 def test_pure_address_num(address, excepted_output):
@@ -72,7 +72,7 @@ def test_pure_address_num(address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "address, excepted_output",
+    ("address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_PORT,
 )
 def test_pure_address_port(address, excepted_output):
@@ -94,7 +94,7 @@ def test_pure_address_port_setter():
 
 
 @pytest.mark.parametrize(
-    "value, error, match_message",
+    ("value", "error", "match_message"),
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
 def test_pure_address_port_setter_error(value, error, match_message):
@@ -104,7 +104,7 @@ def test_pure_address_port_setter_error(value, error, match_message):
 
 
 @pytest.mark.parametrize(
-    "pure_address, excepted_output",
+    ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_AS_HEX,
 )
 def test_pure_address_as_hex(pure_address, excepted_output):
@@ -113,7 +113,7 @@ def test_pure_address_as_hex(pure_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "pure_address, excepted_output",
+    ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4,
 )
 def test_pure_address_num_to_ipv4(pure_address, excepted_output):
@@ -122,7 +122,7 @@ def test_pure_address_num_to_ipv4(pure_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "pure_address, excepted_output",
+    ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
 )
 def test_pure_address_num_to_ipv6(pure_address, excepted_output):
@@ -131,7 +131,7 @@ def test_pure_address_num_to_ipv6(pure_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "pure_address, excepted_output",
+    ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING,
 )
 def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
@@ -140,7 +140,7 @@ def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "pure_address, excepted_output",
+    ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS,
 )
 def test_pure_address_num_to_ipv6_remove_zeroes(pure_address, excepted_output):
@@ -157,7 +157,7 @@ def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_instance",
+    ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS,
 )
 def test_ipaddress(ip_address, excepted_instance):
@@ -166,7 +166,7 @@ def test_ipaddress(ip_address, excepted_instance):
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_output",
+    ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_EQUALITY,
 )
 def test_ipaddress_equality(ip_address, excepted_output):
@@ -175,7 +175,7 @@ def test_ipaddress_equality(ip_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_output",
+    ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_STRING,
 )
 def test_ipaddress_string(ip_address, excepted_output):
@@ -189,7 +189,7 @@ def test_ipaddress_string_error():
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_output",
+    ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_REPR,
 )
 def test_ipaddress_repr(ip_address, excepted_output):
@@ -197,7 +197,7 @@ def test_ipaddress_repr(ip_address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_instance",
+    ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS_AS_IPV4,
 )
 def test_ipaddress_as_ipv4(ip_address, excepted_instance):
@@ -206,7 +206,7 @@ def test_ipaddress_as_ipv4(ip_address, excepted_instance):
 
 
 @pytest.mark.parametrize(
-    "ip_address, excepted_instance",
+    ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS_AS_IPV6,
 )
 def test_ipaddress_as_ipv6(ip_address, excepted_instance):
@@ -215,7 +215,7 @@ def test_ipaddress_as_ipv6(ip_address, excepted_instance):
 
 
 @pytest.mark.parametrize(
-    "input_ipv4", TEST_CASES_IPV4
+    "input_ipv4", TEST_CASES_IPV4,
 )
 def test_ipv4(input_ipv4):
     """Test the IPv4 class"""
@@ -223,8 +223,8 @@ def test_ipv4(input_ipv4):
 
 
 @pytest.mark.parametrize(
-    "input_ipv4, excepted_output",
-    TEST_CASES_IPV4_STRING
+    ("input_ipv4", "excepted_output"),
+    TEST_CASES_IPV4_STRING,
 )
 def test_ipv4_string(input_ipv4, excepted_output):
     """Test IPv4 string representation"""
@@ -232,8 +232,8 @@ def test_ipv4_string(input_ipv4, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv4, excepted_output",
-    TEST_CASES_IPV4_IPV4_TO_NUM
+    ("input_ipv4", "excepted_output"),
+    TEST_CASES_IPV4_IPV4_TO_NUM,
 )
 def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
     """Test IPv4 to num conversion"""
@@ -241,7 +241,7 @@ def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6", TEST_CASES_IPV6
+    "input_ipv6", TEST_CASES_IPV6,
 )
 def test_ipv6(input_ipv6):
     """Test the IPv6 class"""
@@ -249,8 +249,8 @@ def test_ipv6(input_ipv6):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6, excepted_output",
-    TEST_CASES_IPV6_STRING
+    ("input_ipv6", "excepted_output"),
+    TEST_CASES_IPV6_STRING,
 )
 def test_ipv6_string(input_ipv6, excepted_output):
     """Test IPv6 string representation"""
@@ -258,8 +258,8 @@ def test_ipv6_string(input_ipv6, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6, excepted_output",
-    TEST_CASES_IPV6_IPV6_TO_NUM
+    ("input_ipv6", "excepted_output"),
+    TEST_CASES_IPV6_IPV6_TO_NUM,
 )
 def test_ipv6_ipv6_to_num(input_ipv6, excepted_output):
     """Test IPv6 to num conversion"""
@@ -267,8 +267,8 @@ def test_ipv6_ipv6_to_num(input_ipv6, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6, error, match_message",
-    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS
+    ("input_ipv6", "error", "match_message"),
+    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
 )
 def test_ipv6_ipv6_to_num_errors(input_ipv6, error, match_message):
     with pytest.raises(error, match=match_message):
