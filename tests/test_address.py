@@ -2,10 +2,7 @@
 
 import pytest
 
-from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
-from iplib3 import (  # pylint: disable=import-error,no-name-in-module
-    IPAddress, IPv4, IPv6
-)
+from iplib3 import IPAddress, IPv4, IPv6  # pylint: disable=import-error,no-name-in-module
 from iplib3.address import (  # pylint: disable=import-error,no-name-in-module
     PureAddress,
 )
@@ -15,6 +12,7 @@ from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
     IPV6_MAX_VALUE,
     PORT_NUMBER_MAX_VALUE,
 )
+from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
 
 def test_pure_address():
@@ -80,16 +78,16 @@ def test_pure_address_port_setter():
     address.port = None
     assert address.port is None
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Port "):
         address.port = 3.14
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Port "):
         address.port = '80'
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Port number "):
         address.port = PORT_NUMBER_MAX_VALUE+1
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Port number "):
         address.port = PORT_NUMBER_MIN_VALUE-1
 
 
@@ -178,7 +176,7 @@ def test_ipaddress_string():
     assert repr(ipv4) == "iplib3.IPAddress('127.0.0.1')"
     assert repr(ipv6) == "iplib3.IPAddress('0:0:0:0:0:DEAD:DEAD:BEEF')"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No valid address representation exists"):
         str(IPAddress(IPV6_MAX_VALUE+1))
 
 
@@ -262,22 +260,22 @@ def test_ipv6_ipv6_to_num():
     assert IPv6()._ipv6_to_num() == IPV6_LOCALHOST
     assert IPv6('70::')._ipv6_to_num() == 0x70_0000_0000_0000_0000_0000_0000_0000
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid IPv6 address format; only one zero-skip allowed"):
         # Two zero-skips
         IPv6('::DE::AD')._ipv6_to_num()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid IPv6 address format; address contains invalid characters"):
         # Invalid hex literal
         IPv6('::H07:AF')._ipv6_to_num()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid IPv6 address format; too many segments "):
         # Too many segments
         IPv6('1:1:1:1:1:1:1:1:1')._ipv6_to_num()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid IPv6 address format; segment max value "):
         # Segment value too high
         IPv6('::7:FFFFF')._ipv6_to_num()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid IPv6 address format; segment min value "):
         # Segment value too low (negative)
         IPv6('::7:-34')._ipv6_to_num()

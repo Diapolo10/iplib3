@@ -12,27 +12,15 @@ omit = [
 ]
 
 
-[tool.flake8]
-max-line-length = 120
-extend-ignore = 'E203,'
-max-complexity = 15 # Info: https://en.wikipedia.org/wiki/Cyclomatic_complexity
-per-file-ignores = """\
-# F401: Ignore "unused" imports
-# F403: Ignore star imports
-# F405: Ignore names from star imports
-__init__.py:F401,F403,F405\
-"""
-
-
 [tool.poetry]
 name = 'iplib3'
-version = '0.2.3'
+version = '0.2.4'
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 
-include = ['CHANGELOG.md', 'LICENSE',]
+include = ['CHANGELOG.md', 'LICENSE', 'py.typed',]
 license = 'MIT'
 readme = 'README.md'
 
@@ -69,11 +57,11 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = '^3.8.1'
+python = '^3.9.0'
 
 
 [tool.poetry.group.dev.dependencies]
-mypy = '^1.3.0'
+mypy = '^1.5.1'
 
 
 [tool.poetry.group.linters]
@@ -81,9 +69,7 @@ optional = true
 
 
 [tool.poetry.group.linters.dependencies]
-flake8 = '^6.0.0'
-flake8-pyproject = '^1.2.3'
-pylint = '^2.17.4'
+ruff = '^0.0.290'
 
 
 [tool.poetry.group.tests]
@@ -91,17 +77,85 @@ optional = true
 
 
 [tool.poetry.group.tests.dependencies]
-coverage = {version = '^7.2.6', extras = ['toml',]}
-pytest = '^7.3.1'
-pytest-cov = '^4.0.0'
-tox = '^4.5.1'
-tox-gh-actions = '^3.1.1'
+pytest = '^7.4.2'
+pytest-cov = '^4.1.0'
+tox = '^4.11.3'
+tox-gh-actions = '^3.1.3'
 
 
 [tool.poetry.urls]
 "Source code" = 'https://github.com/Diapolo10/iplib3'
 "Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
 "Changelog" = 'https://github.com/Diapolo10/iplib3/blob/nightly/CHANGELOG.md' # TODO: Change to use main branch when ready to deploy live
+
+
+[tool.ruff]
+select = [
+    'A',   # Builtins
+    'ANN', # Annotations
+    'ARG', # Unused arguments
+    'B',   # Bugbear
+    'BLE', # Blind except
+    'C4',  # Comprehensions
+    'C90', # mccabe
+    'COM', # Commas
+    'DTZ', # Datetimes
+    'ERA', # Commented-out code
+    'EXE', # Executable
+    'G',   # Logging format
+    'I',   # Isort
+    'ICN', # Import conventions
+    'INP', # Disallow PEP-420 (Implicit namespace packages)
+    'INT', # gettext
+    'ISC', # Implicit str concat
+    'N',   # PEP-8 Naming
+    'NPY', # Numpy
+    'PGH', # Pygrep hooks
+    'PIE', # Unnecessary code
+    'PL',  # Pylint
+    'PT',  # Pytest
+    'PTH', # Use Pathlib
+    'PYI', # Stub files
+    'RET', # Return
+    'RUF', # Ruff
+    'RSE', # Raise
+    'S',   # Bandit
+    'SIM', # Code simplification
+    'SLF', # Private member access
+    'T20', # Print
+    'TCH', # Type checking
+    'TID', # Tidy imports
+    'UP',  # Pyupgrade
+    'W',   # Warnings
+    'YTT', # sys.version
+]
+ignore = [
+    'PLR0913',  # Too many arguments
+]
+ignore-init-module-imports = true
+line-length = 120
+
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 11
+
+
+[tool.ruff.per-file-ignores]
+# https://beta.ruff.rs/docs/rules/
+'__init__.py' = ['F401','F403','F405',]
+'tests/*' = ['ANN', 'ARG', 'INP001', 'PLR2004', 'S101', 'SLF001',]
+
+
+[tool.ruff.pylint]
+max-args = 15
+max-branches = 20
+max-returns = 10
+max-statements = 80
+
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 
 [tool.pylint.'MESSAGES CONTROL']
@@ -137,7 +191,6 @@ isolated_build = True
 
 [gh-actions]
 python =
-    3.8: py38
     3.9: py39
     3.10: py310
     3.11: py311
