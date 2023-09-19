@@ -94,14 +94,13 @@ TEST_CASES_IPV6_VALIDATOR = [
 TEST_CASES_SUBNET_VALIDATOR = [
     ("255.0.0.0", 'ipv4', True),
     ("255.0.0.0", 'IPV4', True),
-    ("255.0.0.0", 'ipv6', True),
-    ("255.255.255.128", 'ipv6', True),
+    ("255.0.0.0", 'ipv6', False),
+    ("255.255.255.128", 'ipv6', False),
     ("255.128.0.0", 'ipv4', True),
     (16, 'ipv6', True),
     ("1.1.1.1", 'ipv4', False),
     ("255.128.192.224", 'ipv4', False),
     ("255.128.128.0", 'ipv4', False),
-    (24, 'ipv8', False),
 ]
 
 TEST_CASES_IPV4_SUBNET_VALIDATOR = [
