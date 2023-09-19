@@ -50,21 +50,72 @@ Lorem Ipsum dolor sit amet.
 <!--
 _______________________________________________________________________________
 
-## [0.2.3] - YYYY-MM-DD
+## [0.2.4] - 2023-09-18
 
-First official documentation.
+Updated dependencies, added `py.typed`, swapped linters to Ruff, fixed lint
+issues, and removed support for Python 3.8 due to type hint changes.
 
 ### Added
 
-- Documentation
-- Now using specific versions for the dependencies
+- `py.typed` is now present, letting `mypy` use the provided type hints
+- Added a workflow for Ruff
 
 ### Changed
 
-- Changed the filename of `deploy.yml` to `pypi_deploy.yml` to get rid of a YAML validator complaint
-- Updated dependencies
+- Ruff replaces Pylint an Flake8 as linters
+- Cleaned up the source code with Ruff
+- Updated dpendencies
+- Updated `Makefile`
+
+### Removed
+
+- Removed the old workflows for Pylint and Flake8
 
 -->
+
+_______________________________________________________________________________
+
+## [0.2.4] - 2023-09-18
+
+Updated dependencies, added `py.typed`, swapped linters to Ruff, fixed lint
+issues, and removed support for Python 3.8 due to type hint changes.
+
+### Added
+
+- `py.typed` is now present, letting `mypy` use the provided type hints
+- Added a workflow for Ruff
+
+### Changed
+
+- Ruff replaces Pylint an Flake8 as linters
+- Cleaned up the source code with Ruff
+- Updated dpendencies
+- Updated `Makefile`
+
+### Removed
+
+- Removed the old workflows for Pylint and Flake8
+
+_______________________________________________________________________________
+
+## [0.2.3] - 2023-02-09
+
+Updated dependencies, stopped ignoring `poetry.lock`, and upgraded workflows.
+
+### Added
+
+- New workflows for code analysis and automatic dependency updates
+- Automated GitHub releases
+
+### Changed
+
+- `poetry.lock` is now included in the repository
+- Updated project metadata files for consistency
+- Updated old workflows
+
+### Removed
+
+- The old `deploy.yml` was removed in favour of `pypi_deploy.yml`
 
 _______________________________________________________________________________
 

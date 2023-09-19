@@ -1,6 +1,6 @@
 """iplib3's functionality specific to validating things"""
 
-from typing import List, Optional, Tuple, Union
+from __future__ import annotations
 
 from iplib3.constants.ipv4 import (
     IPV4_MAX_SEGMENT_COUNT,
@@ -19,7 +19,10 @@ from iplib3.constants.ipv6 import (
     IPV6_NUMBER_BIT_COUNT,
     IPV6_SEGMENT_BIT_COUNT,
 )
-from iplib3.constants.port import PORT_NUMBER_MAX_VALUE, PORT_NUMBER_MIN_VALUE
+from iplib3.constants.port import (
+    PORT_NUMBER_MAX_VALUE,
+    PORT_NUMBER_MIN_VALUE,
+)
 from iplib3.constants.subnet import (
     IPV4_MAX_SUBNET_VALUE,
     IPV4_MIN_SUBNET_VALUE,
@@ -31,7 +34,7 @@ from iplib3.constants.subnet import (
 __all__ = ('port_validator', 'ip_validator', 'ipv4_validator', 'ipv6_validator', 'subnet_validator')
 
 
-def port_validator(port_num: Optional[int]) -> bool:
+def port_validator(port_num: int | None) -> bool:
     """
     Validates an address port
 
@@ -52,7 +55,7 @@ def port_validator(port_num: Optional[int]) -> bool:
     )
 
 
-def ip_validator(address: Union[str, int], strict: bool = True) -> bool:
+def ip_validator(address: str | int, strict: bool = True) -> bool:
     """
     Validates an IP address of any kind, returning a boolean
 
@@ -65,7 +68,7 @@ def ip_validator(address: Union[str, int], strict: bool = True) -> bool:
     return ipv6_validator(address, strict)
 
 
-def ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
+def ipv4_validator(address: str | int, strict: bool = True) -> bool:
     """
     Validates an IPv4 address, returning a boolean
 
@@ -88,7 +91,7 @@ def ipv4_validator(address: Union[str, int], strict: bool = True) -> bool:
     return valid
 
 
-def ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
+def ipv6_validator(address: str | int, strict: bool = True) -> bool:
     """
     Validates an IPv6 address, returning a boolean
 
@@ -113,7 +116,7 @@ def ipv6_validator(address: Union[str, int], strict: bool = True) -> bool:
     return valid
 
 
-def subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
+def subnet_validator(subnet: str | int, protocol: str = 'ipv4') -> bool:
     """
     Validates a given subnet mask, defaulting to IPv4 protocol
 
@@ -132,7 +135,7 @@ def subnet_validator(subnet: Union[str, int], protocol='ipv4') -> bool:
     return valid
 
 
-def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
+def _ipv4_subnet_validator(subnet: str | int) -> bool:
     """
     Validates an IPv4-compliant subnet mask
 
@@ -205,7 +208,7 @@ def _ipv6_subnet_validator(subnet: int) -> bool:  # IPv6 subnets have no string 
     raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
 
 
-def _port_stripper(address: str, protocol: str = 'ipv4', strict: bool = True) -> Tuple[str, Optional[int], bool]:
+def _port_stripper(address: str, protocol: str = 'ipv4', strict: bool = True) -> tuple[str, int | None, bool]:
     """
     Extracts the port number from IP addresses, if any
 
@@ -308,7 +311,7 @@ def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
             valid = False
 
     try:
-        processed_segments: List[int] = [
+        processed_segments: list[int] = [
             int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0
             for segment in segments
         ]

@@ -18,6 +18,8 @@ The module is currently lacking in long-term vision as I used it as a practice p
 
 This project is not affiliated with `iplib`, the naming similarity is merely a coincidence.
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDiapolo10%2Fiplib3?ref=badge_large)
+
 ## Installation
 
 `iplib3` will work with Python versions 3.6 and above. It could be back-ported to 3.5 or for even earlier versions with relatively little change, but the maintainer doesn't see a good reason to focus on earlier versions.

@@ -2,68 +2,82 @@
 
 import pytest
 
-from iplib3 import IPAddress, IPv4, IPv6  # pylint: disable=import-error,no-name-in-module
-from iplib3.address import (  # pylint: disable=import-error,no-name-in-module
-    PureAddress,
-)
-from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
-    IPV4_LOCALHOST,
-    IPV6_LOCALHOST,
-    IPV6_MAX_VALUE,
-    PORT_NUMBER_MAX_VALUE,
-)
+from iplib3 import IPAddress
+from iplib3.address import IPv6, PureAddress
+from iplib3.constants import IPV6_MAX_VALUE
 from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
+from tests.test_cases_address import (
+    TEST_CASES_IPADDRESS,
+    TEST_CASES_IPADDRESS_AS_IPV4,
+    TEST_CASES_IPADDRESS_AS_IPV6,
+    TEST_CASES_IPADDRESS_EQUALITY,
+    TEST_CASES_IPADDRESS_REPR,
+    TEST_CASES_IPADDRESS_STRING,
+    TEST_CASES_IPV4,
+    TEST_CASES_IPV4_IPV4_TO_NUM,
+    TEST_CASES_IPV4_STRING,
+    TEST_CASES_IPV6,
+    TEST_CASES_IPV6_IPV6_TO_NUM,
+    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
+    TEST_CASES_IPV6_STRING,
+    TEST_CASES_PURE_ADDRESS,
+    TEST_CASES_PURE_ADDRESS_AS_HEX,
+    TEST_CASES_PURE_ADDRESS_EQUALITY,
+    TEST_CASES_PURE_ADDRESS_INEQUALITY,
+    TEST_CASES_PURE_ADDRESS_NUM,
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4,
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING,
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS,
+    TEST_CASES_PURE_ADDRESS_PORT,
+    TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
+)
 
 
-def test_pure_address():
+@pytest.mark.parametrize(
+    "pure_address",
+    TEST_CASES_PURE_ADDRESS,
+)
+def test_pure_address(pure_address):
     """Test the PureAddress base class"""
-
-    assert PureAddress()
-    assert PureAddress(0xDE_AD_BE_EF)
-    assert PureAddress(port=80)
-    assert PureAddress(IPV4_LOCALHOST, 80)
-    assert PureAddress(-42)
+    assert pure_address
 
 
-def test_pure_address_equality():
+@pytest.mark.parametrize(
+    ("address", "input_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_EQUALITY,
+)
+def test_pure_address_equality(address, input_address, excepted_output):
     """Test PureAddress equality"""
-
-    address = PureAddress(0xDE_AD_BE_EF)
-
-    assert address == PureAddress(0xDE_AD_BE_EF)
-    assert (address == PureAddress(0xDE_AD_BE_EF, 80)) is False
-    assert (address == 0xDE_AD_BE_EF) is False
-    assert (address == 'cheese') is False
+    output = address == input_address
+    assert output is excepted_output
 
 
-def test_pure_address_inequality():
+@pytest.mark.parametrize(
+    ("first_address", "second_address"),
+    TEST_CASES_PURE_ADDRESS_INEQUALITY,
+)
+def test_pure_address_inequality(first_address, second_address):
     """Test PureAddress inequality"""
-
-    address = PureAddress(0xDE_AD_BE_EF)
-
-    assert address != PureAddress(0xC0_01_BA_5E)
-    assert address != PureAddress(0xDE_AD_BE_EF, 80)
-    assert address != 0xC0_01_BA_5E
+    assert first_address != second_address
 
 
-def test_pure_address_num():
+@pytest.mark.parametrize(
+    ("address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_NUM,
+)
+def test_pure_address_num(address, excepted_output):
     """Test PureAddress num property"""
-
-    assert PureAddress().num == 0
-    assert PureAddress(0xDE_AD_BE_EF).num == 0xDE_AD_BE_EF
-    assert PureAddress(port=80).num == 0
-    assert PureAddress(IPV4_LOCALHOST, 80).num == 0x7F_00_00_01
-    assert PureAddress(-42).num == 0
+    assert address.num == excepted_output
 
 
-def test_pure_address_port():
+@pytest.mark.parametrize(
+    ("address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_PORT,
+)
+def test_pure_address_port(address, excepted_output):
     """Test PureAddress port property"""
-
-    assert PureAddress().port is None
-    assert PureAddress(0xDE_AD_BE_EF).port is None
-    assert PureAddress(port=80).port == 80
-    assert PureAddress(IPV4_LOCALHOST, 80).port == 80
-    assert PureAddress(-42).port is None
+    assert address.port == excepted_output
 
 
 def test_pure_address_port_setter():
@@ -73,60 +87,65 @@ def test_pure_address_port_setter():
     assert address.port is None
 
     address.port = 80
-    assert address.port == 80
+    assert address.port == 80  # noqa: PLR2004
 
     address.port = None
     assert address.port is None
 
-    with pytest.raises(TypeError):
-        address.port = 3.14
 
-    with pytest.raises(TypeError):
-        address.port = '80'
-
-    with pytest.raises(ValueError):
-        address.port = PORT_NUMBER_MAX_VALUE+1
-
-    with pytest.raises(ValueError):
-        address.port = PORT_NUMBER_MIN_VALUE-1
+@pytest.mark.parametrize(
+    ("value", "error", "match_message"),
+    TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
+)
+def test_pure_address_port_setter_error(value, error, match_message):
+    address = PureAddress()
+    with pytest.raises(error, match=match_message):
+        address.port = value
 
 
-def test_pure_address_as_hex():
+@pytest.mark.parametrize(
+    ("pure_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_AS_HEX,
+)
+def test_pure_address_as_hex(pure_address, excepted_output):
     """Test PureAddress hex output"""
-
-    assert PureAddress(0xDE_AD_BE_EF).as_hex == '0xDEADBEEF'
-    assert PureAddress(0x8B_AD_F0_0D).as_hex == '0x8BADF00D'
-    assert PureAddress(0xDE_AD_C0_DE).as_hex == '0xDEADC0DE'
+    assert pure_address.as_hex == excepted_output
 
 
-def test_pure_address_num_to_ipv4():
+@pytest.mark.parametrize(
+    ("pure_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4,
+)
+def test_pure_address_num_to_ipv4(pure_address, excepted_output):
     """Test PureAddress num to IPv4 string conversion"""
+    assert pure_address.num_to_ipv4() == excepted_output
 
-    assert PureAddress(IPV4_LOCALHOST).num_to_ipv4() == '127.0.0.1'
 
-
-def test_pure_address_num_to_ipv6():
+@pytest.mark.parametrize(
+    ("pure_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
+)
+def test_pure_address_num_to_ipv6(pure_address, excepted_output):
     """Test PureAddress num to IPv6 string conversion"""
-
-    assert PureAddress(IPV6_LOCALHOST).num_to_ipv6() == '0:0:0:0:0:0:0:1'
-    assert PureAddress(0xDEAD_C0DE_1057_BE17).num_to_ipv6() == '0:0:0:0:DEAD:C0DE:1057:BE17'
-    assert PureAddress(0xBADC_0FFE_E0DD_F00D).num_to_ipv6() == '0:0:0:0:BADC:FFE:E0DD:F00D'
+    assert pure_address.num_to_ipv6() == excepted_output
 
 
-def test_pure_address_num_to_ipv6_no_shortening():
+@pytest.mark.parametrize(
+    ("pure_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING,
+)
+def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
     """Test PureAddress num to IPv6 string conversion without shortening"""
-
-    assert PureAddress(IPV6_LOCALHOST).num_to_ipv6(shorten=False) == '0000:0000:0000:0000:0000:0000:0000:0001'
-    assert PureAddress(0xDEAD_C0DE_1057_BE17).num_to_ipv6(shorten=False) == '0000:0000:0000:0000:DEAD:C0DE:1057:BE17'
-    assert PureAddress(0xBADC_0FFE_E0DD_F00D).num_to_ipv6(shorten=False) == '0000:0000:0000:0000:BADC:0FFE:E0DD:F00D'
+    assert pure_address.num_to_ipv6(shorten=False) == excepted_output
 
 
-def test_pure_address_num_to_ipv6_remove_zeroes():
+@pytest.mark.parametrize(
+    ("pure_address", "excepted_output"),
+    TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS,
+)
+def test_pure_address_num_to_ipv6_remove_zeroes(pure_address, excepted_output):
     """Test PureAddress num to IPv6 string conversion with empty segment removal"""
-
-    assert PureAddress(IPV6_LOCALHOST).num_to_ipv6(remove_zeroes=True) == '::1'
-    assert PureAddress(0xDEAD_C0DE_1057_BE17).num_to_ipv6(remove_zeroes=True) == '::DEAD:C0DE:1057:BE17'
-    assert PureAddress(0xBADC_0FFE_E0DD_F00D).num_to_ipv6(remove_zeroes=True) == '::BADC:FFE:E0DD:F00D'
+    assert pure_address.num_to_ipv6(remove_zeroes=True) == excepted_output
 
 
 def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
@@ -134,148 +153,123 @@ def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
     Test PureAddress num to IPv6 string conversion without
     shortening but segment removal applied
     """
-
     assert PureAddress(0xBADC_0FFE_E0DD_F00D).num_to_ipv6(shorten=False, remove_zeroes=True) == '::BADC:0FFE:E0DD:F00D'
 
 
-def test_ipaddress():
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_instance"),
+    TEST_CASES_IPADDRESS,
+)
+def test_ipaddress(ip_address, excepted_instance):
     """Test the IPAddress class"""
-
-    assert IPAddress()
-    assert isinstance(IPAddress(IPV4_LOCALHOST), IPAddress)
-    assert isinstance(IPAddress('127.0.0.1'), IPv4)
-    assert isinstance(IPAddress('::DEAD:BEEF'), IPv6)
-
-    assert isinstance(IPAddress(IPV4_LOCALHOST, 80), IPAddress)
-    assert isinstance(IPAddress('127.0.0.1', 80), IPv4)
-    assert isinstance(IPAddress('::DEAD:BEEF', 80), IPv6)
+    assert isinstance(ip_address, excepted_instance)
 
 
-def test_ipaddress_equality():
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_output"),
+    TEST_CASES_IPADDRESS_EQUALITY,
+)
+def test_ipaddress_equality(ip_address, excepted_output):
     """Test IPAddress equality"""
-
-    address = IPAddress(IPV4_LOCALHOST)
-
-    assert address == IPAddress(IPV4_LOCALHOST)
-    assert address == '127.0.0.1'
-    assert address == PureAddress(IPV4_LOCALHOST)
+    assert ip_address == excepted_output
 
 
-def test_ipaddress_string():
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_output"),
+    TEST_CASES_IPADDRESS_STRING,
+)
+def test_ipaddress_string(ip_address, excepted_output):
     """Test IPAddress string representation"""
-
-    default = IPAddress()
-    ipv4 = IPAddress(IPV4_LOCALHOST)
-    ipv6 = IPAddress(0xDEAD_DEAD_BEEF)
-
-    assert str(default) == '127.0.0.1'
-    assert str(ipv4) == '127.0.0.1'
-    assert str(ipv6) == '0:0:0:0:0:DEAD:DEAD:BEEF'
-
-    assert repr(default) == "iplib3.IPAddress('127.0.0.1')"
-    assert repr(ipv4) == "iplib3.IPAddress('127.0.0.1')"
-    assert repr(ipv6) == "iplib3.IPAddress('0:0:0:0:0:DEAD:DEAD:BEEF')"
-
-    with pytest.raises(ValueError):
-        str(IPAddress(IPV6_MAX_VALUE+1))
+    assert str(ip_address) == excepted_output
 
 
-def test_ipaddress_as_ipv4():
+def test_ipaddress_string_error():
+    with pytest.raises(ValueError, match="No valid address representation exists"):
+        str(IPAddress(IPV6_MAX_VALUE + 1))
+
+
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_output"),
+    TEST_CASES_IPADDRESS_REPR,
+)
+def test_ipaddress_repr(ip_address, excepted_output):
+    assert repr(ip_address) == excepted_output
+
+
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_instance"),
+    TEST_CASES_IPADDRESS_AS_IPV4,
+)
+def test_ipaddress_as_ipv4(ip_address, excepted_instance):
     """Test the IPAddress IPv4 constructor"""
-
-    default = IPAddress()
-    ipv4 = IPAddress('127.0.0.1')
-    ipv6 = IPAddress('::DEAD:BEEF')
-
-    assert isinstance(default.as_ipv4, IPv4)
-    assert isinstance(ipv4.as_ipv4, IPv4)
-    assert isinstance(ipv6.as_ipv4, IPv4)
+    assert isinstance(ip_address.as_ipv4, excepted_instance)
 
 
-def test_ipaddress_as_ipv6():
+@pytest.mark.parametrize(
+    ("ip_address", "excepted_instance"),
+    TEST_CASES_IPADDRESS_AS_IPV6,
+)
+def test_ipaddress_as_ipv6(ip_address, excepted_instance):
     """Test the IPAddress IPv6 constructor"""
-
-    default = IPAddress()
-    ipv4 = IPAddress('127.0.0.1')
-    ipv6 = IPAddress('::DEAD:BEEF')
-
-    assert isinstance(default.as_ipv6, IPv6)
-    assert isinstance(ipv4.as_ipv6, IPv6)
-    assert isinstance(ipv6.as_ipv6, IPv6)
+    assert isinstance(ip_address.as_ipv6, excepted_instance)
 
 
-def test_ipv4():
+@pytest.mark.parametrize(
+    "input_ipv4", TEST_CASES_IPV4,
+)
+def test_ipv4(input_ipv4):
     """Test the IPv4 class"""
-
-    assert IPv4()
-    assert IPv4('127.0.0.1')
-    assert IPv4('127.0.0.1:80')
-    assert IPv4('127.0.0.1', 80)
-    assert IPv4('127.0.0.1:80', 8080)
-    assert IPv4('127.0.0.1', port_num=80)
+    assert input_ipv4
 
 
-def test_ipv4_string():
+@pytest.mark.parametrize(
+    ("input_ipv4", "excepted_output"),
+    TEST_CASES_IPV4_STRING,
+)
+def test_ipv4_string(input_ipv4, excepted_output):
     """Test IPv4 string representation"""
-
-    assert str(IPv4()) == '127.0.0.1'
-    assert str(IPv4('127.0.0.1')) == '127.0.0.1'
-    assert str(IPv4('127.0.0.1:80')) == '127.0.0.1:80'
-    assert str(IPv4('127.0.0.1', 80)) == '127.0.0.1:80'
-    assert str(IPv4('127.0.0.1:80', 8080)) == '127.0.0.1:8080'
+    assert str(input_ipv4) == excepted_output
 
 
-def test_ipv4_ipv4_to_num():
+@pytest.mark.parametrize(
+    ("input_ipv4", "excepted_output"),
+    TEST_CASES_IPV4_IPV4_TO_NUM,
+)
+def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
     """Test IPv4 to num conversion"""
-
-    assert IPv4()._ipv4_to_num() == IPV4_LOCALHOST
-    assert IPv4('127.0.0.1')._ipv4_to_num() == IPV4_LOCALHOST
-    assert IPv4('192.168.0.1')._ipv4_to_num() == 0xC0_A8_00_01
+    assert input_ipv4._ipv4_to_num() == excepted_output  # noqa: SLF001
 
 
-def test_ipv6():
+@pytest.mark.parametrize(
+    "input_ipv6", TEST_CASES_IPV6,
+)
+def test_ipv6(input_ipv6):
     """Test the IPv6 class"""
-
-    assert IPv6()
-    assert IPv6('2606:4700:4700::1111')
-    assert IPv6('2606:4700:4700::1111', 80)
-    assert IPv6('[2606:4700:4700::1111]:80')
-    assert IPv6('[2606:4700:4700::1111]:80', 8080)
+    assert input_ipv6
 
 
-def test_ipv6_string():
+@pytest.mark.parametrize(
+    ("input_ipv6", "excepted_output"),
+    TEST_CASES_IPV6_STRING,
+)
+def test_ipv6_string(input_ipv6, excepted_output):
     """Test IPv6 string representation"""
-
-    assert str(IPv6()) == '0:0:0:0:0:0:0:1'
-    assert str(IPv6('2606:4700:4700::1111')) == '2606:4700:4700::1111'
-    assert str(IPv6('2606:4700:4700::1111', 80)) == '[2606:4700:4700::1111]:80'
-    assert str(IPv6('[2606:4700:4700::1111]:80')) == '[2606:4700:4700::1111]:80'
-    assert str(IPv6('[2606:4700:4700::1111]:80', 8080)) == '[2606:4700:4700::1111]:8080'
-    assert str(IPv6('2606:4700:4700::1111', port_num=80)) == '[2606:4700:4700::1111]:80'
+    assert str(input_ipv6) == excepted_output
 
 
-def test_ipv6_ipv6_to_num():
+@pytest.mark.parametrize(
+    ("input_ipv6", "excepted_output"),
+    TEST_CASES_IPV6_IPV6_TO_NUM,
+)
+def test_ipv6_ipv6_to_num(input_ipv6, excepted_output):
     """Test IPv6 to num conversion"""
+    assert IPv6(input_ipv6)._ipv6_to_num() == excepted_output  # noqa: SLF001
 
-    assert IPv6()._ipv6_to_num() == IPV6_LOCALHOST
-    assert IPv6('70::')._ipv6_to_num() == 0x70_0000_0000_0000_0000_0000_0000_0000
 
-    with pytest.raises(ValueError):
-        # Two zero-skips
-        IPv6('::DE::AD')._ipv6_to_num()
-
-    with pytest.raises(ValueError):
-        # Invalid hex literal
-        IPv6('::H07:AF')._ipv6_to_num()
-
-    with pytest.raises(ValueError):
-        # Too many segments
-        IPv6('1:1:1:1:1:1:1:1:1')._ipv6_to_num()
-
-    with pytest.raises(ValueError):
-        # Segment value too high
-        IPv6('::7:FFFFF')._ipv6_to_num()
-
-    with pytest.raises(ValueError):
-        # Segment value too low (negative)
-        IPv6('::7:-34')._ipv6_to_num()
+@pytest.mark.parametrize(
+    ("input_ipv6", "error", "match_message"),
+    TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
+)
+def test_ipv6_ipv6_to_num_errors(input_ipv6, error, match_message):
+    with pytest.raises(error, match=match_message):
+        IPv6(input_ipv6)._ipv6_to_num()  # noqa: SLF001
