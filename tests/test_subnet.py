@@ -2,14 +2,14 @@
 
 import pytest
 
-from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
-    SubnetMask,
-    PureSubnetMask,
-)
 from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
-    IPV4_MIN_SUBNET_VALUE,
     IPV4_MAX_SUBNET_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
     IPV6_MAX_SUBNET_VALUE,
+)
+from iplib3.subnet import (  # pylint: disable=import-error,no-name-in-module
+    PureSubnetMask,
+    SubnetMask,
 )
 
 

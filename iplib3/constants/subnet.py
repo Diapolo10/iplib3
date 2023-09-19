@@ -1,13 +1,7 @@
 """Subnet constants"""
 
-from .ipv6 import (
-    IPV6_SEGMENT_BIT_COUNT,
-    IPV6_MAX_SEGMENT_COUNT
-)
-from .ipv4 import (
-    IPV4_SEGMENT_BIT_COUNT,
-    IPV4_MAX_SEGMENT_COUNT
-)
+from iplib3.constants.ipv4 import IPV4_MAX_SEGMENT_COUNT, IPV4_SEGMENT_BIT_COUNT
+from iplib3.constants.ipv6 import IPV6_MAX_SEGMENT_COUNT, IPV6_SEGMENT_BIT_COUNT
 
 # Subnet mask constants
 IPV4_VALID_SUBNET_SEGMENTS = (0, 128, 192, 224, 240, 248, 252, 254, 255)

@@ -1,16 +1,16 @@
 """iplib3's functionality specific to subnetting"""
 
-from typing import Optional, Union, Any
+from __future__ import annotations
 
-from .constants.ipv4 import (
-    IPV4_SEGMENT_BIT_COUNT,
-)
-from .constants.subnet import (
-    IPV4_VALID_SUBNET_SEGMENTS,
-    IPV4_MIN_SUBNET_VALUE,
+from typing import Any, Optional, Union
+
+from iplib3.constants.ipv4 import IPV4_SEGMENT_BIT_COUNT
+from iplib3.constants.subnet import (
     IPV4_MAX_SUBNET_VALUE,
-    IPV6_MIN_SUBNET_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
+    IPV4_VALID_SUBNET_SEGMENTS,
     IPV6_MAX_SUBNET_VALUE,
+    IPV6_MIN_SUBNET_VALUE,
 )
 
 
@@ -20,32 +20,31 @@ class PureSubnetMask:
     """
     __slots__ = ('_prefix_length',)
 
-    def __init__(self):
-        self._prefix_length: Optional[int] = 0
+    def __init__(self: PureSubnetMask) -> None:
+        self._prefix_length: int | None = 0
 
-    def __str__(self) -> str:
+    def __str__(self: PureSubnetMask) -> str:
         return str(self.prefix_length)
 
-    def __repr__(self) -> str:
+    def __repr__(self: PureSubnetMask) -> str:
         return f"iplib3.{self.__class__.__name__}('{self}')"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self: PureSubnetMask, other: object) -> bool:
 
         # To accommodate strings and integers
         if self.prefix_length == other or str(self) == other:
             return True
 
         if isinstance(other, PureSubnetMask):
-            print("puresubnetmask")
             return self.prefix_length == other.prefix_length
 
         return False
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self: PureSubnetMask, other: object) -> bool:
         return not self == other
 
     @property
-    def prefix_length(self) -> Optional[int]:
+    def prefix_length(self: PureSubnetMask) -> int | None:
         """
         Negative numbers aren't valid,
         they are treated as zero.
@@ -64,17 +63,17 @@ class SubnetMask(PureSubnetMask):
 
     __slots__ = ('_subnet_type',)
 
-    def __init__(self, subnet_mask: Union[int, str, None] = None, subnet_type: str = 'ipv6'):
+    def __init__(self: SubnetMask, subnet_mask: int | str | None = None, subnet_type: str = 'ipv6') -> None:
         super().__init__()
 
         if isinstance(subnet_mask, str) and '.' in subnet_mask:
             # Only subnets for IPv4 use strings
             subnet_type = 'ipv4'
 
-        self._prefix_length: Optional[int] = self._subnet_to_num(subnet_mask, subnet_type)
+        self._prefix_length: int | None = self._subnet_to_num(subnet_mask, subnet_type)
         self._subnet_type = subnet_type.lower()
 
-    def __repr__(self):
+    def __repr__(self: SubnetMask) -> str:
         if self._subnet_type.lower() == 'ipv4' and self._prefix_length is not None:
             return (
                 f"iplib3.{self.__class__.__name__}"
@@ -83,7 +82,7 @@ class SubnetMask(PureSubnetMask):
         return super().__repr__()
 
     @staticmethod
-    def _subnet_to_num(subnet_mask: Union[int, str, None], subnet_type: str = 'ipv6') -> Optional[int]:
+    def _subnet_to_num(subnet_mask: int | (str | None), subnet_type: str = 'ipv6') -> int | None:
 
         if subnet_mask is None:
             return None
@@ -91,7 +90,7 @@ class SubnetMask(PureSubnetMask):
         if not isinstance(subnet_mask, (int, str)):
             raise TypeError(
                 f"Invalid type for subnet value: '{subnet_mask.__class__.__name__}'\n"
-                f"Expected int, string, or None"
+                f"Expected int, string, or None",
             )
 
         if isinstance(subnet_mask, str):
@@ -117,22 +116,20 @@ class SubnetMask(PureSubnetMask):
                 subnet_mask = int(subnet_mask)
             except ValueError as err:
                 raise ValueError(
-                    f"Subnet value not valid; '{subnet_mask}' is neither a valid string representation nor an integer"
+                    f"Subnet value not valid; '{subnet_mask}' is neither a valid string representation nor an integer",
                 ) from err
 
-        if subnet_type.lower() == 'ipv4':
-            if not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE:
-                raise ValueError(
-                    f"Subnet '{subnet_mask}' not in valid range "
-                    f"({IPV4_MIN_SUBNET_VALUE}-{IPV4_MAX_SUBNET_VALUE})"
-                )
+        if subnet_type.lower() == 'ipv4' and not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE:
+            raise ValueError(
+                f"Subnet '{subnet_mask}' not in valid range "
+                f"({IPV4_MIN_SUBNET_VALUE}-{IPV4_MAX_SUBNET_VALUE})",
+            )
 
-        if subnet_type.lower() == 'ipv6':
-            if not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE:
-                raise ValueError(
-                    f"Subnet '{subnet_mask}' not in valid range "
-                    f"({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})"
-                )
+        if subnet_type.lower() == 'ipv6' and not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE:
+            raise ValueError(
+                f"Subnet '{subnet_mask}' not in valid range "
+                f"({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})",
+            )
 
         return subnet_mask
 

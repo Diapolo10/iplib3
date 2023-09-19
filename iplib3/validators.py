@@ -2,33 +2,30 @@
 
 from typing import List, Optional, Tuple, Union
 
-from .constants.port import (
-    PORT_NUMBER_MIN_VALUE,
-    PORT_NUMBER_MAX_VALUE,
-)
-from .constants.ipv4 import (
+from iplib3.constants.ipv4 import (
     IPV4_MAX_SEGMENT_COUNT,
+    IPV4_MAX_SEGMENT_VALUE,
+    IPV4_MAX_VALUE,
     IPV4_MIN_SEGMENT_COUNT,
     IPV4_MIN_SEGMENT_VALUE,
-    IPV4_MAX_SEGMENT_VALUE,
     IPV4_MIN_VALUE,
-    IPV4_MAX_VALUE,
 )
-from .constants.ipv6 import (
+from iplib3.constants.ipv6 import (
+    IPV6_MAX_SEGMENT_COUNT,
+    IPV6_MAX_SEGMENT_VALUE,
+    IPV6_MAX_VALUE,
+    IPV6_MIN_SEGMENT_VALUE,
+    IPV6_MIN_VALUE,
     IPV6_NUMBER_BIT_COUNT,
     IPV6_SEGMENT_BIT_COUNT,
-    IPV6_MAX_SEGMENT_COUNT,
-    IPV6_MIN_SEGMENT_VALUE,
-    IPV6_MAX_SEGMENT_VALUE,
-    IPV6_MIN_VALUE,
-    IPV6_MAX_VALUE,
 )
-from .constants.subnet import (
-    IPV4_VALID_SUBNET_SEGMENTS,
-    IPV4_MIN_SUBNET_VALUE,
+from iplib3.constants.port import PORT_NUMBER_MAX_VALUE, PORT_NUMBER_MIN_VALUE
+from iplib3.constants.subnet import (
     IPV4_MAX_SUBNET_VALUE,
-    IPV6_MIN_SUBNET_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
+    IPV4_VALID_SUBNET_SEGMENTS,
     IPV6_MAX_SUBNET_VALUE,
+    IPV6_MIN_SUBNET_VALUE,
 )
 
 __all__ = ('port_validator', 'ip_validator', 'ipv4_validator', 'ipv6_validator', 'subnet_validator')
@@ -182,7 +179,7 @@ def _ipv4_subnet_validator(subnet: Union[str, int]) -> bool:
 
     raise TypeError(
         f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}';"
-        f" only strings and integers supported"
+        f" only strings and integers supported",
     )
 
 

@@ -1,10 +1,10 @@
 
-# IPlib3 Change Log
+# IPLib3 Changelog
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [CHANGELOG.md](http://changelog.md/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format is based on [CHANGELOG.md][CHANGELOG.md]
+and this project adheres to [Semantic Versioning][Semantic Versioning].
 
 <!-- 
 TEMPLATE
@@ -190,6 +190,9 @@ the initial commit.
 ### Fixed
 
 - Fixed the CI/CD build process
+
+[CHANGELOG.md]: https://keepachangelog.com/en/1.1.0/
+[Semantic Versioning]: http://semver.org/
 
 <!-- markdownlint-configure-file {
     "MD022": false,

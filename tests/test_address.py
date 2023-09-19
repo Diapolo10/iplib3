@@ -1,11 +1,8 @@
 """Unit tests for iplib3.address"""
 
-from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 import pytest
 
-from iplib3 import (  # pylint: disable=import-error,no-name-in-module
-    IPAddress, IPv4, IPv6
-)
+from iplib3 import IPAddress, IPv4, IPv6  # pylint: disable=import-error,no-name-in-module
 from iplib3.address import (  # pylint: disable=import-error,no-name-in-module
     PureAddress,
 )
@@ -15,6 +12,7 @@ from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
     IPV6_MAX_VALUE,
     PORT_NUMBER_MAX_VALUE,
 )
+from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
 
 def test_pure_address():

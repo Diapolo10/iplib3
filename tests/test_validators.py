@@ -2,24 +2,27 @@
 
 import pytest
 
+from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
+    IPV4_MAX_SUBNET_VALUE,
+    IPV4_MAX_VALUE,
+    IPV4_MIN_SUBNET_VALUE,
+    IPV4_MIN_VALUE,
+    IPV6_MAX_SUBNET_VALUE,
+    IPV6_MAX_VALUE,
+    IPV6_MIN_SUBNET_VALUE,
+    IPV6_MIN_VALUE,
+    PORT_NUMBER_MAX_VALUE,
+    PORT_NUMBER_MIN_VALUE,
+)
 from iplib3.validators import (  # pylint: disable=import-error,no-name-in-module
+    _ipv4_subnet_validator,
+    _ipv6_subnet_validator,
     _port_stripper,
     ip_validator,
     ipv4_validator,
     ipv6_validator,
     port_validator,
     subnet_validator,
-    _ipv4_subnet_validator,
-    _ipv6_subnet_validator,
-)
-from iplib3.constants import (  # pylint: disable=import-error,no-name-in-module
-    IPV4_MIN_VALUE,         IPV6_MIN_VALUE,
-    IPV4_MAX_VALUE,         IPV6_MAX_VALUE,
-
-    PORT_NUMBER_MIN_VALUE,  PORT_NUMBER_MAX_VALUE,
-
-    IPV4_MIN_SUBNET_VALUE,  IPV6_MIN_SUBNET_VALUE,
-    IPV4_MAX_SUBNET_VALUE,  IPV6_MAX_SUBNET_VALUE,
 )
 
 
