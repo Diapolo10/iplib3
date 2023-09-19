@@ -242,19 +242,18 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
         segments = [int(segment) for segment in address.split('.')]
     except ValueError:
         # IPv4 address was not made of valid integers
+        return False
+
+    if not IPV4_MIN_SEGMENT_COUNT <= len(segments) <= IPV4_MAX_SEGMENT_COUNT:
+        # Invalid number of segments
         valid = False
 
-    else:
-        if not IPV4_MIN_SEGMENT_COUNT <= len(segments) <= IPV4_MAX_SEGMENT_COUNT:
-            # Invalid number of segments
-            valid = False
-
-        elif strict:
-            for seg in segments:
-                if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
-                    # Segment value was too high or too low to be strictly valid
-                    valid = False
-                    break
+    elif strict:
+        for seg in segments:
+            if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
+                # Segment value was too high or too low to be strictly valid
+                valid = False
+                break
 
     return valid
 
@@ -262,39 +261,32 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
 def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
     """Validates the address part of an IPv6 address"""
 
+    address = address.strip()
     valid = True
-    segments = []
-    empty_segment = f'{IPV6_MIN_SEGMENT_VALUE}' * IPV6_NUMBER_BIT_COUNT
+    segments: list[str] = []
+    empty_segment = f'{IPV6_MIN_SEGMENT_VALUE:0{IPV6_NUMBER_BIT_COUNT}}'
+    skips = address.count('::')
 
-    # Split on zero-skip, if any
-    try:
-        left, *extra, right = address.strip().split('::')
-    except ValueError:
-        # No zero-skip, full address
-        segments.extend(address.split(':'))
+    if skips > 1:
+        # More than one, illegal zero-skip
+        valid = False
+
+    elif skips == 1:
+        # One, legal zero-skip
+        left, *_, right = address.split('::')
+
+        left_segments = left.split(':')
+        right_segments = right.split(':')
+        total_segments = len(left_segments) + len(right_segments)
+
+        segments.extend(left_segments if left else [empty_segment])
+        segments.extend(empty_segment for _ in range(IPV6_MAX_SEGMENT_COUNT - total_segments))
+        segments.extend(right_segments if right else [empty_segment])
+
     else:
+        # No zero-skip, full address
+        segments = address.split(':')
 
-        if not extra:
-            # One, legal zero-skip
-            left_segments = left.split(':')
-            right_segments = right.split(':')
-            total_segments = len(left_segments) + len(right_segments)
-
-            if left:
-                segments.extend(left_segments)
-            else:
-                segments.append(empty_segment)
-
-            segments.extend(empty_segment for _ in range(IPV6_MAX_SEGMENT_COUNT - total_segments))
-
-            if right:
-                segments.extend(right_segments)
-            else:
-                segments.append(empty_segment)
-
-        else:
-            # More than one, illegal zero-skip
-            valid = False
 
     try:
         processed_segments: list[int] = [
@@ -303,16 +295,15 @@ def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
         ]
     except ValueError:
         # IPv6 address was not made of valid hexadecimal numbers
+        return False
+
+    if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
         valid = False
-    else:
 
-        if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
-            valid = False
-
-        if strict and valid:
-            valid = all(
-                IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE
-                for seg in processed_segments
-            )
+    if strict and valid:
+        valid = all(
+            IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE
+            for seg in processed_segments
+        )
 
     return valid

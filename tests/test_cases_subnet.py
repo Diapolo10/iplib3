@@ -51,7 +51,7 @@ TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM = [
 TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS = [
     ([255, 255, 255, 0], SubnetType.IPV6, TypeError, "Invalid type for subnet value: "),
     ('255.255.255.0', SubnetType.IPV6, ValueError, "IPv6-subnets don't use a string representation"),
-    ('3e2', SubnetType.IPV6, ValueError,  "invalid literal "),
+    ('3e2', SubnetType.IPV6, ValueError, "invalid literal "),
     (IPV4_MAX_SUBNET_VALUE + 1, SubnetType.IPV4, ValueError, "Subnet '"),
     (IPV6_MAX_SUBNET_VALUE + 1, SubnetType.IPV6, ValueError, "Subnet '"),
     ('255.6.0.0', SubnetType.IPV4, ValueError, " is an invalid subnet mask"),
