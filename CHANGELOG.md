@@ -101,17 +101,22 @@ _______________________________________________________________________________
 ## [0.2.3] - 2023-02-09
 
 Updated dependencies, stopped ignoring `poetry.lock`, and upgraded workflows.
+Also added documentation.
 
 ### Added
 
 - New workflows for code analysis and automatic dependency updates
 - Automated GitHub releases
+- Documentation
+- Now using specific versions for the dependencies
 
 ### Changed
 
 - `poetry.lock` is now included in the repository
 - Updated project metadata files for consistency
 - Updated old workflows
+- Changed the filename of `deploy.yml` to `pypi_deploy.yml` to get rid of a YAML validator complaint
+- Updated dependencies
 
 ### Removed
 
