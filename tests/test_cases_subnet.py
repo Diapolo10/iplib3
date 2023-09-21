@@ -33,6 +33,11 @@ TEST_CASES_SUBNET_MASK_SUBNET_TYPE = [
     (SubnetMask('255.255.255.0'), SubnetType.IPV4),
 ]
 
+TEST_CASES_SUBNET_MASK_SUBNET_LENGTH = [
+    ('255.255.255.255.128', ValueError, 'Subnet value not valid;'),
+    ('255.255.128', ValueError, 'Subnet value not valid;'),
+]
+
 TEST_CASES_SUBNET_MASK_STRING = [
     (SubnetMask(24, subnet_type=SubnetType.IPV4), "iplib3.SubnetMask('255.255.255.0')"),
     (SubnetMask(24), "iplib3.SubnetMask('24')"),

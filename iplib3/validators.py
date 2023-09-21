@@ -208,10 +208,8 @@ def _port_stripper(address: str, protocol: SubnetType = SubnetType.IPV4, strict:
 
     if protocol == SubnetType.IPV4:
         port_separator = ':'
-    elif protocol == SubnetType.IPV6:
+    if protocol == SubnetType.IPV6:
         port_separator = ']:'
-    else:
-        valid = False
 
     # Try split on closing bracket and port separator
     address, *port = address.strip().split(port_separator)

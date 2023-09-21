@@ -12,6 +12,14 @@ omit = [
 ]
 
 
+[tool.coverage.report]
+exclude_lines = [
+    'pragma: not covered',
+    '@overload',
+    'if TYPE_CHECKING:',
+]
+
+
 [tool.poetry]
 name = 'iplib3'
 version = '0.2.4'

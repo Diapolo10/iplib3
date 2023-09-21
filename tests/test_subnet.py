@@ -14,6 +14,7 @@ from tests.test_cases_subnet import (
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK,
     TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS,
     TEST_CASES_SUBNET_MASK_STRING,
+    TEST_CASES_SUBNET_MASK_SUBNET_LENGTH,
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM,
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
     TEST_CASES_SUBNET_MASK_SUBNET_TYPE,
@@ -73,6 +74,15 @@ def test_pure_subnet_mask_inequality(subnet, excepted_output):
 def test_subnet_mask_subnet_type(subnet, excepted_output):
     """Test SubnetMask subnet type"""
     assert subnet._subnet_type == excepted_output  # noqa: SLF001
+
+
+@pytest.mark.parametrize(
+        ('subnet', 'error', 'error_message'),
+        TEST_CASES_SUBNET_MASK_SUBNET_LENGTH,
+)
+def test_subnet_mask_subnet_length(subnet, error, error_message):
+    with pytest.raises(error, match=error_message):
+        SubnetMask._ipv4_subnet_to_num(subnet)  # noqa: SLF001
 
 
 @pytest.mark.parametrize(
