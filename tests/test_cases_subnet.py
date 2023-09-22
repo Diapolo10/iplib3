@@ -6,7 +6,13 @@ from iplib3.constants import (
 from iplib3.constants.subnet import SubnetType
 from iplib3.subnet import PureSubnetMask, SubnetMask
 
-IP_ADDRESSES = ['255.255.255.0', '255.255.128.0', '255.6.0.0']
+SUBNET_MASKS = [
+    '255.255.255.0',       # Valid
+    '255.255.128.0',       # Valid
+    '255.6.0.0',           # Invalid
+    '255.255.255.255.128', # Invalid
+    '255.255.128',         # Invalid
+]
 
 TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH = [
     (PureSubnetMask(), None),
@@ -32,16 +38,16 @@ TEST_CASES_PURE_SUBNET_MASK_INEQUALITY = [
 
 TEST_CASES_SUBNET_MASK_SUBNET_TYPE = [
     (SubnetMask(), SubnetType.IPV6),
-    (SubnetMask(IP_ADDRESSES[0]), SubnetType.IPV4),
+    (SubnetMask(SUBNET_MASKS[0]), SubnetType.IPV4),
 ]
 
 TEST_CASES_SUBNET_MASK_SUBNET_LENGTH = [
-    ('255.255.255.255.128', ValueError, 'Subnet value not valid;'),
-    ('255.255.128', ValueError, 'Subnet value not valid;'),
+    (SUBNET_MASKS[3], ValueError, 'Subnet value not valid;'),
+    (SUBNET_MASKS[4], ValueError, 'Subnet value not valid;'),
 ]
 
 TEST_CASES_SUBNET_MASK_STRING = [
-    (SubnetMask(24, subnet_type=SubnetType.IPV4), f'iplib3.SubnetMask({IP_ADDRESSES[0]!r})'),
+    (SubnetMask(24, subnet_type=SubnetType.IPV4), f'iplib3.SubnetMask({SUBNET_MASKS[0]!r})'),
     (SubnetMask(24), "iplib3.SubnetMask('24')"),
 ]
 
@@ -52,20 +58,20 @@ TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM = [
     (None, SubnetType.IPV4, None),
     (24, SubnetType.IPV4, 24),
     ('24', SubnetType.IPV4, 24),
-    (IP_ADDRESSES[1], SubnetType.IPV4, 17),
+    (SUBNET_MASKS[1], SubnetType.IPV4, 17),
 ]
 
 TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS = [
     ([255, 255, 255, 0], SubnetType.IPV6, TypeError, "Invalid type for subnet value: "),
-    (IP_ADDRESSES[0], SubnetType.IPV6, ValueError, "IPv6-subnets don't use a string representation"),
+    (SUBNET_MASKS[0], SubnetType.IPV6, ValueError, "IPv6-subnets don't use a string representation"),
     ('3e2', SubnetType.IPV6, ValueError, "invalid literal "),
     (IPV4_MAX_SUBNET_VALUE + 1, SubnetType.IPV4, ValueError, "Subnet '"),
     (IPV6_MAX_SUBNET_VALUE + 1, SubnetType.IPV6, ValueError, "Subnet '"),
-    (IP_ADDRESSES[2], SubnetType.IPV4, ValueError, " is an invalid subnet mask"),
+    (SUBNET_MASKS[2], SubnetType.IPV4, ValueError, " is an invalid subnet mask"),
 ]
 
 TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK = [
-    (24, SubnetType.IPV4, IP_ADDRESSES[0]),
+    (24, SubnetType.IPV4, SUBNET_MASKS[0]),
 ]
 
 TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS = [

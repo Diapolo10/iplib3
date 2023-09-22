@@ -11,51 +11,98 @@ from iplib3.constants import (
     PORT_NUMBER_MIN_VALUE,
 )
 
+VALID_IPV4_ADDRESSES_STRICT = [
+    '127.0.0.1',
+    '1.1.1.1',
+    '.'.join('0000'),  # Helps prevent false positives on analysis tools
+    '255.255.255.255',
+    '192.168.0.1',
+    '222.13.7.42',
+]
+
+VALID_IPV4_ADDRESSES_LOOSE = [
+    '12.123.234.345',
+    '1337.1337.1337.1337',
+]
+
+INVALID_IPV4_ADDRESSES = [
+    'DE.AD.BE.EF',
+    '12.23.34.45.56',
+    '255,255,255,255',
+]
+
+PORT_NUMBERS_VALID = [
+    None,
+    False,
+    True,
+    13,
+    21,
+    22,
+    25,
+    42,
+    80,
+    192,
+    443,
+    554,
+    1111,
+    3742,
+    8080,
+    25_565,
+]
+
+PORT_NUMBERS_INVALID = [
+    22.0,
+    '42',
+    314159,
+    -1,
+    0xDEADBEEF,
+]
+
 TEST_CASES_PORT_VALIDATOR = [
-    (None, True),
-    (False, True),
-    (True, True),
-    (13, True),
-    (21, True),
-    (22, True),
-    (25, True),
-    (80, True),
-    (192, True),
-    (443, True),
-    (554, True),
-    (3724, True),
-    (8080, True),
-    (25_565, True),
+    (PORT_NUMBERS_VALID[0], True),
+    (PORT_NUMBERS_VALID[1], True),
+    (PORT_NUMBERS_VALID[2], True),
+    (PORT_NUMBERS_VALID[3], True),
+    (PORT_NUMBERS_VALID[4], True),
+    (PORT_NUMBERS_VALID[5], True),
+    (PORT_NUMBERS_VALID[6], True),
+    (PORT_NUMBERS_VALID[8], True),
+    (PORT_NUMBERS_VALID[9], True),
+    (PORT_NUMBERS_VALID[10], True),
+    (PORT_NUMBERS_VALID[11], True),
+    (PORT_NUMBERS_VALID[13], True),
+    (PORT_NUMBERS_VALID[14], True),
+    (PORT_NUMBERS_VALID[15], True),
     (PORT_NUMBER_MIN_VALUE - 1, False),
     (PORT_NUMBER_MAX_VALUE + 1, False),
-    (0xDEADBEEF, False),
-    (22.0, False),
-    ('42', False),
+    (PORT_NUMBERS_INVALID[4], False),
+    (PORT_NUMBERS_INVALID[0], False),
+    (PORT_NUMBERS_INVALID[1], False),
     ([1, 2, 3], False),
 ]
 
 TEST_CASES_IP_VALIDATOR = [
-    ('128.0.0.1', True),
+    (VALID_IPV4_ADDRESSES_STRICT[0], True),
     (0xDE_AD_BE_EF, True),
     ('2606:4700:4700::1111', True),
     (IPV6_MAX_VALUE, True),
 ]
 
 TEST_CASES_IPV4_VALIDATOR = [
-    ('1.1.1.1', True, True),
-    ('0.0.0.0', True, True),  #  noqa: S104
-    ('255.255.255.255', True, True),
-    ('192.168.0.1:8080', True, True),
-    ('12.123.234.345', True, False),
-    ('DE.AD.BE.EF', True, False),
-    ('12.23.34.45.56', False, False),
-    ('255,255,255,255', True, False),
+    (VALID_IPV4_ADDRESSES_STRICT[1], True, True),
+    (VALID_IPV4_ADDRESSES_STRICT[2], True, True),
+    (VALID_IPV4_ADDRESSES_STRICT[3], True, True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[4]}:{PORT_NUMBERS_VALID[14]}', True, True),
+    (VALID_IPV4_ADDRESSES_LOOSE[0], True, False),
+    (INVALID_IPV4_ADDRESSES[0], True, False),
+    (INVALID_IPV4_ADDRESSES[1], False, False),
+    (INVALID_IPV4_ADDRESSES[2], True, False),
     ([127, 0, 0, 1], True, False),
-    ('1337.1337.1337.1337', True, False),
-    ('1.1.1.1:314159', True, False),
-    ('128.0.0.1:notaport', True, False),
-    ('1337.1337.1337.1337', False, True),
-    ('1337.1337.1337.1337:314159', False, True),
+    (VALID_IPV4_ADDRESSES_LOOSE[1], True, False),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[1]}:{PORT_NUMBERS_INVALID[2]}', True, False),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:notaport', True, False),
+    (VALID_IPV4_ADDRESSES_LOOSE[1], False, True),
+    (f'{VALID_IPV4_ADDRESSES_LOOSE[1]}:{PORT_NUMBERS_INVALID[2]}', False, True),
     (25601440, True, True),
     (0xDEADBEEF, True, True),
     (25601440, False, True),
@@ -71,7 +118,7 @@ TEST_CASES_IPV6_VALIDATOR = [
     ('0:0:0:0:0:0:0:0', True, True),
     ('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', True, True),
     ('[0:0:0:0:0:0:0:0]:80', True, True),
-    ('[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:65535', True, True),
+    (f'[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:{PORT_NUMBER_MAX_VALUE}', True, True),
     ('::12', True, True),
     ('314::', True, True),
     ('2606:4700:4700::1111', True, True),
@@ -83,8 +130,8 @@ TEST_CASES_IPV6_VALIDATOR = [
     ('2606:4700:4700:1111', True, False),
     ([2606, 4700, 4700, 0, 0, 0, 0, 1111], True, False),
     ('[2606:4700:4700::1111]:notaport', True, False),
-    ('[2606:4700:4700::1111]:-1', True, False),
-    ('[2606:4700:4700::1111]:314159', True, False),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[3]}', True, False),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[2]}', True, False),
     (IPV6_MIN_VALUE, True, True),
     (IPV6_MAX_VALUE, True, True),
     (IPV6_MIN_VALUE - 1, True, False),
@@ -151,19 +198,19 @@ TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS = [
 ]
 
 TEST_CASES_PORT_STRIPPER_IPV4 = [
-    ("127.0.0.1:8080", 'ipv4', '127.0.0.1', 8080, True),
-    ("127.0.0.1:8080", 'IPv4', '127.0.0.1', 8080, True),
-    ("127.0.0.1:8080", 'IPV4', '127.0.0.1', 8080, True),
-    ("222.13.7.42:80", 'ipv4', '222.13.7.42', 80, True),
-    ("127.0.0.1", 'ipv4', '127.0.0.1', None, True),
-    ("222.13.7.42", 'ipv4', '222.13.7.42', None, True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPV4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[5]}:{PORT_NUMBERS_VALID[8]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[8], True),
+    (VALID_IPV4_ADDRESSES_STRICT[0], 'ipv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[0], True),
+    (VALID_IPV4_ADDRESSES_STRICT[5], 'ipv4', VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[0], True),
 ]
 
 TEST_CASES_PORT_STRIPPER_IPV6 = [
-    ("[2606:4700:4700::1111]:8080", 'ipv6', '2606:4700:4700::1111', 8080, True),
-    ("[2606:4700:4700::1111]:8080", 'IPv6', '2606:4700:4700::1111', 8080, True),
-    ("[2606:4700:4700::1111]:8080", 'IPV6', '2606:4700:4700::1111', 8080, True),
-    ("[::DEAD:BEEF]:80", 'ipv6', '::DEAD:BEEF', 80, True),
-    ("2606:4700:4700::1111", 'ipv6', '2606:4700:4700::1111', None, True),
-    ("::DEAD:BEEF", 'ipv6', '::DEAD:BEEF', None, True),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}', 'ipv6', '2606:4700:4700::1111', PORT_NUMBERS_VALID[14], True),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}', 'IPv6', '2606:4700:4700::1111', PORT_NUMBERS_VALID[14], True),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}', 'IPV6', '2606:4700:4700::1111', PORT_NUMBERS_VALID[14], True),
+    (f'[::DEAD:BEEF]:{PORT_NUMBERS_VALID[8]}', 'ipv6', '::DEAD:BEEF', PORT_NUMBERS_VALID[8], True),
+    ('2606:4700:4700::1111', 'ipv6', '2606:4700:4700::1111', PORT_NUMBERS_VALID[0], True),
+    ('::DEAD:BEEF', 'ipv6', '::DEAD:BEEF', PORT_NUMBERS_VALID[0], True),
 ]
