@@ -41,7 +41,7 @@ TEST_CASES_SUBNET_MASK_SUBNET_LENGTH = [
 ]
 
 TEST_CASES_SUBNET_MASK_STRING = [
-    (SubnetMask(24, subnet_type=SubnetType.IPV4), f'iplib3.SubnetMask({IP_ADDRESSES[0]})'),
+    (SubnetMask(24, subnet_type=SubnetType.IPV4), f'iplib3.SubnetMask({IP_ADDRESSES[0]!r})'),
     (SubnetMask(24), "iplib3.SubnetMask('24')"),
 ]
 
