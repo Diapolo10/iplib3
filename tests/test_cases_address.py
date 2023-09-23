@@ -7,6 +7,40 @@ from iplib3.constants import (
 )
 from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
+PURE_ADDRESS_MASK = [
+    '127.0.0.1',
+    '0:0:0:0:0:0:0:1',
+    '0:0:0:0:DEAD:C0DE:1057:BE17',
+    '0:0:0:0:BADC:FFE:E0DD:F00D',
+    '0000:0000:0000:0000:0000:0000:0000:0001',
+    '0000:0000:0000:0000:DEAD:C0DE:1057:BE17',
+    '0000:0000:0000:0000:BADC:0FFE:E0DD:F00D',
+    '::1',
+    '::DEAD:C0DE:1057:BE17',
+    '::BADC:FFE:E0DD:F00D',
+]
+
+IP_ADDRESS_MASK = [
+    '0:0:0:0:0:DEAD:DEAD:BEEF',
+    '::DEAD:BEEF',
+    '127.0.0.1',
+]
+
+IPV4_MASK = [
+    '127.0.0.1',
+    '127.0.0.1:80',
+    '127.0.0.1:8080',
+    '192.168.0.1',
+]
+
+IPV6_MASK = [
+    '2606:4700:4700::1111',
+    '[2606:4700:4700::1111]:80',
+    '0:0:0:0:0:0:0:1',
+    '[2606:4700:4700::1111]:8080',
+    '70::',
+]
+
 TEST_CASES_PURE_ADDRESS = [
     PureAddress(),
     PureAddress(0xDE_AD_BE_EF),
@@ -57,115 +91,112 @@ TEST_CASES_PURE_ADDRESS_AS_HEX = [
     (PureAddress(0xDE_AD_C0_DE), '0xDEADC0DE'),
 ]
 
+
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4 = [
-    (PureAddress(IPV4_LOCALHOST), '127.0.0.1'),
+    (PureAddress(IPV4_LOCALHOST), PURE_ADDRESS_MASK[0]),
 ]
 
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6 = [
-    (PureAddress(IPV6_LOCALHOST), '0:0:0:0:0:0:0:1'),
-    (PureAddress(0xDEAD_C0DE_1057_BE17), '0:0:0:0:DEAD:C0DE:1057:BE17'),
-    (PureAddress(0xBADC_0FFE_E0DD_F00D), '0:0:0:0:BADC:FFE:E0DD:F00D'),
+    (PureAddress(IPV6_LOCALHOST), PURE_ADDRESS_MASK[1]),
+    (PureAddress(0xDEAD_C0DE_1057_BE17), PURE_ADDRESS_MASK[2]),
+    (PureAddress(0xBADC_0FFE_E0DD_F00D), PURE_ADDRESS_MASK[3]),
 ]
 
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING = [
-    (PureAddress(IPV6_LOCALHOST), '0000:0000:0000:0000:0000:0000:0000:0001'),
-    (PureAddress(0xDEAD_C0DE_1057_BE17), '0000:0000:0000:0000:DEAD:C0DE:1057:BE17'),
-    (PureAddress(0xBADC_0FFE_E0DD_F00D), '0000:0000:0000:0000:BADC:0FFE:E0DD:F00D'),
+    (PureAddress(IPV6_LOCALHOST), PURE_ADDRESS_MASK[4]),
+    (PureAddress(0xDEAD_C0DE_1057_BE17), PURE_ADDRESS_MASK[5]),
+    (PureAddress(0xBADC_0FFE_E0DD_F00D), PURE_ADDRESS_MASK[6]),
 ]
 
 TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS = [
-    (PureAddress(IPV6_LOCALHOST), '::1'),
-    (PureAddress(0xDEAD_C0DE_1057_BE17), '::DEAD:C0DE:1057:BE17'),
-    (PureAddress(0xBADC_0FFE_E0DD_F00D), '::BADC:FFE:E0DD:F00D'),
+    (PureAddress(IPV6_LOCALHOST), PURE_ADDRESS_MASK[7]),
+    (PureAddress(0xDEAD_C0DE_1057_BE17), PURE_ADDRESS_MASK[8]),
+    (PureAddress(0xBADC_0FFE_E0DD_F00D), PURE_ADDRESS_MASK[9]),
 ]
 
 TEST_CASES_IPADDRESS = [
     (IPAddress(), IPAddress),
     (IPAddress(IPV4_LOCALHOST), IPAddress),
-    (IPAddress('127.0.0.1'), IPv4),
-    (IPAddress('::DEAD:BEEF'), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),
     (IPAddress(IPV4_LOCALHOST, 80), IPAddress),
-    (IPAddress('127.0.0.1', 80), IPv4),
-    (IPAddress('::DEAD:BEEF', 80), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2], 80), IPv4),
+    (IPAddress(IP_ADDRESS_MASK[1], 80), IPv6),
 ]
 
 TEST_CASES_IPADDRESS_EQUALITY = [
     (IPAddress(IPV4_LOCALHOST), IPAddress(IPV4_LOCALHOST)),
-    (IPAddress(IPV4_LOCALHOST), '127.0.0.1'),
+    (IPAddress(IPV4_LOCALHOST), IP_ADDRESS_MASK[2]),
     (IPAddress(IPV4_LOCALHOST), PureAddress(IPV4_LOCALHOST)),
 ]
 
-IP_ADDRESS_STRING = ['0:0:0:0:0:DEAD:DEAD:BEEF', '::DEAD:BEEF']
-
 TEST_CASES_IPADDRESS_STRING = [
-    (IPAddress(), '127.0.0.1'),
-    (IPAddress(IPV4_LOCALHOST), '127.0.0.1'),
-    (IPAddress(0xDEAD_DEAD_BEEF), IP_ADDRESS_STRING[0]),
+    (IPAddress(), IP_ADDRESS_MASK[2]),
+    (IPAddress(IPV4_LOCALHOST), IP_ADDRESS_MASK[2]),
+    (IPAddress(0xDEAD_DEAD_BEEF), IP_ADDRESS_MASK[0]),
 ]
 
 TEST_CASES_IPADDRESS_REPR = [
-    (IPAddress(), "iplib3.IPAddress('127.0.0.1')"),
-    (IPAddress(IPV4_LOCALHOST), "iplib3.IPAddress('127.0.0.1')"),
-    (IPAddress(0xDEAD_DEAD_BEEF), "iplib3.IPAddress('0:0:0:0:0:DEAD:DEAD:BEEF')"),
+    (IPAddress(), f"iplib3.IPAddress({IP_ADDRESS_MASK[2]!r})"),
+    (IPAddress(IPV4_LOCALHOST), f"iplib3.IPAddress({IP_ADDRESS_MASK[2]!r})"),
+    (IPAddress(0xDEAD_DEAD_BEEF), f"iplib3.IPAddress({IP_ADDRESS_MASK[0]!r})"),
 ]
 
 TEST_CASES_IPADDRESS_AS_IPV4 = [
     (IPAddress(), IPv4),
-    (IPAddress('127.0.0.1'), IPv4),
-    (IPAddress(IP_ADDRESS_STRING[1]), IPv4),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv4),
 ]
 
 TEST_CASES_IPADDRESS_AS_IPV6 = [
     (IPAddress(), IPv6),
-    (IPAddress('127.0.0.1'), IPv6),
-    (IPAddress(IP_ADDRESS_STRING[1]), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),
 ]
 
 TEST_CASES_IPV4 = [
     IPv4(),
-    IPv4('127.0.0.1'),
-    IPv4('127.0.0.1:80'),
-    IPv4('127.0.0.1', 80),
-    IPv4('127.0.0.1:80', 8080),
-    IPv4('127.0.0.1', port_num=80),
+    IPv4(IPV4_MASK[0]),
+    IPv4(IPV4_MASK[1]),
+    IPv4(IPV4_MASK[0], 80),
+    IPv4(IPV4_MASK[1], 8080),
+    IPv4(IPV4_MASK[0], port_num=80),
 ]
 
 TEST_CASES_IPV4_STRING = [
-    (IPv4(), '127.0.0.1'),
-    (IPv4('127.0.0.1'), '127.0.0.1'),
-    (IPv4('127.0.0.1:80'), '127.0.0.1:80'),
-    (IPv4('127.0.0.1', 80), '127.0.0.1:80'),
-    (IPv4('127.0.0.1:80', 8080), '127.0.0.1:8080'),
+    (IPv4(), IPV4_MASK[0]),
+    (IPv4(IPV4_MASK[0]), IPV4_MASK[0]),
+    (IPv4(IPV4_MASK[1]), IPV4_MASK[1]),
+    (IPv4(IPV4_MASK[0], 80), IPV4_MASK[1]),
+    (IPv4(IPV4_MASK[1], 8080), IPV4_MASK[2]),
 ]
 
-IPV4 = ['192.168.0.1']
 TEST_CASES_IPV4_IPV4_TO_NUM = [
     (IPv4(), IPV4_LOCALHOST),
-    (IPv4('127.0.0.1'), IPV4_LOCALHOST),
-    (IPv4(IPV4[0]), 0xC0_A8_00_01),
+    (IPv4(IPV4_MASK[0]), IPV4_LOCALHOST),
+    (IPv4(IPV4_MASK[3]), 0xC0_A8_00_01),
 ]
 
-IPV6 = ['2606:4700:4700::1111', '[2606:4700:4700::1111]:80']
 TEST_CASES_IPV6 = [
     IPv6(),
-    IPv6(IPV6[0]),
-    IPv6('2606:4700:4700::1111', 80),
-    IPv6(IPV6[1]),
-    IPv6(IPV6[1], 8080),
+    IPv6(IPV6_MASK[0]),
+    IPv6(IPV6_MASK[0], 80),
+    IPv6(IPV6_MASK[1]),
+    IPv6(IPV6_MASK[1], 8080),
 ]
 
 TEST_CASES_IPV6_STRING = [
-    (IPv6(), '0:0:0:0:0:0:0:1'),
-    (IPv6('2606:4700:4700::1111'), '2606:4700:4700::1111'),
-    (IPv6('2606:4700:4700::1111', 80), IPV6[1]),
-    (IPv6(IPV6[1]), IPV6[1]),
-    (IPv6(IPV6[1], 8080), '[2606:4700:4700::1111]:8080'),
-    (IPv6('2606:4700:4700::1111', port_num=80), IPV6[1]),
+    (IPv6(), IPV6_MASK[2]),
+    (IPv6(IPV6_MASK[0]), IPV6_MASK[0]),
+    (IPv6(IPV6_MASK[0], 80), IPV6_MASK[1]),
+    (IPv6(IPV6_MASK[1]), IPV6_MASK[1]),
+    (IPv6(IPV6_MASK[1], 8080), IPV6_MASK[3]),
+    (IPv6(IPV6_MASK[0], port_num=80), IPV6_MASK[1]),
 ]
 
 TEST_CASES_IPV6_IPV6_TO_NUM = [
     (None, IPV6_LOCALHOST),
-    ('70::', 0x70_0000_0000_0000_0000_0000_0000_0000),
+    (IPV6_MASK[4], 0x70_0000_0000_0000_0000_0000_0000_0000),
 ]
 
 TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS = [
