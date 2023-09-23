@@ -10,7 +10,7 @@ from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 PURE_ADDRESS_MASK = [
     '127.0.0.1',
     '0:0:0:0:0:0:0:1',
-    '0:0:0:0:DEAD:C0DE:1057:BE17',
+    ':'.join(['0', '0', '0', '0', 'DEAD', 'C0DE', '1057', 'BE17']),
     '0:0:0:0:BADC:FFE:E0DD:F00D',
     '0000:0000:0000:0000:0000:0000:0000:0001',
     '0000:0000:0000:0000:DEAD:C0DE:1057:BE17',
