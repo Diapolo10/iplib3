@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from itertools import groupby
 from typing import TYPE_CHECKING
 
 from iplib3.constants.address import (
@@ -18,7 +19,6 @@ from iplib3.constants.ipv6 import (
     IPV6_MAX_SEGMENT_COUNT,
     IPV6_MAX_SEGMENT_VALUE,
     IPV6_MAX_VALUE,
-    IPV6_MIN_SEGMENT_COUNT,
     IPV6_MIN_SEGMENT_VALUE,
     IPV6_NUMBER_BIT_COUNT,
     IPV6_SEGMENT_BIT_COUNT,
@@ -146,62 +146,28 @@ class PureAddress:
         with optional zero removal and shortening.
         """
 
+        segment_min_length = (IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT) * (not shorten)
+        zero_segment = f'{0:0{segment_min_length}}'
+
         segments = []
         for _ in range(IPV6_MAX_SEGMENT_COUNT):
             num, segment = divmod(num, IPV6_MAX_SEGMENT_VALUE+1)
-            segments.append(hex(segment).split('x')[1].upper())
+            segments.append(f'{segment:0{segment_min_length}X}')
 
-        if remove_zeroes and '0' in segments:
+        if remove_zeroes and zero_segment in segments:
 
             # Goes over the segments to find the
             # longest strip with nothing but zeroes
             # and replaces it with an empty string.
             # The final str.join will turn to '::'.
 
-            longest = 0
-            longest_idx = 0
-            current = 0
-            current_idx = 0
-
-            for idx, seg in enumerate(segments):
-
-                if seg == '0':
-
-                    if not current:
-                        current_idx = idx
-                    current += 1
-
-                else:
-                    current = 0
-
-                if current > longest:
-                    longest = current
-                    longest_idx = current_idx
-
-            segments = (
-                (
-                    segments[:longest_idx]
-                    if IPV6_MIN_SEGMENT_COUNT < longest_idx < IPV6_MAX_SEGMENT_COUNT-1
-                    else ['']
-                )
-                + ['']
-                + (
-                    segments[longest_idx+longest:]
-                    if IPV6_MIN_SEGMENT_COUNT < longest_idx+longest < IPV6_MAX_SEGMENT_COUNT
-                    else ['']
-                  )
+            longest_idx, length = max(
+                (idx, len(list(group)))
+                for idx, (item, group) in enumerate(groupby(segments))
+                if item == zero_segment
             )
 
-        if not shorten:
-
-            # Fills up any segments to full length by
-            # adding missing zeroes to the front, if any.
-
-            segments = [
-                seg.zfill(IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT)
-                if seg else ''
-                for seg in segments
-            ]
+            segments[longest_idx:longest_idx+length] = ['', '']
 
         return ':'.join(segments[::-1])
 
@@ -211,7 +177,7 @@ class IPAddress(PureAddress):
 
     __slots__ = ('_ipv4', '_ipv6', '_submask')
 
-    def __new__(cls: type[IPAddress], address: int | (str | None) = None, port_num: int | None = None, **kwargs) -> IPAddress:  # noqa: ANN003,PYI034
+    def __new__(cls: type[IPAddress], address: int | str | None = None, port_num: int | None = None, **kwargs) -> IPAddress:  # noqa: ANN003,PYI034
 
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
@@ -219,7 +185,7 @@ class IPAddress(PureAddress):
 
         self = object.__new__(cls)
 
-        self.__init__(address=address, port_num=port_num, **kwargs)
+        self.__init__(address=address, port_num=port_num, **kwargs)  # type: ignore  # noqa: PGH003  # mypy: ignore
         return self
 
     def __init__(self: IPAddress, address: int | None = IPV4_LOCALHOST, port_num: int | None = None) -> None:
@@ -254,13 +220,13 @@ class IPAddress(PureAddress):
     def as_ipv4(self: IPAddress) -> IPv4:
         """Creates and returns an IPv4 version of the address, if possible"""
 
-        return IPv4(self.num_to_ipv4(), port_num=self.port)
+        return IPv4(self.num_to_ipv4(), port_num=self.port)  # type: ignore  # noqa: PGH003
 
     @property
     def as_ipv6(self: IPAddress) -> IPv6:
         """Creates and returns an IPv6-version of the address"""
 
-        return IPv6(self.num_to_ipv6(), port_num=self.port)
+        return IPv6(self.num_to_ipv6(), port_num=self.port)  # type: ignore  # noqa: PGH003
 
 
 class IPv4(IPAddress):
@@ -270,17 +236,17 @@ class IPv4(IPAddress):
 
     def __init__(self: IPv4, address: str | None = None, port_num: int | None = None) -> None:
 
-        if address is None:
-            address = self._num_to_ipv4(IPV4_LOCALHOST)
+        new_address = self._num_to_ipv4(IPV4_LOCALHOST) if address is None else address
 
-        _address, *_port = address.split(':')
+        _address, *_port = new_address.split(':')
+
         if _port:
-            address = _address
+            new_address = _address
 
             if port_num is None:
                 port_num = int(_port[0])
 
-        self._address = address
+        self._address = new_address
         super().__init__(address=self._ipv4_to_num(), port_num=port_num)
 
     def __str__(self: IPv4) -> str:
@@ -314,20 +280,19 @@ class IPv6(IPAddress):
 
     def __init__(self: IPv6, address: str | None = None, port_num: int | None = None) -> None:
 
-        if address is None:
-            address = self._num_to_ipv6(IPV6_LOCALHOST)
+        new_address = self._num_to_ipv6(IPV6_LOCALHOST) if address is None else address
 
-        _address, *_port = address.split(']:')
+        _address, *_port = new_address.split(']:')
 
         if _port:
 
             # Removes the opening square bracket
-            address = _address[1:]
+            new_address = _address[1:]
 
             if port_num is None:
                 port_num = int(_port[0])
 
-        self._address = address
+        self._address = new_address
         super().__init__(address=self._ipv6_to_num(), port_num=port_num)
 
     def __str__(self: IPv6) -> str:

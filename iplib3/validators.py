@@ -26,9 +26,9 @@ from iplib3.constants.port import (
 from iplib3.constants.subnet import (
     IPV4_MAX_SUBNET_VALUE,
     IPV4_MIN_SUBNET_VALUE,
-    IPV4_VALID_SUBNET_SEGMENTS,
     IPV6_MAX_SUBNET_VALUE,
     IPV6_MIN_SUBNET_VALUE,
+    SubnetType,
 )
 
 __all__ = ('port_validator', 'ip_validator', 'ipv4_validator', 'ipv6_validator', 'subnet_validator')
@@ -80,7 +80,7 @@ def ipv4_validator(address: str | int, strict: bool = True) -> bool:
 
     if isinstance(address, str) and '.' in address:
 
-        portless_address, _, valid = _port_stripper(address, protocol='ipv4', strict=strict)
+        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV4, strict=strict)
 
         if valid:
             valid = _ipv4_address_validator(portless_address, strict=strict)
@@ -103,7 +103,7 @@ def ipv6_validator(address: str | int, strict: bool = True) -> bool:
 
     if isinstance(address, str):
 
-        portless_address, _, valid = _port_stripper(address, protocol='ipv6', strict=strict)
+        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV6, strict=strict)
 
         if not valid:
             return valid
@@ -116,7 +116,7 @@ def ipv6_validator(address: str | int, strict: bool = True) -> bool:
     return valid
 
 
-def subnet_validator(subnet: str | int, protocol: str = 'ipv4') -> bool:
+def subnet_validator(subnet: str | int, protocol: SubnetType = SubnetType.IPV4) -> bool:
     """
     Validates a given subnet mask, defaulting to IPv4 protocol
 
@@ -124,12 +124,14 @@ def subnet_validator(subnet: str | int, protocol: str = 'ipv4') -> bool:
     as IPv6 subnets have no valid string representation.
     """
 
+    protocol = SubnetType(protocol)
+
     valid = False
 
-    if isinstance(subnet, str) or protocol.lower() == 'ipv4':
+    if protocol == SubnetType.IPV4:
         valid = _ipv4_subnet_validator(subnet)
 
-    elif protocol.lower() == 'ipv6':
+    elif protocol == SubnetType.IPV6 and isinstance(subnet, int):
         valid = _ipv6_subnet_validator(subnet)
 
     return valid
@@ -147,38 +149,21 @@ def _ipv4_subnet_validator(subnet: str | int) -> bool:
     of the used type.
     """
 
-    if isinstance(subnet, int):
-        return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
-
     if isinstance(subnet, str):
-        segments = tuple(int(s) for s in subnet.split('.'))
+        segments = tuple(int(s) for s in reversed(subnet.split('.')))
         if len(segments) != IPV4_MIN_SEGMENT_COUNT:
             return False
 
-        # Flag for catching invalid subnets where bits
-        # are flipped out of order, eg. 255.128.128.0
-        root_found = False
-        for segment in segments[:-1]:
+        segment_sum = sum(s<<(8*idx) for idx, s in enumerate(segments))
+        subnet_bits = f'{segment_sum:b}'.rstrip('0')
 
-            if segment == IPV4_VALID_SUBNET_SEGMENTS[-1] and not root_found:
-                continue  # Skip preceding 255s
+        if '0' in subnet_bits:
+            return False
 
-            if root_found and segment != IPV4_VALID_SUBNET_SEGMENTS[0]:
-                return False
+        subnet = len(subnet_bits)
 
-            if segment not in IPV4_VALID_SUBNET_SEGMENTS:
-                return False
-
-            root_found = True
-
-        return not (
-            root_found
-            and segments[-1] != IPV4_VALID_SUBNET_SEGMENTS[0]
-            or not
-            IPV4_VALID_SUBNET_SEGMENTS[0]
-            <= segments[-1]
-            <= IPV4_VALID_SUBNET_SEGMENTS[-1] - 1
-        )
+    if isinstance(subnet, int):
+        return IPV4_MIN_SUBNET_VALUE <= subnet <= IPV4_MAX_SUBNET_VALUE
 
     raise TypeError(
         f"IPv4 subnet cannot be of type '{subnet.__class__.__name__}';"
@@ -201,14 +186,13 @@ def _ipv6_subnet_validator(subnet: int) -> bool:  # IPv6 subnets have no string 
     if isinstance(subnet, int):
         return (
             IPV6_MIN_SUBNET_VALUE <= subnet <= IPV6_MAX_SUBNET_VALUE
-            and isinstance(subnet, int)
             and subnet % IPV6_NUMBER_BIT_COUNT == 0
         )
 
     raise TypeError(f"IPv6 subnet cannot be of type '{subnet.__class__.__name__}', it must be an integer")
 
 
-def _port_stripper(address: str, protocol: str = 'ipv4', strict: bool = True) -> tuple[str, int | None, bool]:
+def _port_stripper(address: str, protocol: SubnetType = SubnetType.IPV4, strict: bool = True) -> tuple[str, int | None, bool]:
     """
     Extracts the port number from IP addresses, if any
 
@@ -216,22 +200,22 @@ def _port_stripper(address: str, protocol: str = 'ipv4', strict: bool = True) ->
     and validation information as a boolean.
     """
 
+    protocol = SubnetType(protocol)
+
     valid = True
     port_num = None
     port_separator = None
 
-    if protocol.lower() == 'ipv4':
+    if protocol == SubnetType.IPV4:
         port_separator = ':'
-    elif protocol.lower() == 'ipv6':
+    if protocol == SubnetType.IPV6:
         port_separator = ']:'
-    else:
-        valid = False
 
     # Try split on closing bracket and port separator
     address, *port = address.strip().split(port_separator)
     if port and valid:
 
-        if protocol.lower() == 'ipv6':
+        if protocol == SubnetType.IPV6:
             # Get rid of the opening bracket that contained the address (eg. [::12:34]:8080 -> ::12:34)
             address = address[1:]
 
@@ -256,19 +240,18 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
         segments = [int(segment) for segment in address.split('.')]
     except ValueError:
         # IPv4 address was not made of valid integers
+        return False
+
+    if not IPV4_MIN_SEGMENT_COUNT <= len(segments) <= IPV4_MAX_SEGMENT_COUNT:
+        # Invalid number of segments
         valid = False
 
-    else:
-        if not IPV4_MIN_SEGMENT_COUNT <= len(segments) <= IPV4_MAX_SEGMENT_COUNT:
-            # Invalid number of segments
-            valid = False
-
-        elif strict:
-            for seg in segments:
-                if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
-                    # Segment value was too high or too low to be strictly valid
-                    valid = False
-                    break
+    elif strict:
+        for seg in segments:
+            if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
+                # Segment value was too high or too low to be strictly valid
+                valid = False
+                break
 
     return valid
 
@@ -276,39 +259,32 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
 def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
     """Validates the address part of an IPv6 address"""
 
+    address = address.strip()
     valid = True
-    segments = []
-    empty_segment = f'{IPV6_MIN_SEGMENT_VALUE}' * IPV6_NUMBER_BIT_COUNT
+    segments: list[str] = []
+    empty_segment = f'{IPV6_MIN_SEGMENT_VALUE:0{IPV6_NUMBER_BIT_COUNT}}'
+    skips = address.count('::')
 
-    # Split on zero-skip, if any
-    try:
-        left, *extra, right = address.strip().split('::')
-    except ValueError:
-        # No zero-skip, full address
-        segments.extend(address.split(':'))
+    if skips > 1:
+        # More than one, illegal zero-skip
+        valid = False
+
+    elif skips == 1:
+        # One, legal zero-skip
+        left, *_, right = address.split('::')
+
+        left_segments = left.split(':')
+        right_segments = right.split(':')
+        total_segments = len(left_segments) + len(right_segments)
+
+        segments.extend(left_segments if left else [empty_segment])
+        segments.extend(empty_segment for _ in range(IPV6_MAX_SEGMENT_COUNT - total_segments))
+        segments.extend(right_segments if right else [empty_segment])
+
     else:
+        # No zero-skip, full address
+        segments = address.split(':')
 
-        if not extra:
-            # One, legal zero-skip
-            left_segments = left.split(':')
-            right_segments = right.split(':')
-            total_segments = len(left_segments) + len(right_segments)
-
-            if left:
-                segments.extend(left_segments)
-            else:
-                segments.append(empty_segment)
-
-            segments.extend(empty_segment for _ in range(IPV6_MAX_SEGMENT_COUNT - total_segments))
-
-            if right:
-                segments.extend(right_segments)
-            else:
-                segments.append(empty_segment)
-
-        else:
-            # More than one, illegal zero-skip
-            valid = False
 
     try:
         processed_segments: list[int] = [
@@ -317,16 +293,15 @@ def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
         ]
     except ValueError:
         # IPv6 address was not made of valid hexadecimal numbers
+        return False
+
+    if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
         valid = False
-    else:
 
-        if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
-            valid = False
-
-        if strict and valid:
-            valid = all(
-                IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE
-                for seg in processed_segments
-            )
+    if strict and valid:
+        valid = all(
+            IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE
+            for seg in processed_segments
+        )
 
     return valid

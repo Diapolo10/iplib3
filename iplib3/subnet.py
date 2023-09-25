@@ -2,31 +2,19 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import overload
 
 from iplib3.constants.ipv4 import (
+    IPV4_MIN_SEGMENT_COUNT,
     IPV4_SEGMENT_BIT_COUNT,
 )
 from iplib3.constants.subnet import (
     IPV4_MAX_SUBNET_VALUE,
     IPV4_MIN_SUBNET_VALUE,
-    IPV4_VALID_SUBNET_SEGMENTS,
     IPV6_MAX_SUBNET_VALUE,
     IPV6_MIN_SUBNET_VALUE,
+    SubnetType,
 )
-
-
-class SubnetType(str, Enum):
-    IPV4 = 'ipv4'
-    IPV6 = 'ipv6'
-
-    @classmethod
-    def _missing_(cls: SubnetType, value: str) -> SubnetType:
-        for member in cls:
-            if member.value == value.lower():
-                return member
-        return None
 
 
 class PureSubnetMask:
@@ -79,6 +67,8 @@ class SubnetMask(PureSubnetMask):
     __slots__ = ('_subnet_type',)
 
     def __init__(self: SubnetMask, subnet_mask: int | str | None = None, subnet_type: SubnetType = SubnetType.IPV6) -> None:
+
+        subnet_type = SubnetType(subnet_type)
         super().__init__()
 
         if isinstance(subnet_mask, str) and '.' in subnet_mask:
@@ -109,6 +99,8 @@ class SubnetMask(PureSubnetMask):
     @staticmethod
     def _subnet_to_num(subnet_mask: int | str | None, subnet_type: SubnetType = SubnetType.IPV6) -> int | None:
 
+        subnet_type = SubnetType(subnet_type)
+
         if subnet_mask is None:
             return None
 
@@ -118,24 +110,39 @@ class SubnetMask(PureSubnetMask):
                 f"Expected int, string, or None",
             )
 
+        if subnet_type == SubnetType.IPV4:
+            subnet_mask = SubnetMask._ipv4_subnet_to_num(subnet_mask)
+
+        if subnet_type == SubnetType.IPV6:
+            if isinstance(subnet_mask, str):
+                if '.' in subnet_mask:
+                    raise ValueError("IPv6-subnets don't use a string representation")
+                subnet_mask = int(subnet_mask)
+            if not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE:
+                raise ValueError(
+                    f"Subnet '{subnet_mask}' not in valid range "
+                    f"({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})",
+                )
+
+        return int(subnet_mask)
+
+    @staticmethod
+    def _ipv4_subnet_to_num(subnet_mask: int | str) -> int:
         if isinstance(subnet_mask, str):
             if '.' in subnet_mask:
-                if subnet_type == SubnetType.IPV6:
-                    raise ValueError("IPv6-subnets don't use a string representation")
+                segments = tuple(int(s) for s in reversed(subnet_mask.split('.')))
+                if len(segments) != IPV4_MIN_SEGMENT_COUNT:
+                    raise ValueError(
+                        f"Subnet value not valid; '{subnet_mask}' is not a valid string representation",
+                    )
 
-                segments = list(map(int, subnet_mask.split('.')))[::-1]
-                total = 0
+                segment_sum = sum(s<<(8*idx) for idx, s in enumerate(segments))
+                subnet_bits = f'{segment_sum:b}'.rstrip('0')
 
-                try:
-                    for segment in segments:
-                        total += {
-                            subnet: idx
-                            for idx, subnet in enumerate(IPV4_VALID_SUBNET_SEGMENTS)
-                        }[segment]
-                except KeyError as err:
-                    raise ValueError(f"'{segment}' is an invalid value in a subnet mask") from err
+                if '0' in subnet_bits:
+                    raise ValueError(f"'{subnet_mask}' is an invalid subnet mask")
 
-                return total
+                subnet_mask = len(subnet_bits)
 
             try:
                 subnet_mask = int(subnet_mask)
@@ -144,22 +151,18 @@ class SubnetMask(PureSubnetMask):
                     f"Subnet value not valid; '{subnet_mask}' is neither a valid string representation nor an integer",
                 ) from err
 
-        if subnet_type == SubnetType.IPV4 and not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE:
+        if not IPV4_MIN_SUBNET_VALUE <= subnet_mask <= IPV4_MAX_SUBNET_VALUE:
             raise ValueError(
                 f"Subnet '{subnet_mask}' not in valid range "
                 f"({IPV4_MIN_SUBNET_VALUE}-{IPV4_MAX_SUBNET_VALUE})",
-            )
-
-        if subnet_type == SubnetType.IPV6 and not IPV6_MIN_SUBNET_VALUE <= subnet_mask <= IPV6_MAX_SUBNET_VALUE:
-            raise ValueError(
-                f"Subnet '{subnet_mask}' not in valid range "
-                f"({IPV6_MIN_SUBNET_VALUE}-{IPV6_MAX_SUBNET_VALUE})",
             )
 
         return subnet_mask
 
     @staticmethod
     def _prefix_to_subnet_mask(prefix_length: int, subnet_type: SubnetType) -> str:
+
+        subnet_type = SubnetType(subnet_type)
 
         if subnet_type == SubnetType.IPV6:
             raise ValueError("IPv6 does not support string representations of subnet masks")
