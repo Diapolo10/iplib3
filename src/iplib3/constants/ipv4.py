@@ -1,4 +1,4 @@
-"""IPv4 constants"""
+"""IPv4 constants."""
 
 # IPv4 constants
 IPV4_SEGMENT_BIT_COUNT = 8

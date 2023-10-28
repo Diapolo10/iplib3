@@ -1,4 +1,4 @@
-"""Port number constants"""
+"""Port number constants."""
 
 # Port number constants (agnostic between IPV4 and IPV6)
 PORT_NUMBER_MIN_VALUE = 0
