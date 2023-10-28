@@ -214,7 +214,6 @@ ban-relative-imports = "all"
 legacy_tox_ini = """
 [tox]
 envlist = py39, py310, py311, py312, pypy3
-isolated_build = True
 
 [gh-actions]
 python =
