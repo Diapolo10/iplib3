@@ -1,6 +1,11 @@
 """Unit tests for iplib3.subnet."""
 
 import pytest
+
+from iplib3.subnet import (
+    PureSubnetMask,
+    SubnetMask,
+)
 from tests.test_cases_subnet import (
     TEST_CASES_PURE_SUBNET_MASK_EQUALITY,
     TEST_CASES_PURE_SUBNET_MASK_INEQUALITY,
@@ -13,11 +18,6 @@ from tests.test_cases_subnet import (
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM,
     TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS,
     TEST_CASES_SUBNET_MASK_SUBNET_TYPE,
-)
-
-from iplib3.subnet import (
-    PureSubnetMask,
-    SubnetMask,
 )
 
 

@@ -1,6 +1,10 @@
 """Unit tests for iplib3.address."""
 
 import pytest
+
+from iplib3 import IPAddress
+from iplib3.address import IPv6, PureAddress
+from iplib3.constants import IPV6_MAX_VALUE
 from tests.test_cases_address import (
     TEST_CASES_IPADDRESS,
     TEST_CASES_IPADDRESS_AS_IPV4,
@@ -27,10 +31,6 @@ from tests.test_cases_address import (
     TEST_CASES_PURE_ADDRESS_PORT,
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
-
-from iplib3 import IPAddress
-from iplib3.address import IPv6, PureAddress
-from iplib3.constants import IPV6_MAX_VALUE
 
 
 @pytest.mark.parametrize(

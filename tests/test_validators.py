@@ -1,6 +1,17 @@
 """Unit tests for iplib3.validators."""
 
 import pytest
+
+from iplib3.validators import (
+    _ipv4_subnet_validator,
+    _ipv6_subnet_validator,
+    _port_stripper,
+    ip_validator,
+    ipv4_validator,
+    ipv6_validator,
+    port_validator,
+    subnet_validator,
+)
 from tests.test_cases_validators import (
     TEST_CASES_IP_VALIDATOR,
     TEST_CASES_IPV4_SUBNET_VALIDATOR,
@@ -13,17 +24,6 @@ from tests.test_cases_validators import (
     TEST_CASES_PORT_STRIPPER_IPV6,
     TEST_CASES_PORT_VALIDATOR,
     TEST_CASES_SUBNET_VALIDATOR,
-)
-
-from iplib3.validators import (
-    _ipv4_subnet_validator,
-    _ipv6_subnet_validator,
-    _port_stripper,
-    ip_validator,
-    ipv4_validator,
-    ipv6_validator,
-    port_validator,
-    subnet_validator,
 )
 
 
