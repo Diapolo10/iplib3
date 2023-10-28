@@ -1,3 +1,5 @@
+"""Address test cases."""
+
 from iplib3 import IPAddress, IPv4, IPv6
 from iplib3.address import PureAddress
 from iplib3.constants import (
@@ -10,19 +12,19 @@ from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 PURE_ADDRESS_MASK = [
     '127.0.0.1',
     '0:0:0:0:0:0:0:1',
-    ':'.join(['0', '0', '0', '0', 'DEAD', 'C0DE', '1057', 'BE17']),
-    ':'.join(['0', '0', '0', '0', 'BADC', 'FFE', 'E0DD', 'F00D']),
+    '0:0:0:0:DEAD:C0DE:1057:BE17',
+    '0:0:0:0:BADC:FFE:E0DD:F00D',
     '0000:0000:0000:0000:0000:0000:0000:0001',
     ':'.join(['0000'] * 4 + ['DEAD', 'C0DE', '1057', 'BE17']),
     ':'.join(['0000'] * 4 + ['BADC', '0FFE', 'E0DD', 'F00D']),
     '::1',
-    '::' + ':'.join(['DEAD', 'C0DE', '1057', 'BE17']),
-    '::' + ':'.join(['BADC', 'FFE', 'E0DD', 'F00D']),
+    '::' + 'DEAD:C0DE:1057:BE17',
+    '::' + 'BADC:FFE:E0DD:F00D',
 ]
 
 IP_ADDRESS_MASK = [
     ':'.join(['0'] * 5 + ['DEAD', 'DEAD', 'BEEF']),
-    '::' + ':'.join(['DEAD', 'BEEF']),
+    '::' + 'DEAD:BEEF',
     '127.0.0.1',
 ]
 
@@ -30,14 +32,14 @@ IPV4_MASK = [
     '127.0.0.1',
     '127.0.0.1:80',
     '127.0.0.1:8080',
-    '.'.join(['192', '168', '0', '1']),
+    '192.168.0.1',
 ]
 
 IPV6_MASK = [
-    ':'.join(['2606', '4700', '4700', '', '1111']),
-    f"[{':'.join(['2606', '4700', '4700', '', '1111'])}]:80",
+    '2606:4700:4700::1111',
+    "[2606:4700:4700::1111]:80",
     '0:0:0:0:0:0:0:1',
-    f"[{':'.join(['2606', '4700', '4700', '', '1111'])}]:8080",
+    "[2606:4700:4700::1111]:8080",
     '70::',
 ]
 

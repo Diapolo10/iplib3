@@ -1,3 +1,5 @@
+"""Subnet test cases."""
+
 from iplib3.constants import (
     IPV4_MAX_SUBNET_VALUE,
     IPV4_MIN_SUBNET_VALUE,

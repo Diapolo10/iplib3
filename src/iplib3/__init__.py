@@ -1,4 +1,4 @@
-"""A pathlib-equivalent library for IP addresses"""
+"""A pathlib-equivalent library for IP addresses."""
 
 from iplib3.address import *
 from iplib3.subnet import *

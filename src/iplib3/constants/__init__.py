@@ -1,4 +1,4 @@
-"""Various constant values used by iplib3"""
+"""Various constant values used by iplib3."""
 
 from iplib3.constants.address import *
 from iplib3.constants.ipv4 import *

@@ -1,4 +1,4 @@
-"""IPv6 constants"""
+"""IPv6 constants."""
 
 # IPv6 constants
 IPV6_NUMBER_BIT_COUNT = 4
