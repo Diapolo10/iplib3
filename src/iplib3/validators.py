@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from enum import IntEnum, auto
+
 from iplib3.constants.ipv4 import (
     IPV4_MAX_SEGMENT_COUNT,
     IPV4_MAX_SEGMENT_VALUE,
@@ -34,6 +36,13 @@ from iplib3.constants.subnet import (
 __all__ = ('port_validator', 'ip_validator', 'ipv4_validator', 'ipv6_validator', 'subnet_validator')
 
 
+class ValidationMode(IntEnum):
+    """Detemine the validation strictness."""
+
+    RELAXED = auto()
+    STRICT = auto()
+
+
 def port_validator(port_num: int | None) -> bool:
     """
     Validate an address port.
@@ -54,19 +63,19 @@ def port_validator(port_num: int | None) -> bool:
     )
 
 
-def ip_validator(address: str | int, strict: bool = True) -> bool:
+def ip_validator(address: str | int, validation_mode: ValidationMode = ValidationMode.STRICT) -> bool:
     """
     Validate an IP address of any kind, returning a boolean.
 
     Under strict mode ensures that the numerical values
     don't exceed legal bounds, otherwise focuses on form.
     """
-    if ipv4_validator(address, strict):
+    if ipv4_validator(address, validation_mode):
         return True
-    return ipv6_validator(address, strict)
+    return ipv6_validator(address, validation_mode)
 
 
-def ipv4_validator(address: str | int, strict: bool = True) -> bool:
+def ipv4_validator(address: str | int, validation_mode: ValidationMode = ValidationMode.STRICT) -> bool:
     """
     Validate an IPv4 address, returning a boolean.
 
@@ -77,10 +86,10 @@ def ipv4_validator(address: str | int, strict: bool = True) -> bool:
 
     if isinstance(address, str) and '.' in address:
 
-        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV4, strict=strict)
+        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV4, validation_mode=validation_mode)
 
         if valid:
-            valid = _ipv4_address_validator(portless_address, strict=strict)
+            valid = _ipv4_address_validator(portless_address, validation_mode=validation_mode)
 
     if isinstance(address, int):
         valid = IPV4_MIN_VALUE <= address <= IPV4_MAX_VALUE
@@ -88,7 +97,7 @@ def ipv4_validator(address: str | int, strict: bool = True) -> bool:
     return valid
 
 
-def ipv6_validator(address: str | int, strict: bool = True) -> bool:
+def ipv6_validator(address: str | int, validation_mode: ValidationMode = ValidationMode.STRICT) -> bool:
     """
     Validate an IPv6 address, returning a boolean.
 
@@ -99,12 +108,12 @@ def ipv6_validator(address: str | int, strict: bool = True) -> bool:
 
     if isinstance(address, str):
 
-        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV6, strict=strict)
+        portless_address, _, valid = _port_stripper(address, protocol=SubnetType.IPV6, validation_mode=validation_mode)
 
         if not valid:
             return valid
 
-        valid = _ipv6_address_validator(portless_address, strict=strict)
+        valid = _ipv6_address_validator(portless_address, validation_mode=validation_mode)
 
     if isinstance(address, int):
         valid = IPV6_MIN_VALUE <= address <= IPV6_MAX_VALUE
@@ -186,7 +195,9 @@ def _ipv6_subnet_validator(subnet: int) -> bool:  # IPv6 subnets have no string 
     raise TypeError(msg)
 
 
-def _port_stripper(address: str, protocol: SubnetType = SubnetType.IPV4, strict: bool = True) -> tuple[str, int | None, bool]:
+def _port_stripper(address: str,
+                   protocol: SubnetType = SubnetType.IPV4,
+                   validation_mode: ValidationMode = ValidationMode.STRICT) -> tuple[str, int | None, bool]:
     """
     Extract the port number from IP addresses, if any.
 
@@ -218,13 +229,13 @@ def _port_stripper(address: str, protocol: SubnetType = SubnetType.IPV4, strict:
         except ValueError:
             valid = False
 
-        if strict and valid:
+        if validation_mode == ValidationMode.STRICT and valid:
             valid = port_validator(port_num)
 
     return address, port_num, valid
 
 
-def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
+def _ipv4_address_validator(address: str, validation_mode: ValidationMode = ValidationMode.STRICT) -> bool:
     """Validate the address part of an IPv4 address."""
     valid = True
 
@@ -238,7 +249,7 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
         # Invalid number of segments
         valid = False
 
-    elif strict:
+    elif validation_mode == ValidationMode.STRICT:
         for seg in segments:
             if not IPV4_MIN_SEGMENT_VALUE <= seg <= IPV4_MAX_SEGMENT_VALUE:
                 # Segment value was too high or too low to be strictly valid
@@ -248,7 +259,7 @@ def _ipv4_address_validator(address: str, strict: bool = True) -> bool:
     return valid
 
 
-def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
+def _ipv6_address_validator(address: str, validation_mode: ValidationMode = ValidationMode.STRICT) -> bool:
     """Validate the address part of an IPv6 address."""
     address = address.strip()
     valid = True
@@ -289,7 +300,7 @@ def _ipv6_address_validator(address: str, strict: bool = True) -> bool:
     if len(processed_segments) != IPV6_MAX_SEGMENT_COUNT:
         valid = False
 
-    if strict and valid:
+    if validation_mode == ValidationMode.STRICT and valid:
         valid = all(
             IPV6_MIN_SEGMENT_VALUE <= seg <= IPV6_MAX_SEGMENT_VALUE
             for seg in processed_segments

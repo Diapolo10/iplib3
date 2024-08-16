@@ -119,11 +119,11 @@ TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS = [
 TEST_CASES_IPADDRESS = [
     (IPAddress(), IPAddress),
     (IPAddress(IPV4_LOCALHOST), IPAddress),
-    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),
-    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),  # type: ignore[arg-type]
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),  # type: ignore[arg-type]
     (IPAddress(IPV4_LOCALHOST, 80), IPAddress),
-    (IPAddress(IP_ADDRESS_MASK[2], 80), IPv4),
-    (IPAddress(IP_ADDRESS_MASK[1], 80), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2], 80), IPv4),  # type: ignore[arg-type]
+    (IPAddress(IP_ADDRESS_MASK[1], 80), IPv6),  # type: ignore[arg-type]
 ]
 
 TEST_CASES_IPADDRESS_EQUALITY = [
@@ -146,14 +146,14 @@ TEST_CASES_IPADDRESS_REPR = [
 
 TEST_CASES_IPADDRESS_AS_IPV4 = [
     (IPAddress(), IPv4),
-    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),
-    (IPAddress(IP_ADDRESS_MASK[1]), IPv4),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv4),  # type: ignore[arg-type]
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv4),  # type: ignore[arg-type]
 ]
 
 TEST_CASES_IPADDRESS_AS_IPV6 = [
     (IPAddress(), IPv6),
-    (IPAddress(IP_ADDRESS_MASK[2]), IPv6),
-    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),
+    (IPAddress(IP_ADDRESS_MASK[2]), IPv6),  # type: ignore[arg-type]
+    (IPAddress(IP_ADDRESS_MASK[1]), IPv6),  # type: ignore[arg-type]
 ]
 
 TEST_CASES_IPV4 = [

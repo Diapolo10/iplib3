@@ -3,7 +3,7 @@
 import pytest
 
 from iplib3 import IPAddress
-from iplib3.address import IPv6, PureAddress
+from iplib3.address import AddressFormat, IPv6, PureAddress
 from iplib3.constants import IPV6_MAX_VALUE
 from tests.test_cases_address import (
     TEST_CASES_IPADDRESS,
@@ -37,7 +37,7 @@ from tests.test_cases_address import (
     "pure_address",
     TEST_CASES_PURE_ADDRESS,
 )
-def test_pure_address(pure_address):
+def test_pure_address(pure_address: PureAddress):
     """Test the PureAddress base class."""
     assert pure_address
 
@@ -135,7 +135,7 @@ def test_pure_address_num_to_ipv6(pure_address, excepted_output):
 )
 def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
     """Test PureAddress num to IPv6 string conversion without shortening."""
-    assert pure_address.num_to_ipv6(shorten=False) == excepted_output
+    assert pure_address.num_to_ipv6(AddressFormat.DEFAULT) == excepted_output
 
 
 @pytest.mark.parametrize(
@@ -144,12 +144,16 @@ def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
 )
 def test_pure_address_num_to_ipv6_remove_zeroes(pure_address, excepted_output):
     """Test PureAddress num to IPv6 string conversion with empty segment removal."""
-    assert pure_address.num_to_ipv6(remove_zeroes=True) == excepted_output
+    assert pure_address.num_to_ipv6(AddressFormat.REMOVE_ZEROES | AddressFormat.SHORTEN) == excepted_output
 
 
 def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
     """Test PureAddress num to IPv6 string conversion without shortening but segment removal applied."""
-    assert PureAddress(0xBADC_0FFE_E0DD_F00D).num_to_ipv6(shorten=False, remove_zeroes=True) == '::BADC:0FFE:E0DD:F00D'
+    assert PureAddress(
+        0xBADC_0FFE_E0DD_F00D,
+    ).num_to_ipv6(
+        address_format=AddressFormat.REMOVE_ZEROES,
+    ) == '::BADC:0FFE:E0DD:F00D'
 
 
 @pytest.mark.parametrize(
@@ -215,7 +219,7 @@ def test_ipaddress_as_ipv6(ip_address, excepted_instance):
 @pytest.mark.parametrize(
     "input_ipv4", TEST_CASES_IPV4,
 )
-def test_ipv4(input_ipv4):
+def test_ipv4(input_ipv4: IPAddress):
     """Test the IPv4 class."""
     assert input_ipv4
 
@@ -241,7 +245,7 @@ def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
 @pytest.mark.parametrize(
     "input_ipv6", TEST_CASES_IPV6,
 )
-def test_ipv6(input_ipv6):
+def test_ipv6(input_ipv6: IPAddress):
     """Test the IPv6 class."""
     assert input_ipv6
 

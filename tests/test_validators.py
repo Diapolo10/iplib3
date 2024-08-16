@@ -46,21 +46,21 @@ def test_ip_validator(address, excepted_output):
 
 
 @pytest.mark.parametrize(
-    ("address", "strict", "excepted_output"),
+    ("address", "validation_mode", "excepted_output"),
     TEST_CASES_IPV4_VALIDATOR,
 )
-def test_ipv4_validator(address, strict, excepted_output):
+def test_ipv4_validator(address, validation_mode, excepted_output):
     """Test IPv4 validator."""
-    assert ipv4_validator(address=address, strict=strict) is excepted_output
+    assert ipv4_validator(address=address, validation_mode=validation_mode) is excepted_output
 
 
 @pytest.mark.parametrize(
-    ("address", "strict", "excepted_output"),
+    ("address", "validation_mode", "excepted_output"),
     TEST_CASES_IPV6_VALIDATOR,
 )
-def test_ipv6_validator(address, strict, excepted_output):
+def test_ipv6_validator(address, validation_mode, excepted_output):
     """Test IPv6 validator."""
-    assert ipv6_validator(address=address, strict=strict) is excepted_output
+    assert ipv6_validator(address=address, validation_mode=validation_mode) is excepted_output
 
 
 @pytest.mark.parametrize(

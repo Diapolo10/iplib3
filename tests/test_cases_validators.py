@@ -12,6 +12,7 @@ from iplib3.constants import (
     PORT_NUMBER_MAX_VALUE,
     PORT_NUMBER_MIN_VALUE,
 )
+from iplib3.validators import ValidationMode
 
 VALID_IPV4_ADDRESSES_STRICT = [
     '127.0.0.1',
@@ -91,53 +92,53 @@ TEST_CASES_IP_VALIDATOR = [
 ]
 
 TEST_CASES_IPV4_VALIDATOR = [
-    (VALID_IPV4_ADDRESSES_STRICT[1], True, True),
-    (VALID_IPV4_ADDRESSES_STRICT[2], True, True),
-    (VALID_IPV4_ADDRESSES_STRICT[3], True, True),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[4]}:{PORT_NUMBERS_VALID[14]}', True, True),
-    (VALID_IPV4_ADDRESSES_LOOSE[0], True, False),
-    (INVALID_IPV4_ADDRESSES[0], True, False),
-    (INVALID_IPV4_ADDRESSES[1], False, False),
-    (INVALID_IPV4_ADDRESSES[2], True, False),
-    ([127, 0, 0, 1], True, False),
-    (VALID_IPV4_ADDRESSES_LOOSE[1], True, False),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[1]}:{PORT_NUMBERS_INVALID[2]}', True, False),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:notaport', True, False),
-    (VALID_IPV4_ADDRESSES_LOOSE[1], False, True),
-    (f'{VALID_IPV4_ADDRESSES_LOOSE[1]}:{PORT_NUMBERS_INVALID[2]}', False, True),
-    (25601440, True, True),
-    (0xDEADBEEF, True, True),
-    (25601440, False, True),
-    (0xDEADBEEF, False, True),
-    (IPV4_MIN_VALUE, True, True),
-    (IPV4_MAX_VALUE, True, True),
-    (IPV4_MIN_VALUE - 1, True, False),
-    (IPV4_MAX_VALUE + 1, True, False),
-    (256014.40, True, False),
+    (VALID_IPV4_ADDRESSES_STRICT[1], ValidationMode.STRICT, True),
+    (VALID_IPV4_ADDRESSES_STRICT[2], ValidationMode.STRICT, True),
+    (VALID_IPV4_ADDRESSES_STRICT[3], ValidationMode.STRICT, True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[4]}:{PORT_NUMBERS_VALID[14]}', ValidationMode.STRICT, True),
+    (VALID_IPV4_ADDRESSES_LOOSE[0], ValidationMode.STRICT, False),
+    (INVALID_IPV4_ADDRESSES[0], ValidationMode.STRICT, False),
+    (INVALID_IPV4_ADDRESSES[1], ValidationMode.RELAXED, False),
+    (INVALID_IPV4_ADDRESSES[2], ValidationMode.STRICT, False),
+    ([127, 0, 0, 1], ValidationMode.STRICT, False),
+    (VALID_IPV4_ADDRESSES_LOOSE[1], ValidationMode.STRICT, False),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[1]}:{PORT_NUMBERS_INVALID[2]}', ValidationMode.STRICT, False),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:notaport', ValidationMode.STRICT, False),
+    (VALID_IPV4_ADDRESSES_LOOSE[1], ValidationMode.RELAXED, True),
+    (f'{VALID_IPV4_ADDRESSES_LOOSE[1]}:{PORT_NUMBERS_INVALID[2]}', ValidationMode.RELAXED, True),
+    (25601440, ValidationMode.STRICT, True),
+    (0xDEADBEEF, ValidationMode.STRICT, True),
+    (25601440, ValidationMode.RELAXED, True),
+    (0xDEADBEEF, ValidationMode.RELAXED, True),
+    (IPV4_MIN_VALUE, ValidationMode.STRICT, True),
+    (IPV4_MAX_VALUE, ValidationMode.STRICT, True),
+    (IPV4_MIN_VALUE - 1, ValidationMode.STRICT, False),
+    (IPV4_MAX_VALUE + 1, ValidationMode.STRICT, False),
+    (256014.40, ValidationMode.STRICT, False),
 ]
 
 TEST_CASES_IPV6_VALIDATOR = [
-    ('0:0:0:0:0:0:0:0', True, True),
-    ('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', True, True),
-    ('[0:0:0:0:0:0:0:0]:80', True, True),
-    (f'[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:{PORT_NUMBER_MAX_VALUE}', True, True),
-    ('::12', True, True),
-    ('314::', True, True),
-    ('2606:4700:4700::1111', True, True),
-    ('2606:4700:4700::10000', False, True),
-    ('2606:4700:4700::10000', True, False),
-    ('2606:4700::4700::1111', True, False),
-    ('2606:4700:4700::HACK', True, False),
-    ('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0001', True, False),
-    ('2606:4700:4700:1111', True, False),
-    ([2606, 4700, 4700, 0, 0, 0, 0, 1111], True, False),
-    ('[2606:4700:4700::1111]:notaport', True, False),
-    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[3]}', True, False),
-    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[2]}', True, False),
-    (IPV6_MIN_VALUE, True, True),
-    (IPV6_MAX_VALUE, True, True),
-    (IPV6_MIN_VALUE - 1, True, False),
-    (IPV6_MAX_VALUE + 1, True, False),
+    ('0:0:0:0:0:0:0:0', ValidationMode.STRICT, True),
+    ('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', ValidationMode.STRICT, True),
+    ('[0:0:0:0:0:0:0:0]:80', ValidationMode.STRICT, True),
+    (f'[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]:{PORT_NUMBER_MAX_VALUE}', ValidationMode.STRICT, True),
+    ('::12', ValidationMode.STRICT, True),
+    ('314::', ValidationMode.STRICT, True),
+    ('2606:4700:4700::1111', ValidationMode.STRICT, True),
+    ('2606:4700:4700::10000', ValidationMode.RELAXED, True),
+    ('2606:4700:4700::10000', ValidationMode.STRICT, False),
+    ('2606:4700::4700::1111', ValidationMode.STRICT, False),
+    ('2606:4700:4700::HACK', ValidationMode.STRICT, False),
+    ('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0001', ValidationMode.STRICT, False),
+    ('2606:4700:4700:1111', ValidationMode.STRICT, False),
+    ([2606, 4700, 4700, 0, 0, 0, 0, 1111], ValidationMode.STRICT, False),
+    ('[2606:4700:4700::1111]:notaport', ValidationMode.STRICT, False),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[3]}', ValidationMode.STRICT, False),
+    (f'[2606:4700:4700::1111]:{PORT_NUMBERS_INVALID[2]}', ValidationMode.STRICT, False),
+    (IPV6_MIN_VALUE, ValidationMode.STRICT, True),
+    (IPV6_MAX_VALUE, ValidationMode.STRICT, True),
+    (IPV6_MIN_VALUE - 1, ValidationMode.STRICT, False),
+    (IPV6_MAX_VALUE + 1, ValidationMode.STRICT, False),
 ]
 
 TEST_CASES_SUBNET_VALIDATOR = [
@@ -200,10 +201,10 @@ TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS = [
 ]
 
 TEST_CASES_PORT_STRIPPER_IPV4 = [
-    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPV4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),
-    (f'{VALID_IPV4_ADDRESSES_STRICT[5]}:{PORT_NUMBERS_VALID[8]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[8], True),
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),  # noqa: E501
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),  # noqa: E501
+    (f'{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}', 'IPV4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[14], True),  # noqa: E501
+    (f'{VALID_IPV4_ADDRESSES_STRICT[5]}:{PORT_NUMBERS_VALID[8]}', 'ipv4', VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[8], True),  # noqa: E501
     (VALID_IPV4_ADDRESSES_STRICT[0], 'ipv4', VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[0], True),
     (VALID_IPV4_ADDRESSES_STRICT[5], 'ipv4', VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[0], True),
 ]

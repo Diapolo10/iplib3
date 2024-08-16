@@ -67,7 +67,9 @@ class SubnetMask(PureSubnetMask):
 
     __slots__ = ('_subnet_type',)
 
-    def __init__(self: SubnetMask, subnet_mask: int | str | None = None, subnet_type: SubnetType = SubnetType.IPV6) -> None:
+    def __init__(self: SubnetMask,
+                 subnet_mask: int | str | None = None,
+                 subnet_type: SubnetType = SubnetType.IPV6) -> None:
         """Create SubnetMask."""
         subnet_type = SubnetType(subnet_type)
         super().__init__()
