@@ -175,7 +175,7 @@ class IPAddress(PureAddress):
         """Create PureAddress."""
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
-            cls = IPv4 if '.' in address else IPv6
+            cls = IPv4 if '.' in address else IPv6  # noqa: PLW0642
 
         self = object.__new__(cls)
 
@@ -183,7 +183,7 @@ class IPAddress(PureAddress):
         return self
 
     def __init__(self, address: int | None = IPV4_LOCALHOST, port_num: int | None = None) -> None:
-        """Init PureAddres."""
+        """Init PureAddress."""
         super().__init__(num=address, port=port_num)
         self._ipv4: IPv4 | None = None
         self._ipv6: IPv6 | None = None
