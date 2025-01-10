@@ -1,9 +1,9 @@
-"""iplib3's functionality specific to addresses"""
+"""iplib3's functionality specific to addresses."""
 
 from __future__ import annotations
 
 from itertools import groupby
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from iplib3.constants.address import (
     IPV4_LOCALHOST,
@@ -32,20 +32,19 @@ from iplib3.validators import port_validator
 if TYPE_CHECKING:
     from iplib3.subnet import SubnetMask
 
-__all__ = ('IPAddress', 'IPv4', 'IPv6')
+__all__ = ("IPAddress", "IPv4", "IPv6")
 
 
 class PureAddress:
-    """Bare-bones, independent base class for IP addresses"""
+    """Bare-bones, independent base class for IP addresses."""
 
-    __slots__ = ('_num', '_port')
+    __slots__ = ("_num", "_port")
 
     def __init__(self: PureAddress, num: int | None = None, port: int | None = None) -> None:
         self._num: int = num if num is not None else 0
         self._port: int | None = port if port_validator(port) else None
 
     def __eq__(self: PureAddress, other: object) -> bool:
-
         if isinstance(other, PureAddress):
             return self.num == other.num and self.port == other.port
 
@@ -63,22 +62,19 @@ class PureAddress:
     @property
     def num(self: PureAddress) -> int:
         """
-        Negative numbers aren't valid,
-        they are treated as zero.
+        Negative numbers aren't valid, they are treated as zero.
 
         TODO: Consider whether negative numbers should raise an exception
         """
-
         return max(0, self._num)
 
     @property
     def port(self: PureAddress) -> int | None:
         """
-        Returns the port in the address, or None if no port is specified
+        Returns the port in the address, or None if no port is specified.
 
         TODO: Consider whether invalid port numbers should raise an exception
         """
-
         if self._port is None:
             return None
 
@@ -87,101 +83,91 @@ class PureAddress:
     @port.setter
     def port(self: PureAddress, value: int | None) -> None:
         """
-        Sets a new port value. Value must be a valid integer and within the range of valid ports.
+        Set a new port value. Value must be a valid integer and within the range of valid ports.
 
         TODO: Find a way to avoid mutability
         """
-
         if value is None:
             pass  # OK
 
         elif not isinstance(value, int):
-            raise TypeError(f"Port '{value}' is not a valid integer")
+            msg = f"Port '{value}' is not a valid integer"
+            raise TypeError(msg)
         elif not PORT_NUMBER_MIN_VALUE <= value <= PORT_NUMBER_MAX_VALUE:
-            raise ValueError(
-                f"Port number '{value}' not in valid range "
-                f"({PORT_NUMBER_MIN_VALUE}-{PORT_NUMBER_MAX_VALUE})",
-            )
+            msg = f"Port number '{value}' not in valid range ({PORT_NUMBER_MIN_VALUE}-{PORT_NUMBER_MAX_VALUE})"
+            raise ValueError(msg)
 
         self._port = value
 
     @property
     def as_hex(self: PureAddress) -> str:
-        """
-        Returns a hexadecimal representation of the address
-        """
-
+        """Return a hexadecimal representation of the address."""
         return f"0x{self.num:0X}"
 
     def num_to_ipv4(self: PureAddress) -> str:
-        """
-        A wrapper method for the otherwise equivalent static method
-        """
-
+        """Generate an IPv4 string from an integer."""
         return self._num_to_ipv4(self.num)
 
-    def num_to_ipv6(self: PureAddress, shorten: bool = True, remove_zeroes: bool = False) -> str:
-        """
-        A wrapper method for the otherwise equivalent static method
-        """
-
-        return self._num_to_ipv6(self.num, shorten, remove_zeroes)
+    def num_to_ipv6(self: PureAddress, *, shorten: bool = True, remove_zeroes: bool = False) -> str:
+        """Generate an IPv6 string from an integer."""
+        return self._num_to_ipv6(self.num, shorten=shorten, remove_zeroes=remove_zeroes)
 
     @staticmethod
     def _num_to_ipv4(num: int) -> str:
-        """
-        Generates an IPv4 string from an integer
-        """
-
+        """Generate an IPv4 string from an integer."""
         segments = []
         for _ in range(IPV4_MAX_SEGMENT_COUNT):
-            num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE+1)
+            num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE + 1)
             segments.append(segment)
-        return '.'.join(str(segment) for segment in segments[::-1])
+        return ".".join(str(segment) for segment in segments[::-1])
 
     @staticmethod
-    def _num_to_ipv6(num: int, shorten: bool = True, remove_zeroes: bool = False) -> str:
-        """
-        Generates an IPv6 string from an integer,
-        with optional zero removal and shortening.
-        """
-
+    def _num_to_ipv6(num: int, *, shorten: bool = True, remove_zeroes: bool = False) -> str:
+        """Generate an IPv6 string from an integer, with optional zero removal and shortening."""
         segment_min_length = (IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT) * (not shorten)
-        zero_segment = f'{0:0{segment_min_length}}'
+        zero_segment = f"{0:0{segment_min_length}}"
 
         segments = []
         for _ in range(IPV6_MAX_SEGMENT_COUNT):
-            num, segment = divmod(num, IPV6_MAX_SEGMENT_VALUE+1)
-            segments.append(f'{segment:0{segment_min_length}X}')
+            num, segment = divmod(num, IPV6_MAX_SEGMENT_VALUE + 1)
+            segments.append(f"{segment:0{segment_min_length}X}")
 
         if remove_zeroes and zero_segment in segments:
-
             # Goes over the segments to find the
             # longest strip with nothing but zeroes
             # and replaces it with an empty string.
             # The final str.join will turn to '::'.
 
             longest_idx, length = max(
-                (idx, len(list(group)))
-                for idx, (item, group) in enumerate(groupby(segments))
-                if item == zero_segment
+                (idx, len(list(group))) for idx, (item, group) in enumerate(groupby(segments)) if item == zero_segment
             )
 
-            segments[longest_idx:longest_idx+length] = ['', '']
+            segments[longest_idx : longest_idx + length] = ["", ""]
 
-        return ':'.join(segments[::-1])
+        return ":".join(segments[::-1])
 
 
 class IPAddress(PureAddress):
-    """More flexible PureAddress subclass"""
+    """More flexible PureAddress subclass."""
 
-    __slots__ = ('_ipv4', '_ipv6', '_submask')
+    __slots__ = ("_ipv4", "_ipv6", "_submask")
 
-    def __new__(cls: type[IPAddress], address: int | str | None = None, port_num: int | None = None, **kwargs) -> IPAddress:  # noqa: ANN003,PYI034
+    @overload
+    def __new__(cls, address: int | None, port_num: int | None, **kwargs) -> IPAddress:  # noqa: ANN003
+        ...
+    @overload
+    def __new__(cls, address: str, port_num: int | None, **kwargs) -> IPv4 | IPv6:  # type: ignore[misc]  # noqa: ANN003
+        ...
 
+    def __new__(  # noqa: D102,PYI034
+        cls,
+        address: int | str | None = None,
+        port_num: int | None = None,
+        **kwargs,
+    ) -> IPAddress:
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
-            cls = IPv4 if '.' in address else IPv6
+            cls = IPv4 if "." in address else IPv6  # noqa: PLW0642
 
         self = object.__new__(cls)
 
@@ -189,13 +175,14 @@ class IPAddress(PureAddress):
         return self
 
     def __init__(self: IPAddress, address: int | None = IPV4_LOCALHOST, port_num: int | None = None) -> None:
+        """Create new IPAddress."""
         super().__init__(num=address, port=port_num)
         self._ipv4: IPv4 | None = None
         self._ipv6: IPv6 | None = None
         self._submask: SubnetMask | None = None
 
     def __eq__(self: IPAddress, other: object) -> bool:
-
+        """Compare address."""
         # To accommodate strings
         if str(self) == str(other):
             return True
@@ -203,7 +190,7 @@ class IPAddress(PureAddress):
         return super().__eq__(other)
 
     def __str__(self: IPAddress) -> str:
-
+        """Convert to string."""
         if IPV4_MIN_VALUE <= self.num <= IPV4_MAX_VALUE:
             if self._ipv4 is None:
                 self._ipv4 = self.as_ipv4
@@ -214,31 +201,30 @@ class IPAddress(PureAddress):
                 self._ipv6 = self.as_ipv6
             return str(self._ipv6)
 
-        raise ValueError(f"No valid address representation exists for {self.num}")
+        msg = f"No valid address representation exists for {self.num}"
+        raise ValueError(msg)
 
     @property
     def as_ipv4(self: IPAddress) -> IPv4:
-        """Creates and returns an IPv4 version of the address, if possible"""
-
+        """Create and return an IPv4 version of the address, if possible."""
         return IPv4(self.num_to_ipv4(), port_num=self.port)  # type: ignore  # noqa: PGH003
 
     @property
     def as_ipv6(self: IPAddress) -> IPv6:
-        """Creates and returns an IPv6-version of the address"""
-
+        """Create and return an IPv6-version of the address."""
         return IPv6(self.num_to_ipv6(), port_num=self.port)  # type: ignore  # noqa: PGH003
 
 
 class IPv4(IPAddress):
-    """An IPAddress subclass specific to IPv4"""
+    """An IPAddress subclass specific to IPv4."""
 
-    __slots__ = ('_address',)
+    __slots__ = ("_address",)
 
     def __init__(self: IPv4, address: str | None = None, port_num: int | None = None) -> None:
-
+        """Create new IPv4 address."""
         new_address = self._num_to_ipv4(IPV4_LOCALHOST) if address is None else address
 
-        _address, *_port = new_address.split(':')
+        _address, *_port = new_address.split(":")
 
         if _port:
             new_address = _address
@@ -250,7 +236,7 @@ class IPv4(IPAddress):
         super().__init__(address=self._ipv4_to_num(), port_num=port_num)
 
     def __str__(self: IPv4) -> str:
-
+        """Convert to string."""
         if self.port is not None:
             return f"{self._address}:{self.port}"
 
@@ -258,34 +244,31 @@ class IPv4(IPAddress):
 
     def _ipv4_to_num(self: IPv4) -> int:
         """
-        Takes a valid IPv4 address and turns
-        it into an equivalent integer value.
+        Take a valid IPv4 address and turn it into an equivalent integer value.
 
         Raises ValueError on invalid IPv4 format.
         """
-
-        segments = [int(segment) for segment in self._address.split('.')][::-1]
+        segments = [int(segment) for segment in self._address.split(".")][::-1]
         total = 0
 
         for idx, num in enumerate(segments):
-            total += num * 2**(idx * 8)
+            total += num * 2 ** (idx * 8)
 
         return total
 
 
 class IPv6(IPAddress):
-    """An IPAddress subclass specific to IPv6"""
+    """An IPAddress subclass specific to IPv6."""
 
-    __slots__ = ('_address',)
+    __slots__ = ("_address",)
 
     def __init__(self: IPv6, address: str | None = None, port_num: int | None = None) -> None:
-
+        """Create new IPv6 address."""
         new_address = self._num_to_ipv6(IPV6_LOCALHOST) if address is None else address
 
-        _address, *_port = new_address.split(']:')
+        _address, *_port = new_address.split("]:")
 
         if _port:
-
             # Removes the opening square bracket
             new_address = _address[1:]
 
@@ -296,7 +279,7 @@ class IPv6(IPAddress):
         super().__init__(address=self._ipv6_to_num(), port_num=port_num)
 
     def __str__(self: IPv6) -> str:
-
+        """Convert to string."""
         if self.port is not None:
             return f"[{self._address}]:{self.port}"
 
@@ -304,69 +287,63 @@ class IPv6(IPAddress):
 
     def _ipv6_to_num(self: IPv6) -> int:
         """
-        Takes a valid IPv6 address and turns
-        it into an equivalent integer value.
+        Take a valid IPv6 address and turn it into an equivalent integer value.
 
         Raises ValueError on invalid IPv6 format.
         """
-
-        halves = self._address.split('::')
+        halves = self._address.split("::")
         segments = []
 
         if len(halves) == 2:  # noqa: PLR2004
             # Address with zero-skip part
-            left, right = (half.split(':') for half in halves)
+            left, right = (half.split(":") for half in halves)
             total_length = len(left) + len(right)
 
             if halves[0]:
                 segments.extend(left)
             else:
-                segments.append('0000')
+                segments.append("0000")
 
-            segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
+            segments.extend(["0000" for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
             if halves[1]:
                 segments.extend(right)
             else:
-                segments.append('0000')
+                segments.append("0000")
 
         elif len(halves) == 1:
             # Full address
-            segments.extend(halves[0].split(':'))
+            segments.extend(halves[0].split(":"))
 
         else:
-            raise ValueError("Invalid IPv6 address format; only one zero-skip allowed")
+            msg = "Invalid IPv6 address format; only one zero-skip allowed"
+            raise ValueError(msg)
 
         try:
             processed_segments: list[int] = [
-                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0
-                for segment in segments[::-1]
+                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0 for segment in segments[::-1]
             ]
         except ValueError as err:
-            raise ValueError("Invalid IPv6 address format; address contains invalid characters") from err
+            msg = "Invalid IPv6 address format; address contains invalid characters"
+            raise ValueError(msg) from err
 
         segment_count = len(processed_segments)
         if segment_count > IPV6_MAX_SEGMENT_COUNT:
-            raise ValueError(
-                f"Invalid IPv6 address format; too many segments "
-                f"({segment_count} > {IPV6_MAX_SEGMENT_COUNT})",
-            )
+            msg = f"Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})"
+            raise ValueError(msg)
 
         highest = max(processed_segments)
         if highest > IPV6_MAX_SEGMENT_VALUE:
-            raise ValueError(
-                f"Invalid IPv6 address format; segment max value "
-                f"passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})",
-            )
+            msg = f"Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})"
+            raise ValueError(msg)
 
         lowest = min(processed_segments)
         if lowest < IPV6_MIN_SEGMENT_VALUE:
-            raise ValueError(
-                f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)",
-            )
+            msg = f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)"
+            raise ValueError(msg)
 
         total = 0
         for idx, num in enumerate(processed_segments):
-            total += num * 2**(idx * 16)
+            total += num * 2 ** (idx * 16)
 
         return total

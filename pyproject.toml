@@ -1,74 +1,74 @@
 [build-system]
-requires = ['poetry-core>=1.2.0', 'wheel',]
-build-backend = 'poetry.core.masonry.api'
+requires = ["poetry-core>=1.2.0", "wheel",]
+build-backend = "poetry.core.masonry.api"
 
 
 [tool.coverage.run]
 branch = true
 relative_files = true
 omit = [
-    '.tox/*',
-    'tests/*',
+    ".tox/*",
+    "tests/*",
 ]
 
 
 [tool.coverage.report]
 exclude_lines = [
-    'pragma: not covered',
-    '@overload',
-    'if TYPE_CHECKING:',
+    "pragma: not covered",
+    "@overload",
+    "if TYPE_CHECKING:",
 ]
 
 
 [tool.poetry]
-name = 'iplib3'
-version = '0.2.4'
+name = "iplib3"
+version = "0.2.4"
 description = "A modern, object-oriented approach to IP addresses."
 
 authors = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 maintainers = ["Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",]
 
-include = ['CHANGELOG.md', 'LICENSE', 'py.typed',]
-license = 'MIT'
-readme = 'README.md'
+include = ["CHANGELOG.md", "LICENSE", "py.typed",]
+license = "MIT"
+readme = "README.md"
 
-homepage = 'https://pypi.org/project/iplib3/'
-repository = 'https://github.com/Diapolo10/iplib3'
-documentation = 'https://github.com/Diapolo10/iplib3/tree/main/docs'
+homepage = "https://pypi.org/project/iplib3/"
+repository = "https://github.com/Diapolo10/iplib3"
+documentation = "https://github.com/Diapolo10/iplib3/tree/main/docs"
 
 keywords = [
-    'network',
-    'networking',
-    'ip',
-    'ipaddress',
-    'address',
-    'python3',
-    'pathlib',
+    "network",
+    "networking",
+    "ip",
+    "ipaddress",
+    "address",
+    "python3",
+    "pathlib",
 ]
 classifiers = [
-    'Development Status :: 4 - Beta',
-    'Intended Audience :: Developers',
-    'Intended Audience :: Information Technology',
-    'License :: OSI Approved :: MIT License',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Programming Language :: Python :: Implementation :: PyPy',
-    'Topic :: Internet',
-    'Topic :: Software Development :: Libraries',
-    'Typing :: Typed',
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
 ]
 
 
 [tool.poetry.dependencies]
-python = '^3.9.0'
+python = "^3.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
-mypy = '^1.5.1'
+mypy = "^1.5.1"
 
 
 [tool.poetry.group.linters]
@@ -76,7 +76,7 @@ optional = true
 
 
 [tool.poetry.group.linters.dependencies]
-ruff = '^0.0.290'
+ruff = "^0.9.0"
 
 
 [tool.poetry.group.tests]
@@ -84,16 +84,16 @@ optional = true
 
 
 [tool.poetry.group.tests.dependencies]
-pytest = '^7.4.2'
-pytest-cov = '^4.1.0'
-tox = '^4.11.3'
-tox-gh-actions = '^3.1.3'
+pytest = "^7.4.4"
+pytest-cov = "^4.1.0"
+tox = "^4.23.2"
+tox-gh-actions = "^3.2.0"
 
 
 [tool.poetry.urls]
-"Source code" = 'https://github.com/Diapolo10/iplib3'
-"Tracker" = 'https://github.com/Diapolo10/iplib3/issues'
-"Changelog" = 'https://github.com/Diapolo10/iplib3/blob/main/CHANGELOG.md'
+"Source code" = "https://github.com/Diapolo10/iplib3"
+"Tracker" = "https://github.com/Diapolo10/iplib3/issues"
+"Changelog" = "https://github.com/Diapolo10/iplib3/blob/main/CHANGELOG.md"
 
 
 [tool.pytest.ini_options]
@@ -107,76 +107,43 @@ addopts = """
 --ignore=docs/
 """
 testpaths = [
-    'tests',
+    "tests",
 ]
 
 
 [tool.ruff]
-select = [
-    'A',   # Builtins
-    'ANN', # Annotations
-    'ARG', # Unused arguments
-    'B',   # Bugbear
-    'BLE', # Blind except
-    'C4',  # Comprehensions
-    'C90', # mccabe
-    'COM', # Commas
-    'DTZ', # Datetimes
-    'ERA', # Commented-out code
-    'EXE', # Executable
-    'G',   # Logging format
-    'I',   # Isort
-    'ICN', # Import conventions
-    'INP', # Disallow PEP-420 (Implicit namespace packages)
-    'INT', # gettext
-    'ISC', # Implicit str concat
-    'N',   # PEP-8 Naming
-    'NPY', # Numpy
-    'PGH', # Pygrep hooks
-    'PIE', # Unnecessary code
-    'PL',  # Pylint
-    'PT',  # Pytest
-    'PTH', # Use Pathlib
-    'PYI', # Stub files
-    'RET', # Return
-    'RUF', # Ruff
-    'RSE', # Raise
-    'S',   # Bandit
-    'SIM', # Code simplification
-    'SLF', # Private member access
-    'T20', # Print
-    'TCH', # Type checking
-    'TID', # Tidy imports
-    'UP',  # Pyupgrade
-    'W',   # Warnings
-    'YTT', # sys.version
+lint.select = ["ALL"]
+lint.ignore = [
+    "D203",    # One blank line before class docstring
+    "D212",    # Multi-line summary first line
+    "PLR0913", # Too many arguments
+    "Q000",    # Single quotes found but double quotes preferred
 ]
-ignore = [
-    'PLR0913',  # Too many arguments
-]
-ignore-init-module-imports = true
 line-length = 120
+show-fixes = true
+src = ["src",]
+target-version = "py39"
 
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # https://beta.ruff.rs/docs/rules/
-'__init__.py' = ['F401','F403','F405',]
-'tests/*' = ['ANN', 'ARG', 'INP001', 'S101',]
+"__init__.py" = ["F401","F403","F405",]
+"tests/*" = ["ANN", "ARG", "INP001", "S101",]
 
 
-[tool.ruff.pylint]
+[tool.ruff.lint.pylint]
 max-args = 15
 max-branches = 20
 max-returns = 10
 max-statements = 80
 
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
 
