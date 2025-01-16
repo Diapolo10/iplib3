@@ -33,7 +33,7 @@ from iplib3.constants.subnet import (
     SubnetType,
 )
 
-__all__ = ('port_validator', 'ip_validator', 'ipv4_validator', 'ipv6_validator', 'subnet_validator')
+__all__ = ('ip_validator', 'ipv4_validator', 'ipv6_validator', 'port_validator', 'subnet_validator')
 
 
 class ValidationMode(IntEnum):
