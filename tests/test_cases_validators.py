@@ -207,28 +207,28 @@ TEST_CASES_PORT_STRIPPER_IPV4 = [
         VALID_IPV4_ADDRESSES_STRICT[0],
         PORT_NUMBERS_VALID[14],
         True,
-    ),  # noqa: E501
+    ),
     (
         f"{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}",
         "IPv4",
         VALID_IPV4_ADDRESSES_STRICT[0],
         PORT_NUMBERS_VALID[14],
         True,
-    ),  # noqa: E501
+    ),
     (
         f"{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}",
         "IPV4",
         VALID_IPV4_ADDRESSES_STRICT[0],
         PORT_NUMBERS_VALID[14],
         True,
-    ),  # noqa: E501
+    ),
     (
         f"{VALID_IPV4_ADDRESSES_STRICT[5]}:{PORT_NUMBERS_VALID[8]}",
         "ipv4",
         VALID_IPV4_ADDRESSES_STRICT[5],
         PORT_NUMBERS_VALID[8],
         True,
-    ),  # noqa: E501
+    ),
     (VALID_IPV4_ADDRESSES_STRICT[0], "ipv4", VALID_IPV4_ADDRESSES_STRICT[0], PORT_NUMBERS_VALID[0], True),
     (VALID_IPV4_ADDRESSES_STRICT[5], "ipv4", VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[0], True),
 ]
