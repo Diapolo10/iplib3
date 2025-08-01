@@ -18,8 +18,8 @@ IPV6_MAX_SUBNET_VALUE = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1  # =
 class SubnetType(str, Enum):
     """Subnet type."""
 
-    IPV4 = 'ipv4'
-    IPV6 = 'ipv6'
+    IPV4 = "ipv4"
+    IPV6 = "ipv6"
 
     @classmethod
     def _missing_(cls: type[SubnetType], value: object) -> SubnetType:
@@ -27,5 +27,5 @@ class SubnetType(str, Enum):
             if isinstance(value, str) and member.value == value.lower():
                 return member
 
-        msg = 'Invalid subnet type'
+        msg = "Invalid subnet type"
         raise ValueError(msg)

@@ -42,9 +42,9 @@ def test_pure_subnet_mask_prefix_length(subnet, prefix_length):
 )
 def test_pure_subnet_mask_string(subnet, excepted_output, representation):
     """Test PureSubnetMask string representation."""
-    if representation == 'str':
+    if representation == "str":
         assert str(subnet) == excepted_output
-    elif representation == 'repr':
+    elif representation == "repr":
         assert repr(subnet) == excepted_output
 
 
@@ -77,8 +77,8 @@ def test_subnet_mask_subnet_type(subnet, excepted_output):
 
 
 @pytest.mark.parametrize(
-        ('subnet', 'error', 'error_message'),
-        TEST_CASES_SUBNET_MASK_SUBNET_LENGTH,
+    ("subnet", "error", "error_message"),
+    TEST_CASES_SUBNET_MASK_SUBNET_LENGTH,
 )
 def test_subnet_mask_subnet_length(subnet, error, error_message):
     """Test SubnetMask subnet length."""

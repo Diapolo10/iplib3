@@ -20,7 +20,7 @@ from iplib3.constants.subnet import (
 class PureSubnetMask:
     """Platform and version-independent base class for subnets."""
 
-    __slots__ = ('_prefix_length',)
+    __slots__ = ("_prefix_length",)
 
     def __init__(self: PureSubnetMask) -> None:
         """Create PureSubnetMask."""
@@ -65,16 +65,16 @@ class PureSubnetMask:
 class SubnetMask(PureSubnetMask):
     """Subnet mask for defining subnets."""
 
-    __slots__ = ('_subnet_type',)
+    __slots__ = ("_subnet_type",)
 
-    def __init__(self: SubnetMask,
-                 subnet_mask: int | str | None = None,
-                 subnet_type: SubnetType = SubnetType.IPV6) -> None:
+    def __init__(
+        self: SubnetMask, subnet_mask: int | str | None = None, subnet_type: SubnetType = SubnetType.IPV6
+    ) -> None:
         """Create SubnetMask."""
         subnet_type = SubnetType(subnet_type)
         super().__init__()
 
-        if isinstance(subnet_mask, str) and '.' in subnet_mask:
+        if isinstance(subnet_mask, str) and "." in subnet_mask:
             # Only subnets for IPv4 use strings
             subnet_type = SubnetType.IPV4
 
@@ -92,17 +92,14 @@ class SubnetMask(PureSubnetMask):
 
     @overload
     @staticmethod
-    def _subnet_to_num(subnet_mask: None, subnet_type: SubnetType) -> None:
-        ...
+    def _subnet_to_num(subnet_mask: None, subnet_type: SubnetType) -> None: ...
 
     @overload
     @staticmethod
-    def _subnet_to_num(subnet_mask: int | str, subnet_type: SubnetType) -> int:
-        ...
+    def _subnet_to_num(subnet_mask: int | str, subnet_type: SubnetType) -> int: ...
 
     @staticmethod
     def _subnet_to_num(subnet_mask: int | str | None, subnet_type: SubnetType = SubnetType.IPV6) -> int | None:
-
         subnet_type = SubnetType(subnet_type)
 
         if subnet_mask is None:
@@ -119,7 +116,7 @@ class SubnetMask(PureSubnetMask):
 
         if subnet_type == SubnetType.IPV6:
             if isinstance(subnet_mask, str):
-                if '.' in subnet_mask:
+                if "." in subnet_mask:
                     msg = "IPv6-subnets don't use a string representation"
                     raise ValueError(msg)
                 subnet_mask = int(subnet_mask)
@@ -134,18 +131,18 @@ class SubnetMask(PureSubnetMask):
     @staticmethod
     def _ipv4_subnet_to_num(subnet_mask: int | str) -> int:
         if isinstance(subnet_mask, str):
-            if '.' in subnet_mask:
-                segments = tuple(int(s) for s in reversed(subnet_mask.split('.')))
+            if "." in subnet_mask:
+                segments = tuple(int(s) for s in reversed(subnet_mask.split(".")))
                 if len(segments) != IPV4_MIN_SEGMENT_COUNT:
                     msg = f"Subnet value not valid; '{subnet_mask}' is not a valid string representation"
                     raise ValueError(
                         msg,
                     )
 
-                segment_sum = sum(s<<(8*idx) for idx, s in enumerate(segments))
-                subnet_bits = f'{segment_sum:b}'.rstrip('0')
+                segment_sum = sum(s << (8 * idx) for idx, s in enumerate(segments))
+                subnet_bits = f"{segment_sum:b}".rstrip("0")
 
-                if '0' in subnet_bits:
+                if "0" in subnet_bits:
                     msg = f"'{subnet_mask}' is an invalid subnet mask"
                     raise ValueError(msg)
 
@@ -169,11 +166,10 @@ class SubnetMask(PureSubnetMask):
 
     @staticmethod
     def _prefix_to_subnet_mask(prefix_length: int, subnet_type: SubnetType) -> str:
-
         subnet_type = SubnetType(subnet_type)
 
         if subnet_type == SubnetType.IPV6:
-            msg = 'IPv6 does not support string representations of subnet masks'
+            msg = "IPv6 does not support string representations of subnet masks"
             raise ValueError(msg)
 
         if not IPV4_MIN_SUBNET_VALUE <= prefix_length <= IPV4_MAX_SUBNET_VALUE:
@@ -185,4 +181,4 @@ class SubnetMask(PureSubnetMask):
         for idx, _ in enumerate(segments):
             segments[idx] = 2 ** max(min(IPV4_SEGMENT_BIT_COUNT, prefix_length), 0) - 1
             prefix_length -= IPV4_SEGMENT_BIT_COUNT
-        return '.'.join(map(str, segments))
+        return ".".join(map(str, segments))
