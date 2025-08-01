@@ -72,7 +72,7 @@ python = "^3.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.8.0"
+mypy = "^1.15.0"
 
 
 [tool.poetry.group.linters]
@@ -80,7 +80,7 @@ optional = true
 
 
 [tool.poetry.group.linters.dependencies]
-ruff = ">=0.6,<0.13"
+ruff = "^0.11.0"
 
 
 [tool.poetry.group.tests]
@@ -88,10 +88,10 @@ optional = true
 
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^8.0.0"
-pytest-cov = ">=5,<7"
-tox = "^4.12.1"
-tox-gh-actions = "^3.2.0"
+pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
+tox = "^4.25.0"
+tox-gh-actions = "^3.3.0"
 
 
 [tool.poetry.urls]
@@ -116,69 +116,12 @@ testpaths = [
 
 
 [tool.ruff]
-lint.select = [
-    "A",     # Builtins
-    "ANN",   # Annotations
-    "ARG",   # Unused arguments
-    "ASYNC", # Asynchronous code
-    "B",     # Bugbear
-    "BLE",   # Blind except
-    "C4",    # Comprehensions
-    "C90",   # mccabe
-    "COM",   # Commas
-    # "CPY",   # Copyright
-    "D1",    # Undocumented public elements
-    "D2",    # Docstring conventions
-    "D3",    # Triple double quotes
-    "D4",    # Docstring text format
-    "DTZ",   # Datetimes
-    "E",     # Errors
-    "EM",    # Error messages
-    "ERA",   # Commented-out code
-    "EXE",   # Executable
-    "F",     # Pyflakes
-    "FA",    # __future__ annotations
-    "FBT",   # "Boolean trap"
-    "FIX",   # "FIXME"-comments
-    "FLY",   # F-strings
-    # "FURB",  # Refurb
-    "G",     # Logging format
-    "I",     # Isort
-    "ICN",   # Import conventions
-    "INP",   # Disallow PEP-420 (Implicit namespace packages)
-    "INT",   # gettext
-    "ISC",   # Implicit str concat
-    "LOG",   # Logging
-    "N",     # PEP-8 Naming
-    "PERF",  # Unnecessary performance costs
-    "PGH",   # Pygrep hooks
-    "PIE",   # Unnecessary code
-    "PL",    # Pylint
-    "PT",    # Pytest
-    "PTH",   # Use Pathlib
-    "PYI",   # Stub files
-    "Q",     # Quotes
-    "RET",   # Return
-    "RUF",   # Ruff
-    "RSE",   # Raise
-    "S",     # Bandit
-    "SIM",   # Code simplification
-    "SLF",   # Private member access
-    "SLOT",  # __slots__
-    "T10",   # Debugger
-    "T20",   # Print
-    "TCH",   # Type checking
-    "TD",    # "TODO"-comments
-    "TID",   # Tidy imports
-    "TRY",   # Exception handling
-    "UP",    # Pyupgrade
-    "W",     # Warnings
-    "YTT",   # sys.version
-]
+lint.select = ["ALL"]
 lint.ignore = [
-    "ANN101",  # Type annotation for `self`
+    "COM812",  # Missing trailing comma (disabled due to formatter conflict)
     "D203",    # One blank line before class docstring
     "D212",    # Multi-line summary first line
+    "ISC001",  # Single-line implicit string concatenation (disabled due to formatter conflict)
     "PLR0913", # Too many arguments
     "Q000",    # Single quotes found but double quotes preferred
 ]
@@ -204,7 +147,7 @@ max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
 # https://beta.ruff.rs/docs/rules/
-"__init__.py" = ["F401", "F403", "F405",]
+"__init__.py" = ["F401", "F403", "F405", "PGH003",]
 "tests/*" = ["ANN", "ARG", "INP001", "S101",]
 
 

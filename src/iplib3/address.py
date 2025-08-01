@@ -33,7 +33,7 @@ from iplib3.validators import port_validator
 if TYPE_CHECKING:
     from iplib3.subnet import SubnetMask
 
-__all__ = ('IPAddress', 'IPv4', 'IPv6')
+__all__ = ("IPAddress", "IPv4", "IPv6")
 
 
 class AddressFormat(IntFlag):
@@ -47,14 +47,13 @@ class AddressFormat(IntFlag):
 class PureAddress:
     """Bare-bones, independent base class for IP addresses."""
 
-    __slots__ = ('_num', '_port')
+    __slots__ = ("_num", "_port")
 
     def __init__(self, num: int | None = None, port: int | None = None) -> None:
         self._num: int = num if num is not None else 0
         self._port: int | None = port if port_validator(port) else None
 
     def __eq__(self, other: object) -> bool:
-
         if isinstance(other, PureAddress):
             return self.num == other.num and self.port == other.port
 
@@ -127,55 +126,53 @@ class PureAddress:
         """Generate an IPv4 string from an integer."""
         segments = []
         for _ in range(IPV4_MAX_SEGMENT_COUNT):
-            num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE+1)
+            num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE + 1)
             segments.append(segment)
-        return '.'.join(str(segment) for segment in segments[::-1])
+        return ".".join(str(segment) for segment in segments[::-1])
 
     @staticmethod
     def _num_to_ipv6(num: int, address_format: AddressFormat) -> str:
         """Generate an IPv6 string from an integer, with optional zero removal and shortening."""
-        segment_min_length = (
-            (IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT)
-            * (AddressFormat.SHORTEN not in address_format)
+        segment_min_length = (IPV6_SEGMENT_BIT_COUNT // IPV6_NUMBER_BIT_COUNT) * (
+            AddressFormat.SHORTEN not in address_format
         )
-        zero_segment = f'{0:0{segment_min_length}}'
+        zero_segment = f"{0:0{segment_min_length}}"
 
         segments = []
         for _ in range(IPV6_MAX_SEGMENT_COUNT):
-            num, segment = divmod(num, IPV6_MAX_SEGMENT_VALUE+1)
-            segments.append(f'{segment:0{segment_min_length}X}')
+            num, segment = divmod(num, IPV6_MAX_SEGMENT_VALUE + 1)
+            segments.append(f"{segment:0{segment_min_length}X}")
 
         if AddressFormat.REMOVE_ZEROES in address_format and zero_segment in segments:
-
             # Goes over the segments to find the
             # longest strip with nothing but zeroes
             # and replaces it with an empty string.
             # The final str.join will turn to '::'.
 
             longest_idx, length = max(
-                (idx, len(list(group)))
-                for idx, (item, group) in enumerate(groupby(segments))
-                if item == zero_segment
+                (idx, len(list(group))) for idx, (item, group) in enumerate(groupby(segments)) if item == zero_segment
             )
 
-            segments[longest_idx:longest_idx+length] = ['', '']
+            segments[longest_idx : longest_idx + length] = ["", ""]
 
-        return ':'.join(segments[::-1])
+        return ":".join(segments[::-1])
 
 
 class IPAddress(PureAddress):
     """More flexible PureAddress subclass."""
 
-    __slots__ = ('_ipv4', '_ipv6', '_submask')
+    __slots__ = ("_ipv4", "_ipv6", "_submask")
 
-    def __new__(cls: type[IPAddress],  # noqa: PYI034
-                address: int | str | None = None,
-                port_num: int | None = None,
-                **kwargs) -> IPAddress:    # noqa: ANN003
+    def __new__(  # noqa: PYI034
+        cls: type[IPAddress],
+        address: int | str | None = None,
+        port_num: int | None = None,
+        **kwargs,  # noqa: ANN003
+    ) -> IPAddress:
         """Create PureAddress."""
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
-            cls = IPv4 if '.' in address else IPv6  # noqa: PLW0642
+            cls = IPv4 if "." in address else IPv6  # noqa: PLW0642
 
         self = object.__new__(cls)
 
@@ -209,7 +206,7 @@ class IPAddress(PureAddress):
                 self._ipv6 = self.as_ipv6
             return str(self._ipv6)
 
-        msg = f'No valid address representation exists for {self.num}'
+        msg = f"No valid address representation exists for {self.num}"
         raise ValueError(msg)
 
     @property
@@ -226,13 +223,13 @@ class IPAddress(PureAddress):
 class IPv4(IPAddress):
     """An IPAddress subclass specific to IPv4."""
 
-    __slots__ = ('_address',)
+    __slots__ = ("_address",)
 
     def __init__(self, address: str | None = None, port_num: int | None = None) -> None:
         """Init IPv4."""
         new_address = self._num_to_ipv4(IPV4_LOCALHOST) if address is None else address
 
-        _address, *_port = new_address.split(':')
+        _address, *_port = new_address.split(":")
 
         if _port:
             new_address = _address
@@ -256,11 +253,11 @@ class IPv4(IPAddress):
 
         Raises ValueError on invalid IPv4 format.
         """
-        segments = [int(segment) for segment in self._address.split('.')][::-1]
+        segments = [int(segment) for segment in self._address.split(".")][::-1]
         total = 0
 
         for idx, num in enumerate(segments):
-            total += num * 2**(idx * 8)
+            total += num * 2 ** (idx * 8)
 
         return total
 
@@ -268,16 +265,15 @@ class IPv4(IPAddress):
 class IPv6(IPAddress):
     """An IPAddress subclass specific to IPv6."""
 
-    __slots__ = ('_address',)
+    __slots__ = ("_address",)
 
     def __init__(self, address: str | None = None, port_num: int | None = None) -> None:
         """Init IPv6."""
         new_address = self._num_to_ipv6(IPV6_LOCALHOST, AddressFormat.SHORTEN) if address is None else address
 
-        _address, *_port = new_address.split(']:')
+        _address, *_port = new_address.split("]:")
 
         if _port:
-
             # Removes the opening square bracket
             new_address = _address[1:]
 
@@ -300,66 +296,65 @@ class IPv6(IPAddress):
 
         Raises ValueError on invalid IPv6 format.
         """
-        halves = self._address.split('::')
+        halves = self._address.split("::")
         segments = []
 
         if len(halves) == 2:  # noqa: PLR2004
             # Address with zero-skip part
-            left, right = (half.split(':') for half in halves)
+            left, right = (half.split(":") for half in halves)
             total_length = len(left) + len(right)
 
             if halves[0]:
                 segments.extend(left)
             else:
-                segments.append('0000')
+                segments.append("0000")
 
-            segments.extend(['0000' for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
+            segments.extend(["0000" for _ in range(IPV6_MAX_SEGMENT_COUNT - total_length)])
 
             if halves[1]:
                 segments.extend(right)
             else:
-                segments.append('0000')
+                segments.append("0000")
 
         elif len(halves) == 1:
             # Full address
-            segments.extend(halves[0].split(':'))
+            segments.extend(halves[0].split(":"))
 
         else:
-            msg = 'Invalid IPv6 address format; only one zero-skip allowed'
+            msg = "Invalid IPv6 address format; only one zero-skip allowed"
             raise ValueError(msg)
 
         try:
             processed_segments: list[int] = [
-                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0
-                for segment in segments[::-1]
+                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0 for segment in segments[::-1]
             ]
         except ValueError as err:
-            msg = 'Invalid IPv6 address format; address contains invalid characters'
+            msg = "Invalid IPv6 address format; address contains invalid characters"
             raise ValueError(msg) from err
 
         segment_count = len(processed_segments)
         if segment_count > IPV6_MAX_SEGMENT_COUNT:
-            msg = f'Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})'
+            msg = f"Invalid IPv6 address format; too many segments ({segment_count} > {IPV6_MAX_SEGMENT_COUNT})"
             raise ValueError(
                 msg,
             )
 
         highest = max(processed_segments)
         if highest > IPV6_MAX_SEGMENT_VALUE:
-            msg = f'Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})'
+            msg = f"Invalid IPv6 address format; segment max value passed ({highest} > {IPV6_MAX_SEGMENT_VALUE})"
             raise ValueError(
                 msg,
             )
 
         lowest = min(processed_segments)
         if lowest < IPV6_MIN_SEGMENT_VALUE:
-            msg = f'Invalid IPv6 address format; segment min value passed ({lowest} < 0)'
+            msg = f"Invalid IPv6 address format; segment min value passed ({lowest} < 0)"
             raise ValueError(
                 msg,
             )
 
         total = 0
         for idx, num in enumerate(processed_segments):
-            total += num * 2**(idx * 16)
+            total += num * 2 ** (idx * 16)
 
         return total

@@ -10,37 +10,37 @@ from iplib3.constants import (
 from iplib3.constants.port import PORT_NUMBER_MIN_VALUE
 
 PURE_ADDRESS_MASK = [
-    '127.0.0.1',
-    '0:0:0:0:0:0:0:1',
-    '0:0:0:0:DEAD:C0DE:1057:BE17',
-    '0:0:0:0:BADC:FFE:E0DD:F00D',
-    '0000:0000:0000:0000:0000:0000:0000:0001',
-    ':'.join(['0000'] * 4 + ['DEAD', 'C0DE', '1057', 'BE17']),
-    ':'.join(['0000'] * 4 + ['BADC', '0FFE', 'E0DD', 'F00D']),
-    '::1',
-    '::' + 'DEAD:C0DE:1057:BE17',
-    '::' + 'BADC:FFE:E0DD:F00D',
+    "127.0.0.1",
+    "0:0:0:0:0:0:0:1",
+    "0:0:0:0:DEAD:C0DE:1057:BE17",
+    "0:0:0:0:BADC:FFE:E0DD:F00D",
+    "0000:0000:0000:0000:0000:0000:0000:0001",
+    ":".join(["0000"] * 4 + ["DEAD", "C0DE", "1057", "BE17"]),
+    ":".join(["0000"] * 4 + ["BADC", "0FFE", "E0DD", "F00D"]),
+    "::1",
+    "::" + "DEAD:C0DE:1057:BE17",
+    "::" + "BADC:FFE:E0DD:F00D",
 ]
 
 IP_ADDRESS_MASK = [
-    ':'.join(['0'] * 5 + ['DEAD', 'DEAD', 'BEEF']),
-    '::' + 'DEAD:BEEF',
-    '127.0.0.1',
+    ":".join(["0"] * 5 + ["DEAD", "DEAD", "BEEF"]),
+    "::" + "DEAD:BEEF",
+    "127.0.0.1",
 ]
 
 IPV4_MASK = [
-    '127.0.0.1',
-    '127.0.0.1:80',
-    '127.0.0.1:8080',
-    '192.168.0.1',
+    "127.0.0.1",
+    "127.0.0.1:80",
+    "127.0.0.1:8080",
+    "192.168.0.1",
 ]
 
 IPV6_MASK = [
-    '2606:4700:4700::1111',
+    "2606:4700:4700::1111",
     "[2606:4700:4700::1111]:80",
-    '0:0:0:0:0:0:0:1',
+    "0:0:0:0:0:0:0:1",
     "[2606:4700:4700::1111]:8080",
-    '70::',
+    "70::",
 ]
 
 TEST_CASES_PURE_ADDRESS = [
@@ -55,7 +55,7 @@ TEST_CASES_PURE_ADDRESS_EQUALITY = [
     (PureAddress(0xDE_AD_BE_EF), PureAddress(0xDE_AD_BE_EF), True),
     (PureAddress(0xDE_AD_BE_EF), PureAddress(0xDE_AD_BE_EF, 80), False),
     (PureAddress(0xDE_AD_BE_EF), 0xDE_AD_BE_EF, False),
-    (PureAddress(0xDE_AD_BE_EF), 'cheese', False),
+    (PureAddress(0xDE_AD_BE_EF), "cheese", False),
 ]
 
 TEST_CASES_PURE_ADDRESS_INEQUALITY = [
@@ -82,15 +82,15 @@ TEST_CASES_PURE_ADDRESS_PORT = [
 
 TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR = [
     (3.14, TypeError, "Port "),
-    ('80', TypeError, "Port "),
+    ("80", TypeError, "Port "),
     (PORT_NUMBER_MAX_VALUE + 1, ValueError, "Port number "),
     (PORT_NUMBER_MIN_VALUE - 1, ValueError, "Port number "),
 ]
 
 TEST_CASES_PURE_ADDRESS_AS_HEX = [
-    (PureAddress(0xDE_AD_BE_EF), '0xDEADBEEF'),
-    (PureAddress(0x8B_AD_F0_0D), '0x8BADF00D'),
-    (PureAddress(0xDE_AD_C0_DE), '0xDEADC0DE'),
+    (PureAddress(0xDE_AD_BE_EF), "0xDEADBEEF"),
+    (PureAddress(0x8B_AD_F0_0D), "0x8BADF00D"),
+    (PureAddress(0xDE_AD_C0_DE), "0xDEADC0DE"),
 ]
 
 
@@ -203,13 +203,13 @@ TEST_CASES_IPV6_IPV6_TO_NUM = [
 
 TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS = [
     # Two zero-skips
-    ('::DE::AD', ValueError, "Invalid IPv6 address format; only one zero-skip allowed"),
+    ("::DE::AD", ValueError, "Invalid IPv6 address format; only one zero-skip allowed"),
     # Invalid hex literal
-    ('::H07:AF', ValueError, "Invalid IPv6 address format; address contains invalid characters"),
+    ("::H07:AF", ValueError, "Invalid IPv6 address format; address contains invalid characters"),
     # Too many segments
-    ('1:1:1:1:1:1:1:1:1', ValueError, "Invalid IPv6 address format; too many segments "),
+    ("1:1:1:1:1:1:1:1:1", ValueError, "Invalid IPv6 address format; too many segments "),
     # Segment value too high
-    ('::7:FFFFF', ValueError, "Invalid IPv6 address format; segment max value "),
+    ("::7:FFFFF", ValueError, "Invalid IPv6 address format; segment max value "),
     # Segment value too low (negative)
-    ('::7:-34', ValueError, "Invalid IPv6 address format; segment min value "),
+    ("::7:-34", ValueError, "Invalid IPv6 address format; segment min value "),
 ]

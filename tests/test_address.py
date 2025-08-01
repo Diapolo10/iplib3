@@ -149,11 +149,14 @@ def test_pure_address_num_to_ipv6_remove_zeroes(pure_address, excepted_output):
 
 def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
     """Test PureAddress num to IPv6 string conversion without shortening but segment removal applied."""
-    assert PureAddress(
-        0xBADC_0FFE_E0DD_F00D,
-    ).num_to_ipv6(
-        address_format=AddressFormat.REMOVE_ZEROES,
-    ) == '::BADC:0FFE:E0DD:F00D'
+    assert (
+        PureAddress(
+            0xBADC_0FFE_E0DD_F00D,
+        ).num_to_ipv6(
+            address_format=AddressFormat.REMOVE_ZEROES,
+        )
+        == "::BADC:0FFE:E0DD:F00D"
+    )
 
 
 @pytest.mark.parametrize(
@@ -217,7 +220,8 @@ def test_ipaddress_as_ipv6(ip_address, excepted_instance):
 
 
 @pytest.mark.parametrize(
-    "input_ipv4", TEST_CASES_IPV4,
+    "input_ipv4",
+    TEST_CASES_IPV4,
 )
 def test_ipv4(input_ipv4: IPAddress):
     """Test the IPv4 class."""
@@ -243,7 +247,8 @@ def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
 
 
 @pytest.mark.parametrize(
-    "input_ipv6", TEST_CASES_IPV6,
+    "input_ipv6",
+    TEST_CASES_IPV6,
 )
 def test_ipv6(input_ipv6: IPAddress):
     """Test the IPv6 class."""
