@@ -137,4 +137,4 @@ def test_port_stripper_ipv6(address, protocol, excepted_address, excepted_port, 
 def test_port_stripper_invalid_protocol():
     """Test the port stripper for using invalid protocol."""
     with pytest.raises(ValueError, match="Invalid subnet type"):
-        _port_stripper("127.0.0.1:8080", protocol='IPv9') # type: ignore  # noqa: PGH003
+        _port_stripper("127.0.0.1:8080", protocol="IPv9")  # type: ignore  # noqa: PGH003
