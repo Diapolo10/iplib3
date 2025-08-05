@@ -59,6 +59,9 @@ class PureAddress:
 
         return False
 
+    def __hash__(self) -> int:
+        return hash(self._num)
+
     def __ne__(self, other: object) -> bool:
         return not self == other
 
@@ -193,6 +196,10 @@ class IPAddress(PureAddress):
             return True
 
         return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        """Hash the address."""
+        return hash(str(self))
 
     def __str__(self) -> str:
         """Str variant."""
