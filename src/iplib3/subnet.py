@@ -45,6 +45,10 @@ class PureSubnetMask:
 
         return False
 
+    def __hash__(self) -> int:
+        """Hash the subnet mask."""
+        return hash(self.prefix_length)
+
     def __ne__(self: PureSubnetMask, other: object) -> bool:
         """Compare inequality."""
         return not self == other
