@@ -16,7 +16,7 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [
           '3.11',
-          'pypy-3.9',
+          'pypy-3.11',
         ]
     steps:
 
