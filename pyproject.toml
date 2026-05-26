@@ -58,17 +58,10 @@ dev = [
 [tool.coverage.run]
 branch = true
 relative_files = true
-omit = [
-    ".tox/*",
-    "tests/*",
-]
+omit = [".tox/*", "tests/*"]
 
 [tool.coverage.report]
-exclude_also = [
-    "pragma: not covered",
-    "@overload",
-    "if TYPE_CHECKING:",
-]
+exclude_also = ["pragma: not covered", "@overload", "if TYPE_CHECKING:"]
 
 [tool.hatch.build.targets.sdist.force-include]
 "CHANGELOG.md" = "CHANGELOG.md"
@@ -96,11 +89,9 @@ addopts = [
     "--cov-report=html:tests/reports/coverage-html",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=xml:tests/reports/coverage.xml",
-    "--ignore=docs/"
+    "--ignore=docs/",
 ]
-testpaths = [
-    "tests",
-]
+testpaths = ["tests"]
 
 
 [tool.ruff]
@@ -132,8 +123,8 @@ max-complexity = 15
 
 [tool.ruff.lint.per-file-ignores]
 # https://beta.ruff.rs/docs/rules/
-"__init__.py" = ["F401", "F403", "F405", "PGH003",]
-"tests/*" = ["ANN", "ARG", "INP001", "PLR2004", "S101",]
+"__init__.py" = ["F401", "F403", "F405", "PGH003"]
+"tests/*" = ["ANN", "ARG", "INP001", "PLR2004", "S101", "SLF001"]
 
 
 [tool.ruff.lint.pylint]
@@ -175,7 +166,7 @@ commands =
 [tool.uv]
 cache-keys = [
     { file = "pyproject.toml" },
-    { git = { commit = true, tags = true }},
+    { git = { commit = true, tags = true } },
 ]
 
 [tool.uv-dynamic-versioning]

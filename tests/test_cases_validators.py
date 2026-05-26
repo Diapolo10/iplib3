@@ -34,7 +34,7 @@ INVALID_IPV4_ADDRESSES = [
     "255,255,255,255",
 ]
 
-PORT_NUMBERS_VALID = [
+PORT_NUMBERS_VALID: list[int | bool | None] = [
     None,
     False,
     True,
@@ -53,7 +53,7 @@ PORT_NUMBERS_VALID = [
     25_565,
 ]
 
-PORT_NUMBERS_INVALID = [
+PORT_NUMBERS_INVALID: list[int | float | str] = [
     22.0,
     "42",
     314159,
@@ -61,7 +61,7 @@ PORT_NUMBERS_INVALID = [
     0xDEADBEEF,
 ]
 
-TEST_CASES_PORT_VALIDATOR = [
+TEST_CASES_PORT_VALIDATOR: list[tuple[int | bool | str | float | list[int] | None, bool]] = [
     (PORT_NUMBERS_VALID[0], True),
     (PORT_NUMBERS_VALID[1], True),
     (PORT_NUMBERS_VALID[2], True),
@@ -84,14 +84,14 @@ TEST_CASES_PORT_VALIDATOR = [
     ([1, 2, 3], False),
 ]
 
-TEST_CASES_IP_VALIDATOR = [
+TEST_CASES_IP_VALIDATOR: list[tuple[str | int, bool]] = [
     (VALID_IPV4_ADDRESSES_STRICT[0], True),
     (0xDE_AD_BE_EF, True),
     ("2606:4700:4700::1111", True),
     (IPV6_MAX_VALUE, True),
 ]
 
-TEST_CASES_IPV4_VALIDATOR = [
+TEST_CASES_IPV4_VALIDATOR: list[tuple[str | int | float | list[int], ValidationMode, bool]] = [
     (VALID_IPV4_ADDRESSES_STRICT[1], ValidationMode.STRICT, True),
     (VALID_IPV4_ADDRESSES_STRICT[2], ValidationMode.STRICT, True),
     (VALID_IPV4_ADDRESSES_STRICT[3], ValidationMode.STRICT, True),
@@ -117,7 +117,7 @@ TEST_CASES_IPV4_VALIDATOR = [
     (256014.40, ValidationMode.STRICT, False),
 ]
 
-TEST_CASES_IPV6_VALIDATOR = [
+TEST_CASES_IPV6_VALIDATOR: list[tuple[str | int | list[int], ValidationMode, bool]] = [
     ("0:0:0:0:0:0:0:0", ValidationMode.STRICT, True),
     ("FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", ValidationMode.STRICT, True),
     ("[0:0:0:0:0:0:0:0]:80", ValidationMode.STRICT, True),
@@ -141,7 +141,7 @@ TEST_CASES_IPV6_VALIDATOR = [
     (IPV6_MAX_VALUE + 1, ValidationMode.STRICT, False),
 ]
 
-TEST_CASES_SUBNET_VALIDATOR = [
+TEST_CASES_SUBNET_VALIDATOR: list[tuple[str | int, str, bool]] = [
     ("255.0.0.0", "ipv4", True),
     ("255.0.0.0", "IPV4", True),
     ("255.0.0.0", "ipv6", False),
@@ -153,7 +153,7 @@ TEST_CASES_SUBNET_VALIDATOR = [
     ("255.128.128.0", "ipv4", False),
 ]
 
-TEST_CASES_IPV4_SUBNET_VALIDATOR = [
+TEST_CASES_IPV4_SUBNET_VALIDATOR: list[tuple[str | int, bool]] = [
     ("255.0.0.0", True),
     ("255.255.0.0", True),
     ("255.255.128.0", True),
@@ -179,12 +179,12 @@ TEST_CASES_IPV4_SUBNET_VALIDATOR = [
     (IPV4_MIN_SUBNET_VALUE - 1, False),
 ]
 
-TEST_CASES_IPV4_SUBNET_VALIDATOR_ERRORS = [
+TEST_CASES_IPV4_SUBNET_VALIDATOR_ERRORS: list[tuple[dict[str, int] | list[int], type[Exception]]] = [
     ([1, 2, 3, 4], TypeError),
     ({"1": 1}, TypeError),
 ]
 
-TEST_CASES_IPV6_SUBNET_VALIDATOR = [
+TEST_CASES_IPV6_SUBNET_VALIDATOR: list[tuple[int, bool]] = [
     (0, True),
     (4, True),
     (8, True),
@@ -194,13 +194,13 @@ TEST_CASES_IPV6_SUBNET_VALIDATOR = [
     (17, False),
 ]
 
-TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS = [
+TEST_CASES_IPV6_SUBNET_VALIDATOR_ERRORS: list[tuple[str | list[int], type[Exception]]] = [
     ("255.255.255.0", TypeError),
     ("::DEAD:BEEF", TypeError),
     ([1, 2, 3], TypeError),
 ]
 
-TEST_CASES_PORT_STRIPPER_IPV4 = [
+TEST_CASES_PORT_STRIPPER_IPV4: list[tuple[str, str, str, int | None, bool]] = [
     (
         f"{VALID_IPV4_ADDRESSES_STRICT[0]}:{PORT_NUMBERS_VALID[14]}",
         "ipv4",
@@ -233,7 +233,7 @@ TEST_CASES_PORT_STRIPPER_IPV4 = [
     (VALID_IPV4_ADDRESSES_STRICT[5], "ipv4", VALID_IPV4_ADDRESSES_STRICT[5], PORT_NUMBERS_VALID[0], True),
 ]
 
-TEST_CASES_PORT_STRIPPER_IPV6 = [
+TEST_CASES_PORT_STRIPPER_IPV6: list[tuple[str, str, str, int | None, bool]] = [
     (f"[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}", "ipv6", "2606:4700:4700::1111", PORT_NUMBERS_VALID[14], True),
     (f"[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}", "IPv6", "2606:4700:4700::1111", PORT_NUMBERS_VALID[14], True),
     (f"[2606:4700:4700::1111]:{PORT_NUMBERS_VALID[14]}", "IPV6", "2606:4700:4700::1111", PORT_NUMBERS_VALID[14], True),

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from iplib3.constants.ipv4 import IPV4_MAX_SEGMENT_COUNT, IPV4_SEGMENT_BIT_COUNT
 from iplib3.constants.ipv6 import IPV6_MAX_SEGMENT_COUNT, IPV6_SEGMENT_BIT_COUNT
@@ -15,7 +15,7 @@ IPV6_MIN_SUBNET_VALUE = 0  # Unlike in IPv4, this should *always* be valid
 IPV6_MAX_SUBNET_VALUE = IPV6_SEGMENT_BIT_COUNT * IPV6_MAX_SEGMENT_COUNT - 1  # == 127
 
 
-class SubnetType(str, Enum):
+class SubnetType(StrEnum):
     """Subnet type."""
 
     IPV4 = "ipv4"
