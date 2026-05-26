@@ -168,6 +168,7 @@ cache-keys = [
     { file = "pyproject.toml" },
     { git = { commit = true, tags = true } },
 ]
+constraint-dependencies = ["pygments<=2.20.0"]
 
 [tool.uv-dynamic-versioning]
 bump = true
