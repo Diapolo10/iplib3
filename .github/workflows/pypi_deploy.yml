@@ -14,10 +14,23 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@master
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0  # Fetch all history for versioning
+        fetch-tags: true  # Fetch tags for versioning
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        cache-dependency-glob: "uv.lock"
+        enable-cache: true
+
+    - name: Build
+      run: uv build
 
     - name: Publish distribution 📦 to PyPI
-      uses: JRubics/poetry-publish@v2.1
-      with:
-        ignore_dev_requirements: 'yes'
-        pypi_token: ${{ secrets.PYPI_PASSWORD }}
+      run: uv publish
+      env:
+        UV_PUBLISH_URL: https://upload.pypi.org/legacy/
+        UV_PUBLISH_CHECK_URL: https://pypi.org/simple/
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_PASSWORD }}

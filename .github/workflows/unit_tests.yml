@@ -7,27 +7,36 @@
 
 name: Unit tests
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - 'v*'  # Avoid re-running existing commit on release
+  pull_request:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+env:
+  FORCE_COLOR: 1
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: [
-          '3.10',
           '3.11',
           '3.12',
           '3.13',
-          # 'pypy-3.11'
+          '3.14',
+          'pypy-3.11',
         ]
-
-        # exclude:
-        #   - os: windows-latest
-        #     python-version: 'pypy-3.11'
-        #   - os: macos-latest
-        #     python-version: 'pypy-3.11'
 
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
@@ -37,22 +46,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
+        cache-dependency-glob: "uv.lock"
+        enable-cache: true
         python-version: ${{ matrix.python-version }}
 
-    - name: Install Poetry
-      uses: Gr1N/setup-poetry@v9
-
     - name: Install library and dependencies
-      run: |
-        poetry run pip install --upgrade pip setuptools
-        poetry install --with tests
+      run: uv sync --frozen
 
     - name: Run Tox (Pytest + Coverage)
-      run: |
-        poetry run tox
+      run: uv run tox
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PLATFORM: ${{ matrix.os }}
@@ -77,12 +82,23 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v6
-
-    - name: Publish distribution 📦 to Test PyPI
-      uses: JRubics/poetry-publish@v2.1
-      continue-on-error: true
       with:
-        ignore_dev_requirements: 'yes'
-        pypi_token: ${{ secrets.TEST_PYPI_PASSWORD }}
-        repository_name: 'testpypi'
-        repository_url: 'https://test.pypi.org/legacy/'
+        fetch-depth: 0  # Fetch all history for versioning
+        fetch-tags: true  # Fetch tags for versioning
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        cache-dependency-glob: "uv.lock"
+        enable-cache: true
+
+    - name: Build release
+      run: uv build
+
+    - name: Publish test release 📦 to Test PyPI
+      continue-on-error: true
+      run: uv publish
+      env:
+        UV_PUBLISH_URL: https://test.pypi.org/legacy/
+        UV_PUBLISH_CHECK_URL: https://test.pypi.org/simple/
+        UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_PASSWORD }}
