@@ -139,8 +139,5 @@ cov.xml
 # Tox stuff
 tests/reports
 
-# Makefile installation stamp
-.install.stamp
-
 # Snyk Security Extension - AI Rules (auto-generated)
 .github/instructions/snyk_rules.instructions.md

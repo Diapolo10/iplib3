@@ -3,7 +3,7 @@
 import pytest
 
 from iplib3 import IPAddress
-from iplib3.address import AddressFormat, IPv6, PureAddress
+from iplib3.address import AddressFormat, IPv4, IPv6, PureAddress
 from iplib3.constants import IPV6_MAX_VALUE
 from tests.test_cases_address import (
     TEST_CASES_IPADDRESS,
@@ -37,7 +37,7 @@ from tests.test_cases_address import (
     "pure_address",
     TEST_CASES_PURE_ADDRESS,
 )
-def test_pure_address(pure_address: PureAddress):
+def test_pure_address(pure_address: PureAddress) -> None:
     """Test the PureAddress base class."""
     assert pure_address
 
@@ -46,7 +46,7 @@ def test_pure_address(pure_address: PureAddress):
     ("address", "input_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_EQUALITY,
 )
-def test_pure_address_equality(address, input_address, excepted_output):
+def test_pure_address_equality(address: PureAddress, input_address: PureAddress, *, excepted_output: bool) -> None:
     """Test PureAddress equality."""
     output = address == input_address
     assert output is excepted_output
@@ -56,7 +56,7 @@ def test_pure_address_equality(address, input_address, excepted_output):
     ("first_address", "second_address"),
     TEST_CASES_PURE_ADDRESS_INEQUALITY,
 )
-def test_pure_address_inequality(first_address, second_address):
+def test_pure_address_inequality(first_address: PureAddress, second_address: PureAddress) -> None:
     """Test PureAddress inequality."""
     assert first_address != second_address
 
@@ -65,7 +65,7 @@ def test_pure_address_inequality(first_address, second_address):
     ("address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM,
 )
-def test_pure_address_num(address, excepted_output):
+def test_pure_address_num(address: PureAddress, excepted_output: int) -> None:
     """Test PureAddress num property."""
     assert address.num == excepted_output
 
@@ -74,18 +74,18 @@ def test_pure_address_num(address, excepted_output):
     ("address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_PORT,
 )
-def test_pure_address_port(address, excepted_output):
+def test_pure_address_port(address: PureAddress, excepted_output: int) -> None:
     """Test PureAddress port property."""
     assert address.port == excepted_output
 
 
-def test_pure_address_port_setter():
+def test_pure_address_port_setter() -> None:
     """Test PureAddress port setter."""
     address = PureAddress()
     assert address.port is None
 
     address.port = 80
-    assert address.port == 80  # noqa: PLR2004
+    assert address.port == 80
 
     address.port = None
     assert address.port is None
@@ -95,7 +95,7 @@ def test_pure_address_port_setter():
     ("value", "error", "match_message"),
     TEST_CASES_PURE_ADDRESS_PORT_SETTER_ERROR,
 )
-def test_pure_address_port_setter_error(value, error, match_message):
+def test_pure_address_port_setter_error(value: int, error: type[Exception], match_message: str) -> None:
     """Test pure address port errors."""
     address = PureAddress()
     with pytest.raises(error, match=match_message):
@@ -106,7 +106,7 @@ def test_pure_address_port_setter_error(value, error, match_message):
     ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_AS_HEX,
 )
-def test_pure_address_as_hex(pure_address, excepted_output):
+def test_pure_address_as_hex(pure_address: PureAddress, excepted_output: str) -> None:
     """Test PureAddress hex output."""
     assert pure_address.as_hex == excepted_output
 
@@ -115,7 +115,7 @@ def test_pure_address_as_hex(pure_address, excepted_output):
     ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV4,
 )
-def test_pure_address_num_to_ipv4(pure_address, excepted_output):
+def test_pure_address_num_to_ipv4(pure_address: PureAddress, excepted_output: str) -> None:
     """Test PureAddress num to IPv4 string conversion."""
     assert pure_address.num_to_ipv4() == excepted_output
 
@@ -124,7 +124,7 @@ def test_pure_address_num_to_ipv4(pure_address, excepted_output):
     ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6,
 )
-def test_pure_address_num_to_ipv6(pure_address, excepted_output):
+def test_pure_address_num_to_ipv6(pure_address: PureAddress, excepted_output: str) -> None:
     """Test PureAddress num to IPv6 string conversion."""
     assert pure_address.num_to_ipv6() == excepted_output
 
@@ -133,7 +133,7 @@ def test_pure_address_num_to_ipv6(pure_address, excepted_output):
     ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_NO_SHORTENING,
 )
-def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
+def test_pure_address_num_to_ipv6_no_shortening(pure_address: PureAddress, excepted_output: str) -> None:
     """Test PureAddress num to IPv6 string conversion without shortening."""
     assert pure_address.num_to_ipv6(AddressFormat.DEFAULT) == excepted_output
 
@@ -142,12 +142,12 @@ def test_pure_address_num_to_ipv6_no_shortening(pure_address, excepted_output):
     ("pure_address", "excepted_output"),
     TEST_CASES_PURE_ADDRESS_NUM_TO_IPV6_REMOVE_ZEROS,
 )
-def test_pure_address_num_to_ipv6_remove_zeroes(pure_address, excepted_output):
+def test_pure_address_num_to_ipv6_remove_zeroes(pure_address: PureAddress, excepted_output: str) -> None:
     """Test PureAddress num to IPv6 string conversion with empty segment removal."""
     assert pure_address.num_to_ipv6(AddressFormat.REMOVE_ZEROES | AddressFormat.SHORTEN) == excepted_output
 
 
-def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
+def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening() -> None:
     """Test PureAddress num to IPv6 string conversion without shortening but segment removal applied."""
     assert (
         PureAddress(
@@ -163,7 +163,7 @@ def test_pure_address_num_to_ipv6_remove_zeroes_no_shortening():
     ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS,
 )
-def test_ipaddress(ip_address, excepted_instance):
+def test_ipaddress(ip_address: IPAddress, excepted_instance: type) -> None:
     """Test the IPAddress class."""
     assert isinstance(ip_address, excepted_instance)
 
@@ -172,7 +172,7 @@ def test_ipaddress(ip_address, excepted_instance):
     ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_EQUALITY,
 )
-def test_ipaddress_equality(ip_address, excepted_output):
+def test_ipaddress_equality(ip_address: IPAddress, *, excepted_output: bool) -> None:
     """Test IPAddress equality."""
     assert ip_address == excepted_output
 
@@ -181,12 +181,12 @@ def test_ipaddress_equality(ip_address, excepted_output):
     ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_STRING,
 )
-def test_ipaddress_string(ip_address, excepted_output):
+def test_ipaddress_string(ip_address: IPAddress, excepted_output: str) -> None:
     """Test IPAddress string representation."""
     assert str(ip_address) == excepted_output
 
 
-def test_ipaddress_string_error():
+def test_ipaddress_string_error() -> None:
     """Test string form errors."""
     with pytest.raises(ValueError, match="No valid address representation exists"):
         str(IPAddress(IPV6_MAX_VALUE + 1))
@@ -196,7 +196,7 @@ def test_ipaddress_string_error():
     ("ip_address", "excepted_output"),
     TEST_CASES_IPADDRESS_REPR,
 )
-def test_ipaddress_repr(ip_address, excepted_output):
+def test_ipaddress_repr(ip_address: IPAddress, excepted_output: str) -> None:
     """Test IP address representation."""
     assert repr(ip_address) == excepted_output
 
@@ -205,7 +205,7 @@ def test_ipaddress_repr(ip_address, excepted_output):
     ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS_AS_IPV4,
 )
-def test_ipaddress_as_ipv4(ip_address, excepted_instance):
+def test_ipaddress_as_ipv4(ip_address: IPAddress, excepted_instance: type) -> None:
     """Test the IPAddress IPv4 constructor."""
     assert isinstance(ip_address.as_ipv4, excepted_instance)
 
@@ -214,7 +214,7 @@ def test_ipaddress_as_ipv4(ip_address, excepted_instance):
     ("ip_address", "excepted_instance"),
     TEST_CASES_IPADDRESS_AS_IPV6,
 )
-def test_ipaddress_as_ipv6(ip_address, excepted_instance):
+def test_ipaddress_as_ipv6(ip_address: IPAddress, excepted_instance: type) -> None:
     """Test the IPAddress IPv6 constructor."""
     assert isinstance(ip_address.as_ipv6, excepted_instance)
 
@@ -223,7 +223,7 @@ def test_ipaddress_as_ipv6(ip_address, excepted_instance):
     "input_ipv4",
     TEST_CASES_IPV4,
 )
-def test_ipv4(input_ipv4: IPAddress):
+def test_ipv4(input_ipv4: IPv4) -> None:
     """Test the IPv4 class."""
     assert input_ipv4
 
@@ -232,7 +232,7 @@ def test_ipv4(input_ipv4: IPAddress):
     ("input_ipv4", "excepted_output"),
     TEST_CASES_IPV4_STRING,
 )
-def test_ipv4_string(input_ipv4, excepted_output):
+def test_ipv4_string(input_ipv4: IPv4, excepted_output: str) -> None:
     """Test IPv4 string representation."""
     assert str(input_ipv4) == excepted_output
 
@@ -241,16 +241,16 @@ def test_ipv4_string(input_ipv4, excepted_output):
     ("input_ipv4", "excepted_output"),
     TEST_CASES_IPV4_IPV4_TO_NUM,
 )
-def test_ipv4_ipv4_to_num(input_ipv4, excepted_output):
+def test_ipv4_ipv4_to_num(input_ipv4: IPv4, excepted_output: int) -> None:
     """Test IPv4 to num conversion."""
-    assert input_ipv4._ipv4_to_num() == excepted_output  # noqa: SLF001
+    assert input_ipv4._ipv4_to_num() == excepted_output
 
 
 @pytest.mark.parametrize(
     "input_ipv6",
     TEST_CASES_IPV6,
 )
-def test_ipv6(input_ipv6: IPAddress):
+def test_ipv6(input_ipv6: IPAddress) -> None:
     """Test the IPv6 class."""
     assert input_ipv6
 
@@ -259,7 +259,7 @@ def test_ipv6(input_ipv6: IPAddress):
     ("input_ipv6", "excepted_output"),
     TEST_CASES_IPV6_STRING,
 )
-def test_ipv6_string(input_ipv6, excepted_output):
+def test_ipv6_string(input_ipv6: IPAddress, excepted_output: str) -> None:
     """Test IPv6 string representation."""
     assert str(input_ipv6) == excepted_output
 
@@ -268,16 +268,16 @@ def test_ipv6_string(input_ipv6, excepted_output):
     ("input_ipv6", "excepted_output"),
     TEST_CASES_IPV6_IPV6_TO_NUM,
 )
-def test_ipv6_ipv6_to_num(input_ipv6, excepted_output):
+def test_ipv6_ipv6_to_num(input_ipv6: str, excepted_output: int) -> None:
     """Test IPv6 to num conversion."""
-    assert IPv6(input_ipv6)._ipv6_to_num() == excepted_output  # noqa: SLF001
+    assert IPv6(input_ipv6)._ipv6_to_num() == excepted_output
 
 
 @pytest.mark.parametrize(
     ("input_ipv6", "error", "match_message"),
     TEST_CASES_IPV6_IPV6_TO_NUM_ERRORS,
 )
-def test_ipv6_ipv6_to_num_errors(input_ipv6, error, match_message):
+def test_ipv6_ipv6_to_num_errors(input_ipv6: str, error: type, match_message: str) -> None:
     """Test errors converting IPv6 into number."""
     with pytest.raises(error, match=match_message):
-        IPv6(input_ipv6)._ipv6_to_num()  # noqa: SLF001
+        IPv6(input_ipv6)._ipv6_to_num()

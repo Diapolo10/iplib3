@@ -16,23 +16,23 @@ SUBNET_MASKS = [
     "255.255.128",  # Invalid
 ]
 
-TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH = [
+TEST_CASES_PURE_SUBNET_MASK_PREFIX_LENGTH: list[tuple[PureSubnetMask, int | None]] = [
     (PureSubnetMask(), None),
     (PureSubnetMask(), IPV4_MIN_SUBNET_VALUE),
 ]
 
-TEST_CASES_PURE_SUBNET_MASK_STRING = [
+TEST_CASES_PURE_SUBNET_MASK_STRING: list[tuple[PureSubnetMask, str, str]] = [
     (PureSubnetMask(), "0", "str"),
     (PureSubnetMask(), "iplib3.PureSubnetMask('0')", "repr"),
 ]
 
-TEST_CASES_PURE_SUBNET_MASK_EQUALITY = [
+TEST_CASES_PURE_SUBNET_MASK_EQUALITY: list[tuple[PureSubnetMask, PureSubnetMask | int | str]] = [
     (PureSubnetMask(), PureSubnetMask()),
     (PureSubnetMask(), IPV4_MIN_SUBNET_VALUE),
     (PureSubnetMask(), "0"),
 ]
 
-TEST_CASES_PURE_SUBNET_MASK_INEQUALITY = [
+TEST_CASES_PURE_SUBNET_MASK_INEQUALITY: list[tuple[PureSubnetMask, PureSubnetMask | int | float | str]] = [
     (PureSubnetMask(), PureSubnetMask()),
     (PureSubnetMask(), 3.14),
     (PureSubnetMask(), IPV4_MIN_SUBNET_VALUE),
@@ -43,17 +43,17 @@ TEST_CASES_SUBNET_MASK_SUBNET_TYPE = [
     (SubnetMask(SUBNET_MASKS[0]), SubnetType.IPV4),
 ]
 
-TEST_CASES_SUBNET_MASK_SUBNET_LENGTH = [
+TEST_CASES_SUBNET_MASK_SUBNET_LENGTH: list[tuple[str | int, type[Exception], str]] = [
     (SUBNET_MASKS[3], ValueError, "Subnet value not valid;"),
     (SUBNET_MASKS[4], ValueError, "Subnet value not valid;"),
 ]
 
-TEST_CASES_SUBNET_MASK_STRING = [
+TEST_CASES_SUBNET_MASK_STRING: list[tuple[SubnetMask, str]] = [
     (SubnetMask(24, subnet_type=SubnetType.IPV4), f"iplib3.SubnetMask({SUBNET_MASKS[0]!r})"),
     (SubnetMask(24), "iplib3.SubnetMask('24')"),
 ]
 
-TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM = [
+TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM: list[tuple[str | int | None, SubnetType, int | None]] = [
     (None, SubnetType.IPV6, None),
     (24, SubnetType.IPV6, 24),
     ("24", SubnetType.IPV6, 24),
@@ -63,7 +63,9 @@ TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM = [
     (SUBNET_MASKS[1], SubnetType.IPV4, 17),
 ]
 
-TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS = [
+TEST_CASES_SUBNET_MASK_SUBNET_TO_NUM_ERRORS: list[
+    tuple[list[int] | str | int | None, SubnetType, type[Exception], str]
+] = [
     ([255, 255, 255, 0], SubnetType.IPV6, TypeError, "Invalid type for subnet value: "),
     (SUBNET_MASKS[0], SubnetType.IPV6, ValueError, "IPv6-subnets don't use a string representation"),
     ("3e2", SubnetType.IPV6, ValueError, "invalid literal "),
@@ -76,7 +78,7 @@ TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK = [
     (24, SubnetType.IPV4, SUBNET_MASKS[0]),
 ]
 
-TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS = [
+TEST_CASES_SUBNET_MASK_PREFIX_TO_SUBNET_MASK_ERRORS: list[tuple[int, SubnetType, type[Exception], str]] = [
     (24, SubnetType.IPV6, ValueError, "IPv6 does not support string representations of subnet masks"),
     (IPV4_MAX_SUBNET_VALUE + 1, SubnetType.IPV4, ValueError, "Invalid subnet value for IPv4: "),
 ]

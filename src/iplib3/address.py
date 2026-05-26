@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from enum import IntFlag, auto
 from itertools import groupby
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from iplib3.constants.address import (
     IPV4_LOCALHOST,
@@ -131,7 +131,7 @@ class PureAddress:
         for _ in range(IPV4_MAX_SEGMENT_COUNT):
             num, segment = divmod(num, IPV4_MAX_SEGMENT_VALUE + 1)
             segments.append(segment)
-        return ".".join(str(segment) for segment in segments[::-1])
+        return ".".join(str(segment) for segment in reversed(segments))
 
     @staticmethod
     def _num_to_ipv6(num: int, address_format: AddressFormat) -> str:
@@ -158,7 +158,7 @@ class PureAddress:
 
             segments[longest_idx : longest_idx + length] = ["", ""]
 
-        return ":".join(segments[::-1])
+        return ":".join(reversed(segments))
 
 
 class IPAddress(PureAddress):
@@ -166,21 +166,17 @@ class IPAddress(PureAddress):
 
     __slots__ = ("_ipv4", "_ipv6", "_submask")
 
-    def __new__(  # noqa: PYI034
-        cls: type[IPAddress],
-        address: int | str | None = None,
-        port_num: int | None = None,
-        **kwargs,  # noqa: ANN003
-    ) -> IPAddress:
+    def __new__(cls: type[Self], address: int | str | None = None, port_num: int | None = None) -> Self:
         """Create PureAddress."""
+        _class: type[Self | IPv4 | IPv6] = cls
         if isinstance(address, str):
             # Only IPv4-addresses have '.', ':' is used in both IPv4 and IPv6
-            cls = IPv4 if "." in address else IPv6  # noqa: PLW0642
+            _class = IPv4 if "." in address else IPv6
 
-        self = object.__new__(cls)
+        self = object.__new__(_class)
 
-        self.__init__(address=address, port_num=port_num, **kwargs)  # type: ignore  # noqa: PGH003  # mypy: ignore
-        return self
+        self.__init__(address=address, port_num=port_num)  # type: ignore[misc]
+        return self  # type: ignore[return-value]
 
     def __init__(self, address: int | None = IPV4_LOCALHOST, port_num: int | None = None) -> None:
         """Init PureAddress."""
@@ -219,12 +215,12 @@ class IPAddress(PureAddress):
     @property
     def as_ipv4(self) -> IPv4:
         """Creates and returns an IPv4 version of the address, if possible."""
-        return IPv4(self.num_to_ipv4(), port_num=self.port)  # type: ignore  # noqa: PGH003
+        return IPv4(self.num_to_ipv4(), port_num=self.port)
 
     @property
     def as_ipv6(self) -> IPv6:
         """Creates and returns an IPv6-version of the address."""
-        return IPv6(self.num_to_ipv6(), port_num=self.port)  # type: ignore  # noqa: PGH003
+        return IPv6(self.num_to_ipv6(), port_num=self.port)
 
 
 class IPv4(IPAddress):
@@ -260,7 +256,7 @@ class IPv4(IPAddress):
 
         Raises ValueError on invalid IPv4 format.
         """
-        segments = [int(segment) for segment in self._address.split(".")][::-1]
+        segments = map(int, reversed(self._address.split(".")))
         total = 0
 
         for idx, num in enumerate(segments):
@@ -333,7 +329,7 @@ class IPv6(IPAddress):
 
         try:
             processed_segments: list[int] = [
-                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0 for segment in segments[::-1]
+                int(segment, IPV6_SEGMENT_BIT_COUNT) if segment else 0 for segment in reversed(segments)
             ]
         except ValueError as err:
             msg = "Invalid IPv6 address format; address contains invalid characters"

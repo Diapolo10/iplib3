@@ -20,22 +20,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v6
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        python-version: '3.11'
-
-    - name: Install Poetry
-      uses: Gr1N/setup-poetry@v9
+        cache-dependency-glob: "uv.lock"
+        enable-cache: true
 
     - name: Install library and dependencies
-      run: |
-        poetry run pip install --upgrade pip setuptools
-        poetry install --only linters
+      run: uv sync --frozen
 
     - name: Lint with Ruff
+      id: lint
       run: |
-        poetry run ruff check --fix .
+        uv run --frozen ruff check --fix .
         echo "RUFF_SUCCESS=$([ $? -eq 0 ])" >> $GITHUB_ENV
 
     - name: Create Pull Request
