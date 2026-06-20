@@ -24,7 +24,7 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Fetch all history for versioning
           fetch-tags: true  # Fetch tags for versioning
@@ -57,7 +57,7 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download Artifacts
         uses: actions/download-artifact@v8
