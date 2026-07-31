@@ -98,6 +98,7 @@ testpaths = ["tests"]
 lint.select = ["ALL"]
 lint.ignore = [
     "COM812",  # Missing trailing comma (disabled due to formatter conflict)
+    "CPY001",  # Missing copyright notice at the top of the file
     "D203",    # One blank line before class docstring
     "D212",    # Multi-line summary first line
     "ISC001",  # Single-line implicit string concatenation (disabled due to formatter conflict)
